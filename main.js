@@ -29,6 +29,11 @@ app.get('/kost', (req, res) => {
     res.render('kost');
 });
 
+// Indbakke
+app.get('/indbakke', (req, res) => {
+    res.render('indbakke');
+});
+
 
 
 // Server listening
