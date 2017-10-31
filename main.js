@@ -1,21 +1,24 @@
+var bodyparser = require('body-parser');
+var Chart = require('chart.js');
 var express = require('express');
 var app = express();
-var bodyparser = require('body-parser');
+
 
 // Setup
-app.use(express.static('public'));
+app.use(express.static(__dirname + '/public'));
 app.use(bodyparser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
 
-// Root route [Login]
+// Home
 app.get('/', (req, res) => {
-    res.render('index');
+    res.render('home');
 });
 
-// Min side-route
-app.get('/home', (req, res) => {
-	res.render('home');
+// Login
+app.get('/login', (req, res) => {
+    res.render('login');
 });
+
 
 
 // Server listening
