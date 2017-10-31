@@ -9,14 +9,13 @@ app.use(express.static(__dirname + '/public'));
 app.use(bodyparser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
 
-// Home
+// Landing pages
 app.get('/', (req, res) => {
-    res.render('home');
+    res.render('login');
 });
 
-// Login
-app.get('/login', (req, res) => {
-    res.render('login');
+app.get('/home', (req, res) => {
+    res.render('home');
 });
 
 // Program
