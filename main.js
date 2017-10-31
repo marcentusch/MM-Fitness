@@ -19,6 +19,16 @@ app.get('/login', (req, res) => {
     res.render('login');
 });
 
+// Program
+app.get('/program', (req, res) => {
+    res.render('program');
+});
+
+// Kost
+app.get('/kost', (req, res) => {
+    res.render('kost');
+});
+
 
 
 // Server listening
