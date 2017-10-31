@@ -9,3 +9,9 @@ html, body{
 	position: relative;
 	bottom: 0;
 }
+
+.stickyBottom {
+	position: fixed;
+    bottom: 0;
+    width: 100%;
+}

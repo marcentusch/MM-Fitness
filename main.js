@@ -34,6 +34,11 @@ app.get('/indbakke', (req, res) => {
     res.render('indbakke');
 });
 
+// Nyheder
+app.get('/nyheder', (req, res) => {
+    res.render('nyheder');
+});
+
 
 
 // Server listening
