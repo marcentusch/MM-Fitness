@@ -5,10 +5,11 @@
 		<h4>Min side</h4>
 		<% let user = users[0]; %>
 
-		<p><%= user.name %> </p>
+		<p> <%= user.name %> </p>
+		<p>Nuværende vægt: <%= user.weightStats.currentWeight %>kg</p>
+		<p>Vægt gains/loses: <%= user.weightStats.weightProgress %>kg</p>
+
 		<canvas id="myChart" width="100" height="80"></canvas>
-
-
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script>
 		<script>
 
