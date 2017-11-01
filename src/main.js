@@ -11,12 +11,6 @@ var userData = require('./data/users.json');
 mongoose.connect('mongodb://localhost/mm_fitness_app');
 var db = mongoose.connection;
 
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function(){
-    //console.log("CONNECTED TO DB!");
-});
-
-
 // Setup
 app.use(express.static('public'));
 app.use(bodyparser.urlencoded({extended: true}));
@@ -29,8 +23,14 @@ app.get('/', (req, res) => {
 
 // Hjem
 app.get('/home', (req, res) => {
-    console.log(userData);
     res.render('home', {users: userData});
+});
+
+// Profil
+app.get('/profile', (req, res) => {
+    let user = findUser("mo@pe.dk");
+    console.log("==============================", user);
+    res.render('profile', {user: user});
 });
 
 // Trænings program
@@ -39,18 +39,18 @@ app.get('/program', (req, res) => {
 });
 
 // Kost
-app.get('/kost', (req, res) => {
-    res.render('kost');
+app.get('/meal-plan', (req, res) => {
+    res.render('meal-plan');
 });
 
 // Indbakke
-app.get('/indbakke', (req, res) => {
-    res.render('indbakke');
+app.get('/inbox', (req, res) => {
+    res.render('inbox');
 });
 
 // Nyheder
-app.get('/nyheder', (req, res) => {
-    res.render('nyheder');
+app.get('/news', (req, res) => {
+    res.render('news');
 });
 
 // Opdatér vægt route
@@ -59,15 +59,21 @@ app.post('/home/:id', (req, res) => {
 
 });
 
-app.post('/user/new', (req,res) =>{
-    console.log("body", req.body);
-    createNewUser(req.body.name, req.body.email);
+app.post('/user/new', (req,res) => {
+    const body = req.body;
+    const user = {
+        name: body.name,
+        email: body.email,
+        password: body.password,
+        avatarURL: body.avatarURL
+    }
+    createNewUser(user);
 });
 
 // DETTE SKAL FLYTTES TIL FIL!!!!
 // Define schema for user
 var userSchema = mongoose.Schema({
-    _id: String,
+    id: String,
     name: String,
     email: String,
     password: String,
@@ -81,55 +87,68 @@ var userSchema = mongoose.Schema({
                 date: String,
                 weight: String
             }
-        ],
-        trainingStats: {
-            assignedWorkouts: [
-                {
-                    name: String,
-                    reps: String
-                }                
-            ]
-        },
-        foodStats: {
-            totalCalories: String,
-            mealPlan: [
-                {
-                    name: String,
-                    description: String,
-                    recipe: String,
-                    calories: String,
-                    carbohydrates: String,
-                    fat: String,
-                    protein: String
-                }
-            ]
-        },
-        messages: [
+        ]
+    },
+    trainingStats: {
+        assignedWorkouts: [
             {
-                date: String,
-                content: String
+                name: String,
+                reps: String
+            }                
+        ]
+    },
+    foodStats: {
+        totalCalories: String,
+        mealPlan: [
+            {
+                name: String,
+                description: String,
+                recipe: String,
+                calories: String,
+                carbohydrates: String,
+                fat: String,
+                protein: String
             }
         ]
-    }
+    },
+    messages: [
+        {
+            date: String,
+            content: String
+        }
+    ]
 });
 
 // Compile schema into model
-var User = mongoose.model('User', userSchema);
+let User = mongoose.model('User', userSchema);
 
-function createNewUser(name, email){
-    console.log("name", name);
-    User.create(
-        {
-            name: name, 
-            email: email
-        }
-    ),
-    function(err, user){
+function createNewUser(user){
+    User.create(user),
+    function(err, newUser){
         if(err){
             console.log(err);
         }else{
-            console.log("User created: " + user);
-            return user;
+            console.log("User created: " + newUser);
+            return newUser;
+        }
+    }
+}
+
+function findUser(email){
+    try {
+        return new Promise( (resolve, reject) => {
+            User.findOne({email: email}, (err, user) => {
+                if(err){
+                    reject(err);
+                }else{
+                    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>", user);
+                      resolve(user);
+                }
+            });
+        } );
+    } catch(err) {
+        if(err)  {
+            throw(err);
         }
     }
 }
