@@ -8,8 +8,10 @@ var config = require('../config/global.config.json');
 var userData = require('./data/users.json');
 
 // Connect to database
-mongoose.connect('mongodb://localhost/mm_fitness_app');
+mongoose.Promise = global.Promise;
+mongoose.connect('mongodb://localhost/mm_fitness_app', {useMongoClient: true});
 var db = mongoose.connection;
+
 
 // Setup
 app.use(express.static('public'));
@@ -29,7 +31,7 @@ app.get('/home', (req, res) => {
 // Profil
 app.get('/profile', (req, res) => {
     let user = findUser("mo@pe.dk");
-    console.log("==============================", user);
+    console.log("User from route", user);
     res.render('profile', {user: user});
 });
 
@@ -134,22 +136,13 @@ function createNewUser(user){
     }
 }
 
-function findUser(email){
+async function findUser(email){
     try {
-        return new Promise( (resolve, reject) => {
-            User.findOne({email: email}, (err, user) => {
-                if(err){
-                    reject(err);
-                }else{
-                    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>", user);
-                      resolve(user);
-                }
-            });
-        } );
+        const newUser = await User.findOne({email: email}).exec();
+        console.log("user from db", newUser);
+        return newUser;
     } catch(err) {
-        if(err)  {
-            throw(err);
-        }
+        throw(err);
     }
 }
 

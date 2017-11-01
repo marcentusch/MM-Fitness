@@ -8,5 +8,10 @@
 	},
 	"mongo": {
 		"port":"27017"
+	},
+	"mongoose": {
+		"options": {
+			"useMongoClient": "true"
+		}
 	}
 }
