@@ -16,22 +16,6 @@ db.once('open', function(){
     //console.log("CONNECTED TO DB!");
 });
 
-// Define schema for user
-var userSchema = mongoose.Schema({
-    name: String,
-    email: String
-});
-
-// Compile schema into model
-var User = mongoose.model('User', userSchema);
-
-// Create a user
-/*User.create({name: 'Johnny', email: 'johnny@johnny.dk'}, function(err, user){
-    if(err){
-        console.log(err);
-    }
-    console.log(user);
-}); */
 
 // Setup
 app.use(express.static('public'));
@@ -74,6 +58,90 @@ app.post('/home/:id', (req, res) => {
     let newWeight = req.body.newWeight;
 
 });
+
+app.post('/user/new', (req,res) =>{
+    console.log("body", req.body);
+    createNewUser(req.body.name, req.body.email);
+});
+
+// DETTE SKAL FLYTTES TIL FIL!!!!
+// Define schema for user
+var userSchema = mongoose.Schema({
+    _id: String,
+    name: String,
+    email: String,
+    password: String,
+    avatarURL: String,
+    weightStats: {
+        currentWeight: String,
+        startWeight: String,
+        weightProgress: String,
+        allWeights: [
+            {
+                date: String,
+                weight: String
+            }
+        ],
+        trainingStats: {
+            assignedWorkouts: [
+                {
+                    name: String,
+                    reps: String
+                }                
+            ]
+        },
+        foodStats: {
+            totalCalories: String,
+            mealPlan: [
+                {
+                    name: String,
+                    description: String,
+                    recipe: String,
+                    calories: String,
+                    carbohydrates: String,
+                    fat: String,
+                    protein: String
+                }
+            ]
+        },
+        messages: [
+            {
+                date: String,
+                content: String
+            }
+        ]
+    }
+});
+
+// Compile schema into model
+var User = mongoose.model('User', userSchema);
+
+function createNewUser(name, email){
+    console.log("name", name);
+    User.create(
+        {
+            name: name, 
+            email: email
+        }
+    ),
+    function(err, user){
+        if(err){
+            console.log(err);
+        }else{
+            console.log("User created: " + user);
+            return user;
+        }
+    }
+}
+
+// Create a user
+/* User.create({name: 'Johnny', email: 'johnny@johnny.dk'}, function(err, user){
+    if(err){
+        console.log(err);
+    }
+    console.log(user);
+}); */
+
 
 // Server listening
 app.listen(config.port, () => {
