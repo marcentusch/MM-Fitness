@@ -1,0 +1,21 @@
+[
+    {
+        "_id": "821039bf-6aeb-4e57-8027-b29c7c12a1d8",
+        "name": "Mr Hest",
+        "stats": {
+            "currentWeight": "322",
+            "weightProgress": "-22",
+            "allWeights": [
+                {
+                    "date": "01-02-2016",
+                    "weight": "321"
+                },
+                {
+                    "date": "01-03-2016",
+                    "weight": "320"
+                }
+            ],
+            "test": ["0", "2", "3", "7", "10", "4"]
+        }
+    }
+]

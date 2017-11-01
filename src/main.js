@@ -3,22 +3,27 @@ var Chart = require('chart.js');
 var express = require('express');
 var app = express();
 
+var config = require('../config/global.config.json');
+var userData = require('./data/users.json');
+
 
 // Setup
-app.use(express.static(__dirname + '/public'));
+app.use(express.static('public'));
 app.use(bodyparser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
 
-// Landing pages
+// Login
 app.get('/', (req, res) => {
     res.render('login');
 });
 
+// Hjem
 app.get('/home', (req, res) => {
-    res.render('home');
+    console.log(userData);
+    res.render('home', {users: userData});
 });
 
-// Program
+// Trænings program
 app.get('/program', (req, res) => {
     res.render('program');
 });
@@ -39,9 +44,7 @@ app.get('/nyheder', (req, res) => {
 });
 
 
-
 // Server listening
-var port = 8080;
-app.listen(port, () => {
-    console.log("Server listening on port " + port);
+app.listen(config.port, () => {
+    console.log("Server listening on port " + config.port);
 });
