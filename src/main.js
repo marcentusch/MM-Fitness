@@ -31,9 +31,9 @@ app.get('/', (req, res) => {
 });
 
 // Hjem
-app.get('/home', async (req, res) => {
+app.get('/home/:_id', async (req, res) => {
     try {
-        const user = await userFactory.findUser("test@test.dk", User);
+        const user = await userFactory.findUser(req.params._id, User);
         res.render('home', {user: user});
     } catch(err) {
         throw err;
@@ -71,11 +71,16 @@ app.get('/news', (req, res) => {
 });
 
 // Opdatér vægt route
-app.post('/update/:_id/weight', (req, res) => {
-    console.log(req.body);
-    let newWeight = req.body.weight;
-    userFactory.updateWeight(newWeight);
-    res.redirect('/home');
+app.post('/update/:_id/weight', async (req, res) => {
+    try {
+        const userId = req.params._id;
+        const newWeight = req.body.weight;
+        await userFactory.updateWeight(newWeight, userId, User);
+        
+        res.redirect('/home/' + userId);
+    } catch(err) {
+        throw(err);
+    }
 });
 
 // Server listening

@@ -1,3 +1,4 @@
+const moment = require('moment');
 const utility = require('./utility.js');
 
 module.exports = {
@@ -21,13 +22,29 @@ function createNewUser(user, User){
 }
 
 // Find specific user using e-mail
-function findUser(email, User){
-    return User.findOne({email: email});
+function findUser(_id, User){
+    return User.findById({_id: _id});
 }
 
-function updateWeight(weight, User){
-    let user = findUser('test@test.dk', User);
-    user.currentWeight = weight;
+function updateWeight(weight, userId, User){
+    User.findById(userId, function (err, user) {
+        if (err) {
+            throw(err);
+        } 
+        user.weightStats.currentWeight = weight;
+
+        const newWeight = {
+            date: moment(),
+            weight: weight
+        };
+        user.weightStats.allWeights.push(newWeight);
+        user.save(function (err, updatedUser) {
+            if (err){
+                throw(err); 
+            } 
+            return updatedUser;
+        });
+    });
 }
 
 // Function to make a random user
