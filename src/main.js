@@ -1,22 +1,28 @@
-var bodyparser = require('body-parser');
-var Chart = require('chart.js');
-var express = require('express');
-var app = express();
-var mongoose = require('mongoose');
+const bodyparser = require('body-parser');
+const Chart = require('chart.js');
+const express = require('express');
+const app = express();
+const mongoose = require('mongoose');
 
-var config = require('../config/global.config.json');
-var userData = require('./data/users.json');
-
-// Connect to database
-mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/mm_fitness_app', {useMongoClient: true});
-var db = mongoose.connection;
+const config = require('../config/global.config.json');
+const userFactory = require('./services/userFactory.js');
 
 
 // Setup
 app.use(express.static('public'));
 app.use(bodyparser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
+
+
+const userData = require('./schemas/userSchema.js');
+// Database stuff
+mongoose.Promise = global.Promise;
+mongoose.connect('mongodb://localhost/mm_fitness_app', {useMongoClient: true});
+const db = mongoose.connection;
+
+const userSchema = mongoose.Schema(userData);
+const User = mongoose.model('User', userSchema);
+
 
 // Login
 app.get('/', (req, res) => {
@@ -29,10 +35,13 @@ app.get('/home', (req, res) => {
 });
 
 // Profil
-app.get('/profile', (req, res) => {
-    let user = findUser("mo@pe.dk");
-    console.log("User from route", user);
-    res.render('profile', {user: user});
+app.get('/profile', async (req, res) => {
+    try {
+        const user = await userFactory.findUser("johnny@johnny.dk", User);
+        res.render('profile', {user: user});
+    } catch(err) {
+        throw err;
+    }
 });
 
 // Trænings program
@@ -69,90 +78,9 @@ app.post('/user/new', (req,res) => {
         password: body.password,
         avatarURL: body.avatarURL
     }
-    createNewUser(user);
+    userFactory.createNewUser(user, User);
 });
 
-// DETTE SKAL FLYTTES TIL FIL!!!!
-// Define schema for user
-var userSchema = mongoose.Schema({
-    id: String,
-    name: String,
-    email: String,
-    password: String,
-    avatarURL: String,
-    weightStats: {
-        currentWeight: String,
-        startWeight: String,
-        weightProgress: String,
-        allWeights: [
-            {
-                date: String,
-                weight: String
-            }
-        ]
-    },
-    trainingStats: {
-        assignedWorkouts: [
-            {
-                name: String,
-                reps: String
-            }                
-        ]
-    },
-    foodStats: {
-        totalCalories: String,
-        mealPlan: [
-            {
-                name: String,
-                description: String,
-                recipe: String,
-                calories: String,
-                carbohydrates: String,
-                fat: String,
-                protein: String
-            }
-        ]
-    },
-    messages: [
-        {
-            date: String,
-            content: String
-        }
-    ]
-});
-
-// Compile schema into model
-let User = mongoose.model('User', userSchema);
-
-function createNewUser(user){
-    User.create(user),
-    function(err, newUser){
-        if(err){
-            console.log(err);
-        }else{
-            console.log("User created: " + newUser);
-            return newUser;
-        }
-    }
-}
-
-async function findUser(email){
-    try {
-        const newUser = await User.findOne({email: email}).exec();
-        console.log("user from db", newUser);
-        return newUser;
-    } catch(err) {
-        throw(err);
-    }
-}
-
-// Create a user
-/* User.create({name: 'Johnny', email: 'johnny@johnny.dk'}, function(err, user){
-    if(err){
-        console.log(err);
-    }
-    console.log(user);
-}); */
 
 
 // Server listening
