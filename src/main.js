@@ -78,12 +78,16 @@ app.post('/home/:id', (req, res) => {
 
 
 function randomUser() {
+
+    // User meta data
     const names = ["Jens", "Brian", "Søren", "Ole", "Denise", "Maibrit"];
     const emails = ["foo@bar.dk", "test@test.dk", "lorem@ipsum.dk"];
     const password = "12345";
     const avatarURL = "http://www.qygjxz.com/data/out/190/5691490-profile-pictures.png";
-    
-    const weights =[];
+   
+    // Create weight data
+    const weights = [];
+
     for(let i = 0; i < 10; i++) {
         let weight = {
             date: randomDate(),
@@ -98,18 +102,102 @@ function randomUser() {
         weightProgress: randomNumber(0, 10, 1),
         allWeights: weights
     }
+
+
+    // Create exercise data
+    const exercises = ["squats", "bænkpres", "dødløft", "biceps curls", "skulder pres", "mavebøjninger"];
+
+    let trainingPases =[];
+    for(let i = 0; i < 3; i++) {
+        let assignedWorkouts = [];
+        for(let i = 0; i < 5; i++){
+            const workOuts = 
+                {
+                    name: exercises[randomNumber(0, 5, 0)],
+                    reps: randomNumber(6, 20, 0),
+                    startWorkLoad: randomNumber(10, 30, 0),
+                    currentWorkLoad: randomNumber(25, 40, 0),
+                    WorkLoadProgress: randomNumber(1, 5, 0),
+                    workLoad: randomNumber(10, 30, 0)
+                }
+            assignedWorkouts.push(workOuts);
+        }
+        let trainingPas = {
+            pasNumber: i + 1,
+            assignedWorkouts: assignedWorkouts
+        }
+        trainingPases.push(trainingPas);  
+    }
+
+    const trainingStats = {
+        trainingPases: trainingPases
+    }
+
+
+    // Create food data
+    const foods = ["nutella", "smør", "banan", "blomme", "mandler", "mango", "burger", "sunde pommes frites", "chips"];
+
+    const foodStats = {
+        totalCalories: randomNumber(1900, 3000, 0),
+        mealPlan: [
+            {
+                name: foods[randomNumber(0, 8, 0)],
+                description: "beskrivelse..",
+                recipe: "put den i ovnen",
+                calories: randomNumber(100, 500, 0),
+                carbohydrates: randomNumber(0, 30),
+                fat: randomNumber(0, 30),
+                protein: randomNumber(0, 30)
+            }
+        ]
+    }
+
+
+    // Create message data
+    const messageData = [
+        "Hej Mikael, har du sovet godt?",
+        "Skal du træne i dag, Jens?",
+        "Husk at spis godt med proteiner i dag ven",
+        "Voldemort did nothing wrong!",
+        "Leave Britney alone!",
+        "Never trust a fart - Mahatma Gandhi 2017",
+        "Godmorgen",
+        "Hvor ser du godt ud i dag, har du trænet?",
+        "7",
+        "Husk vitaminpiller, det er godt for leveren",
+        ";-) ;-* kys tihi f9ser",
+        "sk8r boi 69"
+    ];
+
+    const messages = [
+        {
+            date: randomDate(),
+            content: messageData[randomNumber(0, 11, 0)]
+        }
+    ]
+
+
+    // Create the actual user from above data
     const user = {
-        name: names[randomNumber(0,5, 0)],
-        email: emails[randomNumber(0,2)],
+        name: names[randomNumber(0, 5, 0)],
+        email: emails[randomNumber(0, 2, 0)],
         password: password,
         avatarURL: avatarURL,
-        weightStats: weightStats
+        weightStats: weightStats,
+        trainingStats: trainingStats,
+        foodStats: foodStats,
+        messages: messages
     }
+
     console.log(JSON.stringify(user, null, 3));
     userFactory.createNewUser(user, User);
 }
+
+
 randomUser();
 
+
+// Utility functions
 function randomDate() {
     const someDate = randomNumber(1,27) + "-" + randomNumber(1, 12) + "-2017";
     const randomDate = moment(someDate, "D-M-YYYY").format("d/M/YY");

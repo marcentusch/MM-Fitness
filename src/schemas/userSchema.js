@@ -17,11 +17,20 @@ module.exports =
         ]
     },
     trainingStats: {
-        assignedWorkouts: [
+        trainingPases:[
             {
-                name: String,
-                reps: String
-            }                
+                pasNumber: String,
+                assignedWorkouts: [
+                    {
+                        name: String,
+                        reps: String,
+                        startWorkLoad: String,
+                        currentWorkLoad: String,
+                        WorkLoadProgress: String,
+                        workLoad: String
+                    }                
+                ]
+            }
         ]
     },
     foodStats: {
