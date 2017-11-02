@@ -3,7 +3,8 @@ const utility = require('./utility.js');
 module.exports = {
     createNewUser,
     findUser,
-    randomUser
+    randomUser,
+    updateWeight
 };
 
 // Create new user
@@ -24,6 +25,11 @@ function findUser(email, User){
     return User.findOne({email: email});
 }
 
+function updateWeight(weight, User){
+    let user = findUser('test@test.dk', User);
+    user.currentWeight = weight;
+}
+
 // Function to make a random user
 function randomUser(User, amount) {
     
@@ -39,7 +45,7 @@ function randomUser(User, amount) {
 
         // User meta data
         const names = ["Jens", "Brian", "Søren", "Ole", "Denise", "Maibrit", "Marc", "Jonas"];
-        const emails = ["foo@bar.dk", "test@test.dk", "lorem@ipsum.dk", "memes@10minutemail.com"];
+        const emails = ["foo@bar.dk", "test@test.dk"];
         const password = "12345";
         const avatarURL = "http://www.qygjxz.com/data/out/190/5691490-profile-pictures.png";
         

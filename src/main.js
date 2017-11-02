@@ -33,7 +33,7 @@ app.get('/', (req, res) => {
 // Hjem
 app.get('/home', async (req, res) => {
     try {
-        const user = await userFactory.findUser("johnny@johnny.dk", User);
+        const user = await userFactory.findUser("test@test.dk", User);
         res.render('home', {user: user});
     } catch(err) {
         throw err;
@@ -43,7 +43,7 @@ app.get('/home', async (req, res) => {
 // Profil
 app.get('/profile', async (req, res) => {
     try {
-        const user = await userFactory.findUser("johnny@johnny.dk", User);
+        const user = await userFactory.findUser("test@test.dk", User);
         res.render('profile', {user: user});
     } catch(err) {
         throw err;
@@ -71,9 +71,11 @@ app.get('/news', (req, res) => {
 });
 
 // Opdatér vægt route
-app.post('/home/:id', (req, res) => {
-    let newWeight = req.body.newWeight;
-
+app.post('/update/:_id/weight', (req, res) => {
+    console.log(req.body);
+    let newWeight = req.body.weight;
+    userFactory.updateWeight(newWeight);
+    res.redirect('/home');
 });
 
 // Server listening
