@@ -137,19 +137,23 @@ function randomUser() {
     // Create food data
     const foods = ["nutella", "smør", "banan", "blomme", "mandler", "mango", "burger", "sunde pommes frites", "chips"];
 
+    let mealPlan = [];
+    for(let i = 0; i < 5; i++) {
+        const meal = {
+            name: foods[randomNumber(0, 8, 0)],
+            description: "beskrivelse..",
+            recipe: "put den i ovnen",
+            calories: randomNumber(100, 500, 0),
+            carbohydrates: randomNumber(0, 30),
+            fat: randomNumber(0, 30),
+            protein: randomNumber(0, 30)
+        }
+        mealPlan.push(meal);
+    }
+
     const foodStats = {
         totalCalories: randomNumber(1900, 3000, 0),
-        mealPlan: [
-            {
-                name: foods[randomNumber(0, 8, 0)],
-                description: "beskrivelse..",
-                recipe: "put den i ovnen",
-                calories: randomNumber(100, 500, 0),
-                carbohydrates: randomNumber(0, 30),
-                fat: randomNumber(0, 30),
-                protein: randomNumber(0, 30)
-            }
-        ]
+        mealPlan: mealPlan
     }
 
 
@@ -169,13 +173,16 @@ function randomUser() {
         "sk8r boi 69"
     ];
 
-    const messages = [
-        {
-            date: randomDate(),
-            content: messageData[randomNumber(0, 11, 0)]
-        }
-    ]
+    const messages = [];
 
+    for(let i = 0; i < 5; i++) {
+        const message = {
+                date: randomDate(),
+                content: messageData[randomNumber(0, 11, 0)]
+        }
+        messages.push(message);
+    }
+        
 
     // Create the actual user from above data
     const user = {
