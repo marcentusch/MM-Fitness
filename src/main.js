@@ -8,6 +8,8 @@ const config = require('../config/global.config.json');
 const userFactory = require('./services/userFactory.js');
 const userData = require('./schemas/userSchema.js');
 
+// MAKING AUTH FROM THIS: https://scotch.io/tutorials/easy-node-authentication-setup-and-local
+
 // Setup
 app.use(express.static('public'));
 app.use(bodyparser.urlencoded({extended: true}));
