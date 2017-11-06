@@ -4,11 +4,11 @@
 		
 		<h4>Min side</h4>
 
-		<p> <%= user.name %> </p>
+		<p> <%= user.username %> </p>
 		<p>Nuværende vægt: <%= user.weightStats.currentWeight %>kg</p>
 		<p>Vægt gains/loses: <%= user.weightStats.weightProgress %>kg</p>
 
-		<% const method = "/update/" + user._id + "/weight" %>
+		<!-- <% const method = "/update/" + user._id + "/weight" %> -->
 
 		<form action=<%= method %> method="POST">
 			<input type="text" name="weight"/>
