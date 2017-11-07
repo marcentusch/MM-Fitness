@@ -42,7 +42,7 @@ function updateWeight(weight, user, User){
         user.weightStats.allWeights.push(newWeight);
 
         // Update weight progress
-        user.weightStats.weightProgress = user.weightStats.allWeights[0] - weight;
+        user.weightStats.weightProgress = user.weightStats.allWeights[0].weight - weight;
 
         user.save(function (err, updatedUser) {
             if (err){
@@ -86,7 +86,7 @@ function randomUser(User, amount) {
         const weightStats = {
             currentWeight: utility.randomNumber(50, 100, 1),
             startWeight: utility.randomNumber(50, 100, 1),
-            weightProgress: null,
+            weightProgress: 0,
             allWeights: weights
         }
         
