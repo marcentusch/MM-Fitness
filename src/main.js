@@ -1,17 +1,19 @@
-const bodyparser = require('body-parser'),
-      Chart = require('chart.js'),
-      express = require('express'),
-      app = express(),
-      mongoose = require('mongoose'),
-      passport = require('passport'),
-      LocalStrategy = require('passport-local').Strategy,
-      passportLocalMongoose = require('passport-local-mongoose');
-
-const config = require('../config/global.config.json');
-const userFactory = require('./services/userFactory.js');
-const userData = require('./schemas/userSchema.js');
-
 // MAKING AUTH FROM THIS: https://scotch.io/tutorials/easy-node-authentication-setup-and-local
+
+// Require packages
+const passportLocalMongoose = require('passport-local-mongoose'),
+      bodyparser            = require('body-parser'),
+      Chart                 = require('chart.js'),
+      express               = require('express'),
+      mongoose              = require('mongoose'),
+      passport              = require('passport'),
+      LocalStrategy         = require('passport-local').Strategy,
+      app                   = express();
+
+// Require local files
+const middleware  = require('./middleware/index.js');
+const config      = require('../config/global.config.json');
+const userData    = require('./schemas/userSchema.js');
 
 // Database stuff
 mongoose.Promise = global.Promise;
@@ -41,54 +43,47 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 // Uncomment this method for test data, specify amount of users
+//const userFactory = require('./services/userFactory.js');
 //userFactory.randomUser(User, 1);
+
 
 // ===============================================================
 // ROUTES
-
-/* // Hjem
-app.get('/home/:_id', async (req, res) => {
-    try {
-        const user = await userFactory.findUser(req.params._id, User);
-        res.render('home', {user: user});
-    } catch(err) {
-        throw err;
-    }
-}); */
+// ===============================================================
 
 // Root route
 app.get('/', (req, res) => {
-    res.send('Root route')
+    res.render('login');
 });
 
-app.get('/home', isLoggedIn, (req, res) => {
+app.get('/home', middleware.isLoggedIn, (req, res) => {
     let user = req.user;
     res.render('home', {user: user});
 });
 
 // Profile
-app.get('/profile', isLoggedIn, (req, res) => {
+app.get('/profile', middleware.isLoggedIn, (req, res) => {
     let user = req.user;
     res.render('profile', {user: user})
 });
 
 // Training program
-app.get('/program', (req, res) => {
+app.get('/program', middleware.isLoggedIn, (req, res) => {
     res.render('program');
 });
 
 // Meal plan
-app.get('/meal-plan', (req, res) => {
+app.get('/meal-plan', middleware.isLoggedIn, (req, res) => {
     res.render('meal-plan');
 });
 
 // Inbox
-app.get('/inbox', (req, res) => {
+app.get('/inbox', middleware.isLoggedIn, (req, res) => {
     res.render('inbox');
 });
 
 // News
-app.get('/news', (req, res) => {
+app.get('/news', middleware.isLoggedIn, (req, res) => {
     res.render('news');
 });
 
@@ -105,8 +100,10 @@ app.post('/update/:_id/weight', async (req, res) => {
     }
 });
 
+
 // ===============================================================
 // AUTH ROUTES
+// ===============================================================
 
 // Show signup form
 app.get('/register', (req, res) => {
@@ -149,13 +146,6 @@ app.get('/logout', (req, res) => {
     req.logout();
     res.redirect('/');
 });
-
-function isLoggedIn(req, res, next){
-    if(req.isAuthenticated()){
-        return next();
-    }
-    res.redirect('/login');
-}
 
 // Server listening
 app.listen(config.port, () => {

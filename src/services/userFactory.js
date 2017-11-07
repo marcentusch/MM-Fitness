@@ -169,7 +169,7 @@ function randomUser(User, amount) {
 
         // Create the actual user from above data
         const user = {
-            name: names[utility.randomNumber(0, names.length -1, 0)],
+            username: names[utility.randomNumber(0, names.length -1, 0)],
             email: emails[utility.randomNumber(0, emails.length -1, 0)],
             password: password,
             avatarURL: avatarURL,
