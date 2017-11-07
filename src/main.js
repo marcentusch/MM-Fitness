@@ -1,5 +1,3 @@
-// MAKING AUTH FROM THIS: https://scotch.io/tutorials/easy-node-authentication-setup-and-local
-
 // Require packages
 const passportLocalMongoose = require('passport-local-mongoose'),
       bodyparser            = require('body-parser'),
@@ -43,7 +41,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 // Uncomment this method for test data, specify amount of users
-//const userFactory = require('./services/userFactory.js');
+const userFactory = require('./services/userFactory.js');
 //userFactory.randomUser(User, 1);
 
 
@@ -88,16 +86,13 @@ app.get('/news', middleware.isLoggedIn, (req, res) => {
 });
 
 // Update weight route
-app.post('/update/:_id/weight', async (req, res) => {
-    try {
-        const userId = req.params._id;
-        const newWeight = req.body.weight;
-        await userFactory.updateWeight(newWeight, userId, User);
-        
-        res.redirect('/home/' + userId);
-    } catch(err) {
-        throw(err);
-    }
+app.post('/update/weight', (req, res) => {
+    console.log()
+    const newWeight = req.params.weight;
+    console.log("newWeight", newWeight);
+    userFactory.updateWeight(newWeight, req.user, User);
+    
+    res.redirect('/home');
 });
 
 

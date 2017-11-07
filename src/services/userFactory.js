@@ -26,7 +26,8 @@ function findUser(_id, User){
     return User.findById({_id: _id});
 }
 
-function updateWeight(weight, userId, User){
+function updateWeight(weight, user, User){
+    const userId = user._id;
     User.findById(userId, function (err, user) {
         if (err) {
             throw(err);
