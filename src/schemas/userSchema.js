@@ -6,13 +6,13 @@ module.exports =
     password: String,
     avatarURL: String,
     weightStats: {
-        currentWeight: String,
-        startWeight: String,
-        weightProgress: String,
+        currentWeight: Number,
+        startWeight: Number,
+        weightProgress: Number,
         allWeights: [
             {
                 date: String,
-                weight: String
+                weight: Number
             }
         ]
     },

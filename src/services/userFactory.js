@@ -32,13 +32,18 @@ function updateWeight(weight, user, User){
         if (err) {
             throw(err);
         } 
+        
+        // Create new weight
         user.weightStats.currentWeight = weight;
-
         const newWeight = {
-            date: moment(),
+            date: moment().format("d/M/YY"),
             weight: weight
         };
         user.weightStats.allWeights.push(newWeight);
+
+        // Update weight progress
+        user.weightStats.weightProgress = user.weightStats.allWeights[0] - weight;
+
         user.save(function (err, updatedUser) {
             if (err){
                 throw(err); 

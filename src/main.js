@@ -1,12 +1,13 @@
 // Require packages
+const userFactory = require('./services/userFactory.js');
 const passportLocalMongoose = require('passport-local-mongoose'),
-      bodyparser            = require('body-parser'),
-      Chart                 = require('chart.js'),
-      express               = require('express'),
-      mongoose              = require('mongoose'),
-      passport              = require('passport'),
-      LocalStrategy         = require('passport-local').Strategy,
-      app                   = express();
+bodyparser            = require('body-parser'),
+Chart                 = require('chart.js'),
+express               = require('express'),
+mongoose              = require('mongoose'),
+passport              = require('passport'),
+LocalStrategy         = require('passport-local').Strategy,
+app                   = express();
 
 // Require local files
 const middleware  = require('./middleware/index.js');
@@ -41,8 +42,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 // Uncomment this method for test data, specify amount of users
-const userFactory = require('./services/userFactory.js');
-//userFactory.randomUser(User, 1);
+// userFactory.randomUser(User, 10);
 
 
 // ===============================================================
@@ -87,9 +87,7 @@ app.get('/news', middleware.isLoggedIn, (req, res) => {
 
 // Update weight route
 app.post('/update/weight', (req, res) => {
-    console.log()
-    const newWeight = req.params.weight;
-    console.log("newWeight", newWeight);
+    const newWeight = req.body.weight;
     userFactory.updateWeight(newWeight, req.user, User);
     
     res.redirect('/home');
