@@ -14,11 +14,7 @@ function createNewUser(user, User){
     }
 }
 
-
-/* function findUser(_id, User){
-    return User.findById({_id: _id});
-} */
-
+// Update weight
 function updateWeight(weight, user, User){
     const userId = user._id;
     User.findById(userId, function (err, user) {
@@ -46,13 +42,10 @@ function updateWeight(weight, user, User){
     });
 }
 
-
 // Function to make random users
 function testData(User, amount) {
     
-    
     User.remove( { username : { $ne: "1" } } ).exec();
-    
     
     for(let i = 0; i < amount; i++){
         
@@ -84,7 +77,7 @@ function testData(User, amount) {
 
 
         // Create exercise data
-        const muscleGroups = ["ben", "ryg", "biceps", "mave", "røv", "nakke", "triceps"];
+        const muscleGroups = ["Ben", "Ryg", "Biceps", "Mave", "Røv", "Nakke", "Triceps"];
 
         let trainingPases =[];
         for(let i = 0; i < 3; i++) {
@@ -114,7 +107,7 @@ function testData(User, amount) {
 
 
         // Create food data
-        const foods = ["nutella", "smør", "banan", "blomme", "mandler", "mango", "burger", "sunde pommes frites", "chips"];
+        const foods = ["Nutella", "Smør", "Banan", "Blomme", "Mandler", "Mango", "Burger", "Sunde pommes frites", "Chips"];
 
         let mealPlan = [];
         for(let i = 0; i < 5; i++) {
@@ -197,6 +190,7 @@ function createTestWorkouts() {
         const workOut = 
             {
                 name: exercises[utility.randomNumber(0, exercises.length -1, 0)],
+                sæt: utility.randomNumber(3, 5, 0),
                 reps: utility.randomNumber(6, 20, 0),
                 startWorkLoad: utility.randomNumber(10, 30, 0),
                 currentWorkLoad: utility.randomNumber(25, 40, 0),
@@ -210,7 +204,6 @@ function createTestWorkouts() {
 
 module.exports = {
     createNewUser,
-    //findUser,
     testData,
     updateWeight
 };

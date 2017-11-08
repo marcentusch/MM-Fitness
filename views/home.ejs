@@ -15,10 +15,8 @@
 			<% } %>
 		<% } %>	
 
-		<!-- <% const method = "/update/" + user._id + "/weight" %> -->
-
 		<form action="/update/weight" method="POST">
-			<input type="number" name="weight"/>
+			<input type="number" name="weight" step="0.1"/>
 			<input type="submit" class="btn btn-primary"/>	
 		</form>
 

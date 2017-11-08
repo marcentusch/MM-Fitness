@@ -1,18 +1,21 @@
 // Require packages
-const userFactory           = require('./services/userFactory.js'),
-passportLocalMongoose       = require('passport-local-mongoose'),
-bodyparser                  = require('body-parser'),
-Chart                       = require('chart.js'),
-express                     = require('express'),
-mongoose                    = require('mongoose'),
-passport                    = require('passport'),
-LocalStrategy               = require('passport-local').Strategy,
-app                         = express();
+
+const passportLocalMongoose     = require('passport-local-mongoose'),
+bodyparser                      = require('body-parser'),
+express                         = require('express'),
+Chart                           = require('chart.js'),
+mongoose                        = require('mongoose'),
+passport                        = require('passport'),
+LocalStrategy                   = require('passport-local').Strategy,
+app                             = express();
 
 // Require local files
 const middleware  = require('./middleware/index.js'),
 config            = require('../config/global.config.json'),
-userData          = require('./schemas/userSchema.js');
+userData          = require('./schemas/userSchema.js'),
+workoutData       = require('./schemas/workoutSchema.js'),
+userFactory       = require('./services/userFactory.js'),
+workoutFactory    = require('./services/workoutFactory.js');
 
 // Database stuff
 mongoose.Promise = global.Promise;
@@ -23,6 +26,10 @@ const db = mongoose.connection;
 const userSchema = mongoose.Schema(userData);
 userSchema.plugin(passportLocalMongoose);
 const User = mongoose.model('User', userSchema);
+
+// Make workout-schema
+const workoutSchema = mongoose.Schema(workoutData);
+const Workout = mongoose.model('Workout', workoutSchema);
 
 // Setup
 app.use(express.static('public'));
@@ -43,8 +50,8 @@ passport.deserializeUser(User.deserializeUser());
 
 // Uncomment this method for test data, specify amount of users
 userFactory.testData(User, 10);
+// workoutFactory.createNewWorkout(Workout, "bænkpres");
 
- 
 
 // ===============================================================
 // ROUTES 
@@ -89,11 +96,21 @@ app.get('/news', middleware.isLoggedIn, (req, res) => {
 });
 
 // Update weight route
-app.post('/update/weight', (req, res) => {
+app.post('/update/weight', middleware.isLoggedIn, (req, res) => {
     const newWeight = req.body.weight;
     userFactory.updateWeight(newWeight, req.user, User);
-    
     res.redirect('/home');
+});
+
+app.get('/workout/:name', middleware.isLoggedIn, async (req, res) => {
+    const name = req.params.name;
+    try {
+        Workout.findOne({name: name}, (err, workoutFromDb) => {
+            res.render('workout', {workout: workoutFromDb});
+        }).exec();
+    } catch (err) {
+        throw(err);
+    }
 });
 
 // ===============================================================
@@ -122,6 +139,7 @@ app.post('/register', (req, res) => {
 
 // ===============================================================
 // LOGIN ROUTES
+// ===============================================================
 
 // Render login form
 app.get('/login', (req, res) => {

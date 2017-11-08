@@ -3,11 +3,12 @@
 <% let trainingStats = user.trainingStats %>
 
 <h4 class="m-1 my-2">Program</h4>
+<hr>
 
-<div class="card m-1 mb-3">
-    <% trainingStats.trainingPases.forEach((trainingPas) => { %>
+<% trainingStats.trainingPases.forEach((trainingPas) => { %>
+    <div class="card m-1 my-4">
         <div class="card-header">
-            <h5> <%= trainingPas.pasNumber %> </h5>
+            <h5>Pas <%= trainingPas.pasNumber %> </h5>
         </div>
     
         <div class="card-body">
@@ -15,16 +16,12 @@
             <div class="list-group list-unstyled">
                 <h5> <%= muscleGroup.name %> </h5>
                 <% muscleGroup.assignedWorkouts.forEach((workout) => { %>
-                    <a href="test" class="btn btn-sm btn-primary mt-1"> <%= workout.name %> </a>
+                    <a href="/workout/<%= workout.name %>" target="_blank" class="btn btn-sm btn-primary mt-1"> <%= workout.name %> - <%= workout.sæt %> sæt af <%= workout.reps %> gentagelser</a>
                 <% }) %>
             </div>
         <% }) %>
-        </div>
-
-    <% }) %>
-
-</div>
-
-
+        </div>        
+    </div>
+<% }) %>
 
 <% include partials/footer %>

@@ -1,0 +1,38 @@
+[
+    {
+        "name": "Dødløft",
+        "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam, obcaecati minima! Tenetur, iusto eligendi reprehenderit voluptates placeat ab vero perferendis tempore error enim necessitatibus minima, similique nostrum neque animi dolorum praesentium. Dolor odio quod magnam ad omnis! Perferendis corrupti mollitia vitae neque modi laborum officiis pariatur necessitatibus. Non quaerat sit amet error necessitatibus saepe numquam eos praesentium, hic dolor ex et neque delectus, voluptatibus assumenda repudiandae sint voluptas ab. Aliquam quidem, nihil harum recusandae ratione ipsum facere, in, porro sed voluptate eligendi doloribus nostrum ipsam. Hic, blanditiis? Omnis aut excepturi sequi ut ducimus? Voluptate, quae earum sequi iusto repellat voluptas.",
+
+        "videoUrl": "www.google.com"
+    },
+    {
+        "name": "Mavebøjninger",
+        "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam, obcaecati minima! Tenetur, iusto eligendi reprehenderit voluptates placeat ab vero perferendis tempore error enim necessitatibus minima, similique nostrum neque animi dolorum praesentium. Dolor odio quod magnam ad omnis! Perferendis corrupti mollitia vitae neque modi laborum officiis pariatur necessitatibus. Non quaerat sit amet error necessitatibus saepe numquam eos praesentium, hic dolor ex et neque delectus, voluptatibus assumenda repudiandae sint voluptas ab. Aliquam quidem, nihil harum recusandae ratione ipsum facere, in, porro sed voluptate eligendi doloribus nostrum ipsam. Hic, blanditiis? Omnis aut excepturi sequi ut ducimus? Voluptate, quae earum sequi iusto repellat voluptas.",
+
+        "videoUrl": "www.google.com"
+    },
+    {
+        "name": "Squats",
+        "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam, obcaecati minima! Tenetur, iusto eligendi reprehenderit voluptates placeat ab vero perferendis tempore error enim necessitatibus minima, similique nostrum neque animi dolorum praesentium. Dolor odio quod magnam ad omnis! Perferendis corrupti mollitia vitae neque modi laborum officiis pariatur necessitatibus. Non quaerat sit amet error necessitatibus saepe numquam eos praesentium, hic dolor ex et neque delectus, voluptatibus assumenda repudiandae sint voluptas ab. Aliquam quidem, nihil harum recusandae ratione ipsum facere, in, porro sed voluptate eligendi doloribus nostrum ipsam. Hic, blanditiis? Omnis aut excepturi sequi ut ducimus? Voluptate, quae earum sequi iusto repellat voluptas.",
+
+        "videoUrl": "www.google.com"
+    },
+    {
+        "name": "Biceps curls",
+        "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam, obcaecati minima! Tenetur, iusto eligendi reprehenderit voluptates placeat ab vero perferendis tempore error enim necessitatibus minima, similique nostrum neque animi dolorum praesentium. Dolor odio quod magnam ad omnis! Perferendis corrupti mollitia vitae neque modi laborum officiis pariatur necessitatibus. Non quaerat sit amet error necessitatibus saepe numquam eos praesentium, hic dolor ex et neque delectus, voluptatibus assumenda repudiandae sint voluptas ab. Aliquam quidem, nihil harum recusandae ratione ipsum facere, in, porro sed voluptate eligendi doloribus nostrum ipsam. Hic, blanditiis? Omnis aut excepturi sequi ut ducimus? Voluptate, quae earum sequi iusto repellat voluptas.",
+
+        "videoUrl": "www.google.com"
+    },
+    {
+        "name": "Bænkpres",
+        "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam, obcaecati minima! Tenetur, iusto eligendi reprehenderit voluptates placeat ab vero perferendis tempore error enim necessitatibus minima, similique nostrum neque animi dolorum praesentium. Dolor odio quod magnam ad omnis! Perferendis corrupti mollitia vitae neque modi laborum officiis pariatur necessitatibus. Non quaerat sit amet error necessitatibus saepe numquam eos praesentium, hic dolor ex et neque delectus, voluptatibus assumenda repudiandae sint voluptas ab. Aliquam quidem, nihil harum recusandae ratione ipsum facere, in, porro sed voluptate eligendi doloribus nostrum ipsam. Hic, blanditiis? Omnis aut excepturi sequi ut ducimus? Voluptate, quae earum sequi iusto repellat voluptas.",
+
+        "videoUrl": "www.google.com"
+    },
+    {
+        "name": "Skulder pres",
+        "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam, obcaecati minima! Tenetur, iusto eligendi reprehenderit voluptates placeat ab vero perferendis tempore error enim necessitatibus minima, similique nostrum neque animi dolorum praesentium. Dolor odio quod magnam ad omnis! Perferendis corrupti mollitia vitae neque modi laborum officiis pariatur necessitatibus. Non quaerat sit amet error necessitatibus saepe numquam eos praesentium, hic dolor ex et neque delectus, voluptatibus assumenda repudiandae sint voluptas ab. Aliquam quidem, nihil harum recusandae ratione ipsum facere, in, porro sed voluptate eligendi doloribus nostrum ipsam. Hic, blanditiis? Omnis aut excepturi sequi ut ducimus? Voluptate, quae earum sequi iusto repellat voluptas.",
+
+        "videoUrl": "www.google.com"
+    }
+]
