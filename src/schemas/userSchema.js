@@ -1,6 +1,5 @@
 module.exports =
 {
-    id: String,
     username: String,
     email: String,
     password: String,
@@ -23,6 +22,7 @@ module.exports =
                 assignedWorkouts: [
                     {
                         name: String,
+                        category: String,
                         reps: String,
                         startWorkLoad: String,
                         currentWorkLoad: String,

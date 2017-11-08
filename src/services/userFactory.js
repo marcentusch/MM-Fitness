@@ -4,8 +4,9 @@ const utility = require('./utility.js');
 module.exports = {
     createNewUser,
     findUser,
-    randomUser,
-    updateWeight
+    testData,
+    updateWeight,
+    getMusclegroups
 };
 
 // Create new user
@@ -21,7 +22,7 @@ function createNewUser(user, User){
     }
 }
 
-// Find specific user using e-mail
+
 function findUser(_id, User){
     return User.findById({_id: _id});
 }
@@ -53,21 +54,34 @@ function updateWeight(weight, user, User){
     });
 }
 
-// Function to make a random user
-function randomUser(User, amount) {
+function getMusclegroups(user) {
+  /*   let newTrainingPas = [];
+
+    user.trainingStats.trainingPases.forEach((trainingPas) => {
+        let newMuscleGroups = [];
+        let muscleGroup = {};
+        let muscleGroupSearch = trainingPas.assignedWorkouts[0].muscleGroup;
+        trainingPas.assignedWorkouts.forEach((workout) => {
+            if(workout.muscleGroup === muscleGroupSearch) {
+                
+            }
+
+        });
+    }); */
+
+}
+
+// Function to make random users
+function testData(User, amount) {
     
-    // Delete everything we have in database
-    User.remove({}, (err, user) => {
-        if(err){
-            console.log(err)
-        }
-    });
-
-    // Make "amount" of users
+    
+    User.remove( { username : { $ne: "1" } } ).exec();
+    
+    
     for(let i = 0; i < amount; i++){
-
+        
         // User meta data
-        const names = ["Jens", "Brian", "Søren", "Ole", "Denise", "Maibrit", "Marc", "Jonas"];
+        const usernames = ["Jens", "Brian", "Søren", "Ole", "Denise", "Maibrit", "Marc", "Jonas"];
         const emails = ["foo@bar.dk", "test@test.dk"];
         const password = "12345";
         const avatarURL = "http://www.qygjxz.com/data/out/190/5691490-profile-pictures.png";
@@ -95,21 +109,23 @@ function randomUser(User, amount) {
 
         // Create exercise data
         const exercises = ["squats", "bænkpres", "dødløft", "biceps curls", "skulder pres", "mavebøjninger"];
+        const categories = ["ben", "ryg", "arme", "mave"];
 
         let trainingPases =[];
         for(let i = 0; i < 3; i++) {
             let assignedWorkouts = [];
             for(let i = 0; i < 5; i++){
-                const workOuts = 
+                const workOut = 
                     {
                         name: exercises[utility.randomNumber(0, exercises.length -1, 0)],
+                        category: categories[utility.randomNumber(0, categories.length -1)],
                         reps: utility.randomNumber(6, 20, 0),
                         startWorkLoad: utility.randomNumber(10, 30, 0),
                         currentWorkLoad: utility.randomNumber(25, 40, 0),
                         WorkLoadProgress: utility.randomNumber(1, 5, 0),
                         workLoad: utility.randomNumber(10, 30, 0)
                     }
-                assignedWorkouts.push(workOuts);
+                assignedWorkouts.push(workOut);
             }
             let trainingPas = {
                 pasNumber: i + 1,
@@ -172,10 +188,9 @@ function randomUser(User, amount) {
             messages.push(message);
         }
             
-
         // Create the actual user from above data
-        const user = {
-            username: names[utility.randomNumber(0, names.length -1, 0)],
+        let newUser = {
+            username: usernames[utility.randomNumber(0, usernames.length -1, 0)],
             email: emails[utility.randomNumber(0, emails.length -1, 0)],
             password: password,
             avatarURL: avatarURL,
@@ -184,8 +199,22 @@ function randomUser(User, amount) {
             foodStats: foodStats,
             messages: messages
         }
+    
 
-        //console.log(JSON.stringify(user, null, 3));
-        createNewUser(user, User);
+        createNewUser(newUser, User);
+        
+        if(i === 0) {
+            User.findOneAndUpdate({ username: "1" }, { $set: { trainingStats: newUser.trainingStats } }, { new: true }, function(err, doc) {
+                // console.log(doc);
+            });
+        }
+        /* User.findOne({username: "1"}, (err, user) => {
+            if(err) {
+                throw err;
+            } else {
+                user.trainingStats = newUser.trainingStats;
+                user.save();
+            }  
+        }); */
     }
 }

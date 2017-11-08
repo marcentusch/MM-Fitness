@@ -42,8 +42,9 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 // Uncomment this method for test data, specify amount of users
-// userFactory.randomUser(User, 10);
+userFactory.testData(User, 10);
 
+ 
 
 // ===============================================================
 // ROUTES
@@ -55,19 +56,20 @@ app.get('/', (req, res) => {
 });
 
 app.get('/home', middleware.isLoggedIn, (req, res) => {
-    let user = req.user;
+    const user = req.user;
     res.render('home', {user: user});
 });
 
 // Profile
 app.get('/profile', middleware.isLoggedIn, (req, res) => {
-    let user = req.user;
+    const user = req.user;
     res.render('profile', {user: user})
 });
 
 // Training program
 app.get('/program', middleware.isLoggedIn, (req, res) => {
-    res.render('program');
+    const user = req.user;
+    res.render('program', {user: user})
 });
 
 // Meal plan
