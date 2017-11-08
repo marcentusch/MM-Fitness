@@ -77,11 +77,13 @@ function testData(User, amount) {
 
 
         // Create exercise data
-        const muscleGroups = ["Ben", "Ryg", "Biceps", "Mave", "Røv", "Nakke", "Triceps"];
+        const muscleGroups = ["ben", "ryg", "biceps", "mave", "røv", "nakke", "triceps"];
+        const days = ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Freday", "Lørdag", "Søndag"];
 
         let trainingPases =[];
         for(let i = 0; i < 3; i++) {
             let trainingPas = {
+                day: days[utility.randomNumber(0, days.length -1)],
                 muscleGroups: [
                     {
                         name: muscleGroups[utility.randomNumber(0, muscleGroups.length -1)],
@@ -191,7 +193,7 @@ function createTestWorkouts() {
             {
                 name: exercises[utility.randomNumber(0, exercises.length -1, 0)],
                 sæt: utility.randomNumber(3, 5, 0),
-                reps: utility.randomNumber(6, 20, 0),
+                reps: utility.randomNumber(10, 20, 0),
                 startWorkLoad: utility.randomNumber(10, 30, 0),
                 currentWorkLoad: utility.randomNumber(25, 40, 0),
                 WorkLoadProgress: utility.randomNumber(1, 5, 0),

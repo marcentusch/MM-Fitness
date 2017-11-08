@@ -19,6 +19,8 @@ module.exports =
         trainingPases:[
             {
                 _id: false,                
+                pasNumber: String,
+                day: String,
                 muscleGroups: [
                     {
                         _id: false,
@@ -36,7 +38,6 @@ module.exports =
                         ]
                     }
                 ],
-                pasNumber: String,
             }
         ]
     },

@@ -1,13 +1,14 @@
 // Require packages
-
 const passportLocalMongoose     = require('passport-local-mongoose'),
 bodyparser                      = require('body-parser'),
-express                         = require('express'),
 Chart                           = require('chart.js'),
+express                         = require('express'),
+app                             = express(),
 mongoose                        = require('mongoose'),
 passport                        = require('passport'),
 LocalStrategy                   = require('passport-local').Strategy,
-app                             = express();
+utility                         = require('./services/utility.js');
+moment                          = require('moment');
 
 // Require local files
 const middleware  = require('./middleware/index.js'),
@@ -48,9 +49,15 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-// Uncomment this method for test data, specify amount of users
+// Creates test data. needs username = 1
 userFactory.testData(User, 10);
-// workoutFactory.createNewWorkout(Workout, "bænkpres");
+
+
+/* Workout.remove({}).exec();
+const exercises = ["squats", "bænkpres", "dødløft", "biceps curls", "skulder pres", "mavebøjninger"];
+exercises.forEach((exercise) => {
+    workoutFactory.createNewWorkout(Workout, exercise);
+});  */
 
 
 // ===============================================================
@@ -76,8 +83,8 @@ app.get('/profile', middleware.isLoggedIn, (req, res) => {
 // Training program
 app.get('/program', middleware.isLoggedIn, (req, res) => {
     const user = req.user;
-    //console.log(JSON.stringify(user, null, 3));
-    res.render('program', {user: user});
+    const today = utility.currentDayDK();
+    res.render('program', {user: user, today: today});
 });
 
 // Meal plan
@@ -102,6 +109,7 @@ app.post('/update/weight', middleware.isLoggedIn, (req, res) => {
     res.redirect('/home');
 });
 
+// Workout details
 app.get('/workout/:name', middleware.isLoggedIn, async (req, res) => {
     const name = req.params.name;
     try {
