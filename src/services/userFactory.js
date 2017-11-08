@@ -1,12 +1,5 @@
-const moment = require('moment');
-const utility = require('./utility.js');
-
-module.exports = {
-    createNewUser,
-    findUser,
-    testData,
-    updateWeight
-};
+const moment = require('moment'),
+utility      = require('./utility.js');
 
 // Create new user
 function createNewUser(user, User){
@@ -14,7 +7,7 @@ function createNewUser(user, User){
     function(err, newUser){
         if(err){
             console.log(err);
-        }else{
+        } else{
             console.log("User created: " + newUser);
             return newUser;
         }
@@ -22,9 +15,9 @@ function createNewUser(user, User){
 }
 
 
-function findUser(_id, User){
+/* function findUser(_id, User){
     return User.findById({_id: _id});
-}
+} */
 
 function updateWeight(weight, user, User){
     const userId = user._id;
@@ -214,3 +207,10 @@ function createTestWorkouts() {
     }
     return assignedWorkouts;
 }
+
+module.exports = {
+    createNewUser,
+    //findUser,
+    testData,
+    updateWeight
+};

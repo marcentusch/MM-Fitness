@@ -4,9 +4,16 @@
 		
 		<h4>Min side</h4>
 
-		<p> <%= user.username %> </p>
+		<hr>
+
 		<p>Nuværende vægt: <%= user.weightStats.currentWeight %>kg</p>
-		<p>Vægt gains/loses: <%= user.weightStats.weightProgress %>kg</p>
+		<% if(user.weightStats.weightProgress != null && user.weightStats.weightProgress != 0){ %>
+			<% if(user.weightStats.weightProgress < 0){ %>
+				<p>Du har taget <%= Math.abs(user.weightStats.weightProgress).toFixed(1) %>kg på siden du startede</p>
+			<% } else { %>
+				<p>Du har tabt dig <%= Math.abs(user.weightStats.weightProgress).toFixed(1) %>kg siden du startede</p>
+			<% } %>
+		<% } %>	
 
 		<!-- <% const method = "/update/" + user._id + "/weight" %> -->
 

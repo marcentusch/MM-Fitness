@@ -1,18 +1,18 @@
 // Require packages
-const userFactory = require('./services/userFactory.js');
-const passportLocalMongoose = require('passport-local-mongoose'),
-bodyparser            = require('body-parser'),
-Chart                 = require('chart.js'),
-express               = require('express'),
-mongoose              = require('mongoose'),
-passport              = require('passport'),
-LocalStrategy         = require('passport-local').Strategy,
-app                   = express();
+const userFactory           = require('./services/userFactory.js'),
+passportLocalMongoose       = require('passport-local-mongoose'),
+bodyparser                  = require('body-parser'),
+Chart                       = require('chart.js'),
+express                     = require('express'),
+mongoose                    = require('mongoose'),
+passport                    = require('passport'),
+LocalStrategy               = require('passport-local').Strategy,
+app                         = express();
 
 // Require local files
-const middleware  = require('./middleware/index.js');
-const config      = require('../config/global.config.json');
-const userData    = require('./schemas/userSchema.js');
+const middleware  = require('./middleware/index.js'),
+config            = require('../config/global.config.json'),
+userData          = require('./schemas/userSchema.js');
 
 // Database stuff
 mongoose.Promise = global.Promise;
@@ -69,7 +69,7 @@ app.get('/profile', middleware.isLoggedIn, (req, res) => {
 // Training program
 app.get('/program', middleware.isLoggedIn, (req, res) => {
     const user = req.user;
-    console.log(JSON.stringify(user, null, 3));
+    //console.log(JSON.stringify(user, null, 3));
     res.render('program', {user: user});
 });
 
@@ -95,7 +95,6 @@ app.post('/update/weight', (req, res) => {
     
     res.redirect('/home');
 });
-
 
 // ===============================================================
 // AUTH ROUTES
@@ -134,7 +133,7 @@ app.post('/login', passport.authenticate('local', {
     successRedirect: '/home',
     failureRedirect: '/login'
 }), (req, res) => {
-
+    // Some function to callback
 });
 
 // Logout route
