@@ -47,12 +47,12 @@ userFactory.testData(User, 10);
  
 
 // ===============================================================
-// ROUTES
+// ROUTES 
 // ===============================================================
 
 // Root route
 app.get('/', (req, res) => {
-    res.render('login');
+    res.render('login'); 
 });
 
 app.get('/home', middleware.isLoggedIn, (req, res) => {
@@ -63,13 +63,14 @@ app.get('/home', middleware.isLoggedIn, (req, res) => {
 // Profile
 app.get('/profile', middleware.isLoggedIn, (req, res) => {
     const user = req.user;
-    res.render('profile', {user: user})
+    res.render('profile', {user: user});
 });
 
 // Training program
 app.get('/program', middleware.isLoggedIn, (req, res) => {
     const user = req.user;
-    res.render('program', {user: user})
+    console.log(JSON.stringify(user, null, 3));
+    res.render('program', {user: user});
 });
 
 // Meal plan

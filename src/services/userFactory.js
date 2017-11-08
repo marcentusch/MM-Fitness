@@ -5,8 +5,7 @@ module.exports = {
     createNewUser,
     findUser,
     testData,
-    updateWeight,
-    getMusclegroups
+    updateWeight
 };
 
 // Create new user
@@ -54,22 +53,6 @@ function updateWeight(weight, user, User){
     });
 }
 
-function getMusclegroups(user) {
-  /*   let newTrainingPas = [];
-
-    user.trainingStats.trainingPases.forEach((trainingPas) => {
-        let newMuscleGroups = [];
-        let muscleGroup = {};
-        let muscleGroupSearch = trainingPas.assignedWorkouts[0].muscleGroup;
-        trainingPas.assignedWorkouts.forEach((workout) => {
-            if(workout.muscleGroup === muscleGroupSearch) {
-                
-            }
-
-        });
-    }); */
-
-}
 
 // Function to make random users
 function testData(User, amount) {
@@ -108,28 +91,26 @@ function testData(User, amount) {
 
 
         // Create exercise data
-        const exercises = ["squats", "bænkpres", "dødløft", "biceps curls", "skulder pres", "mavebøjninger"];
-        const categories = ["ben", "ryg", "arme", "mave"];
+        const muscleGroups = ["ben", "ryg", "biceps", "mave", "røv", "nakke", "triceps"];
 
         let trainingPases =[];
         for(let i = 0; i < 3; i++) {
-            let assignedWorkouts = [];
-            for(let i = 0; i < 5; i++){
-                const workOut = 
-                    {
-                        name: exercises[utility.randomNumber(0, exercises.length -1, 0)],
-                        category: categories[utility.randomNumber(0, categories.length -1)],
-                        reps: utility.randomNumber(6, 20, 0),
-                        startWorkLoad: utility.randomNumber(10, 30, 0),
-                        currentWorkLoad: utility.randomNumber(25, 40, 0),
-                        WorkLoadProgress: utility.randomNumber(1, 5, 0),
-                        workLoad: utility.randomNumber(10, 30, 0)
-                    }
-                assignedWorkouts.push(workOut);
-            }
             let trainingPas = {
+                muscleGroups: [
+                    {
+                        name: muscleGroups[utility.randomNumber(0, muscleGroups.length -1)],
+                        assignedWorkouts: createTestWorkouts()
+                    },
+                    {
+                        name: muscleGroups[utility.randomNumber(0, muscleGroups.length -1)],
+                        assignedWorkouts: createTestWorkouts()
+                    },
+                    {
+                        name: muscleGroups[utility.randomNumber(0, muscleGroups.length -1)],
+                        assignedWorkouts: createTestWorkouts()
+                    }
+                ],
                 pasNumber: i + 1,
-                assignedWorkouts: assignedWorkouts
             }
             trainingPases.push(trainingPas);  
         }
@@ -204,17 +185,32 @@ function testData(User, amount) {
         createNewUser(newUser, User);
         
         if(i === 0) {
-            User.findOneAndUpdate({ username: "1" }, { $set: { trainingStats: newUser.trainingStats } }, { new: true }, function(err, doc) {
+            User.findOneAndUpdate({ username: "1" }, { $set: { 
+                trainingStats: newUser.trainingStats,
+                 weightStats: newUser.weightStats
+            } }, { new: true }, function(err, doc) {
                 // console.log(doc);
             });
         }
-        /* User.findOne({username: "1"}, (err, user) => {
-            if(err) {
-                throw err;
-            } else {
-                user.trainingStats = newUser.trainingStats;
-                user.save();
-            }  
-        }); */
     }
+}
+
+// Helper function because too many nested objects and arrays in trainingStats
+function createTestWorkouts() {
+    const exercises = ["squats", "bænkpres", "dødløft", "biceps curls", "skulder pres", "mavebøjninger"];
+    
+    let assignedWorkouts = [];
+    for(let i = 0; i < 5; i++){
+        const workOut = 
+            {
+                name: exercises[utility.randomNumber(0, exercises.length -1, 0)],
+                reps: utility.randomNumber(6, 20, 0),
+                startWorkLoad: utility.randomNumber(10, 30, 0),
+                currentWorkLoad: utility.randomNumber(25, 40, 0),
+                WorkLoadProgress: utility.randomNumber(1, 5, 0),
+                workLoad: utility.randomNumber(10, 30, 0)
+            }
+        assignedWorkouts.push(workOut);
+    }
+    return assignedWorkouts;
 }

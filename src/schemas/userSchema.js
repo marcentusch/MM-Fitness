@@ -18,18 +18,24 @@ module.exports =
     trainingStats: {
         trainingPases:[
             {
-                pasNumber: String,
-                assignedWorkouts: [
+                _id: false,                
+                muscleGroups: [
                     {
+                        _id: false,
                         name: String,
-                        category: String,
-                        reps: String,
-                        startWorkLoad: String,
-                        currentWorkLoad: String,
-                        WorkLoadProgress: String,
-                        workLoad: String
-                    }                
-                ]
+                        assignedWorkouts: [
+                            {
+                                name: String,
+                                reps: String,
+                                startWorkLoad: String,
+                                currentWorkLoad: String,
+                                WorkLoadProgress: String,
+                                workLoad: String
+                            }                
+                        ]
+                    }
+                ],
+                pasNumber: String,
             }
         ]
     },
