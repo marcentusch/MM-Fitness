@@ -89,7 +89,24 @@ app.get('/program', middleware.isLoggedIn, (req, res) => {
 
 // Meal plan
 app.get('/meal-plan', middleware.isLoggedIn, (req, res) => {
-    res.render('meal-plan');
+    const user = req.user;
+    const today = utility.currentDayDK();
+    let rest = true;
+    
+    user.trainingStats.trainingPases.forEach((trainingpas) => {
+        if(trainingpas.day === today ){
+            rest = false;
+        }
+    });
+
+    if(rest === true) {
+        for(let i = 0; i < user.foodStats.mealPlan.meals.length; i++) {
+            if(user.foodStats.mealPlan.meals[i].meal === "post-workout") {
+                user.foodStats.mealPlan.meals.splice(i, 1);
+            }
+        };
+    }
+    res.render('meal-plan', {user: user});
 });
 
 // Inbox

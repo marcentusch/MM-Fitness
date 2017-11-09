@@ -1,18 +1,39 @@
 <% include partials/header %>
+<% let mealPlan = user.foodStats.mealPlan %>
 
-<h4 class="m-1 my-2">Kost</h4>
+<h4 class="ml-4 my-2">Kost</h4>
 
 <div class="card m-1 mb-3">
-    <div class="card-header">
-        Idag
+    <div class="card-header bg-dark text-white">
+        <h5>
+            <span class="float-left">I dag </span> 
+            <span class="float-right">kalorier</span> 
+            <span class="float-right mr-2"><%= mealPlan.totalCalories %></span>
+        </h5> 
     </div>
-    <div class="card-body">
-        <div class="list-group list-unstyled">
-            <h5>2500 kalorier tilbage i dag</h5>
-            <li>&ltTidspunkt&gt&Måltid&gt&ltKalorier&gt</li>
-            <li>&ltTidspunkt&gt&Måltid&gt&ltKalorier&gt</li>
-            <li>&ltTidspunkt&gt&Måltid&gt&ltKalorier&gt</li>
-            <li>&ltTidspunkt&gt&Måltid&gt&ltKalorier&gt</li>
+    <div class="card-body bg-light">
+        <div class="list-group">
+            <% mealPlan.meals.forEach((meal) => { %>
+                <a class="btn btn-info my-1" data-toggle="collapse" href="#<%= meal.id %>" aria-expanded="false" aria-controls="<%= meal.id %>">
+                     <span class="float-left text-capitalize"><%= meal.meal %></span>
+                     <span class="float-right"><%= meal.calories %></span>
+                </a>
+                <div class="collapse mt-2" id="<%= meal.id %>">
+                    <h5 class="mb-0"> <%= meal.name %>
+                        <div class="mr-2 float-right">
+                            <i class="fa fa-check-square fa-lg text-secondary" aria-hidden="true"></i>
+                        </div> 
+                    </h5>
+                    
+                    <p> <%= meal.description %> </p>
+                    <hr>
+                    <ul class="list-unstyled">
+                        <li> Kulhydrater: <span class="float-right mr-3"><%= meal.carbohydrates %> g</span> </li>
+                        <li> Fedt: <span class="float-right mr-3"><%= meal.fat %> g</span> </li>
+                        <li> Protein: <span class="float-right mr-3"><%= meal.protein %> g</span> </li>
+                    </ul>
+                </div>
+            <% }) %>
         </div>
     </div>
 </div>
@@ -28,15 +49,15 @@
             type: 'doughnut',
             data : {
                 datasets: [{
-                    data: [10, 20, 30],
-                    backgroundColor: ["red", "green", "blue"]
+                    data: [<%= mealPlan.totalCarbohydrates %>, <%= mealPlan.totalFat %>, <%= mealPlan.totalProtein %>],
+                    backgroundColor: ["#98FB98", "#F08080", "skyblue"]
                 }],
 
                  // These labels appear in the legend and in the tooltips when hovering different arcs
                 labels: [
-                    'Protein',
                     'Kulhydrat',
-                    'Fedt'
+                    'Fedt',
+                    'Protein'
                 ]
             }    
         });

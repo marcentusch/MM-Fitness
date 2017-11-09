@@ -78,7 +78,7 @@ function testData(User, amount) {
 
         // Create exercise data
         const muscleGroups = ["ben", "ryg", "biceps", "mave", "røv", "nakke", "triceps"];
-        const days = ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Freday", "Lørdag", "Søndag"];
+        const days = ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"];
 
         let trainingPases =[];
         for(let i = 0; i < 3; i++) {
@@ -107,23 +107,45 @@ function testData(User, amount) {
             trainingPases: trainingPases
         }
 
-
         // Create food data
+        const eatTimes = ["Morgenmad", "Mellemmåltid", "Frokost", "post-workout", "Aftensmad"];
         const foods = ["Nutella", "Smør", "Banan", "Blomme", "Mandler", "Mango", "Burger", "Sunde pommes frites", "Chips"];
 
-        let mealPlan = [];
+        let meals = [];
+
         for(let i = 0; i < 5; i++) {
             const meal = {
+                id: i,
+                meal: eatTimes[i],
                 name: foods[utility.randomNumber(0, foods.length -1, 0)],
                 description: "beskrivelse..",
-                recipe: "put den i ovnen",
                 calories: utility.randomNumber(100, 500, 0),
                 carbohydrates: utility.randomNumber(0, 30),
                 fat: utility.randomNumber(0, 30),
                 protein: utility.randomNumber(0, 30)
             }
-            mealPlan.push(meal);
+            meals.push(meal);
         }
+
+        let totalCalories = 0;
+        let totalCarbohydrates = 0;
+        let totalFat = 0;
+        let totalProtein = 0;
+
+        meals.forEach((meal) => {
+            totalCalories += Number(meal.calories);
+            totalCarbohydrates += Number(meal.carbohydrates);
+            totalFat += Number(meal.fat);
+            totalProtein += Number(meal.protein);
+        })
+
+        const mealPlan = {
+            totalCalories: totalCalories,
+            totalCarbohydrates: totalCarbohydrates,
+            totalFat: totalFat,
+            totalProtein: totalProtein,
+            meals: meals
+        };
 
         const foodStats = {
             totalCalories: utility.randomNumber(1900, 3000, 0),
@@ -175,7 +197,8 @@ function testData(User, amount) {
         if(i === 0) {
             User.findOneAndUpdate({ username: "1" }, { $set: { 
                 trainingStats: newUser.trainingStats,
-                 weightStats: newUser.weightStats
+                weightStats: newUser.weightStats,
+                foodStats: newUser.foodStats
             } }, { new: true }, function(err, doc) {
                 // console.log(doc);
             });

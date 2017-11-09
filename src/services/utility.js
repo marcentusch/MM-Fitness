@@ -20,7 +20,7 @@ function randomNumber(min, max, decimals) {
 
 function currentDayDK() {
     const day = moment().format("dddd");
-    let dkDay
+    let dkDay;
     if(day === "Monday") {
         dkDay = "Mandag";
     } else if (day === "Tuesday") {

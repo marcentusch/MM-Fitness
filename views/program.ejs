@@ -4,19 +4,19 @@
     let trainingStats = user.trainingStats;
 %>
 
-<h4 class="m-1 my-2">Dit trænings program</h4>
+<h4 class="ml-4 my-2">Mit trænings program</h4>
 
 <% trainingStats.trainingPases.forEach((trainingPas) => { %>
     <div class="card m-1 my-4">
-        <div class="card-header">
+        <div class="card-header text-white bg-dark">
             <% if(today === trainingPas.day) {   %>
-                <h5> Idag - Pas <%= trainingPas.pasNumber %> </h5>
+                <h5> I dag - Pas <%= trainingPas.pasNumber %> </h5>
             <% } else if(today !== trainingPas.day) { %>
                 <h5> <%= trainingPas.day %> - Pas <%= trainingPas.pasNumber %> </h5>
             <% } %>
         </div>
     
-        <div class="card-body pt-0">
+        <div class="card-body pt-0 bg-light">
         <% trainingPas.muscleGroups.forEach((muscleGroup) => { %>
             <h5 class="mt-4 text-capitalize"> <%= muscleGroup.name %> </h5>
             <div class="list-group list-unstyled" style="position: relative;">

@@ -42,18 +42,24 @@ module.exports =
         ]
     },
     foodStats: {
-        totalCalories: String,
-        mealPlan: [
-            {
-                name: String,
-                description: String,
-                recipe: String,
-                calories: String,
-                carbohydrates: String,
-                fat: String,
-                protein: String
-            }
-        ]
+        mealPlan: {
+            totalCalories: Number,
+            totalCarbohydrates: Number,
+            totalFat: Number,
+            totalProtein: Number,
+            meals: [
+                {
+                    id: String,
+                    meal: String,
+                    name: String,
+                    description: String,
+                    calories: Number,
+                    carbohydrates: Number,
+                    fat: Number,
+                    protein: Number
+                }
+            ],
+        }
     },
     messages: [ 
         {
