@@ -102,6 +102,7 @@ app.get('/meal-plan', middleware.isLoggedIn, (req, res) => {
     if(rest === true) {
         for(let i = 0; i < user.foodStats.mealPlan.meals.length; i++) {
             if(user.foodStats.mealPlan.meals[i].meal === "post-workout") {
+                user.foodStats.mealPlan.totalCalories -= user.foodStats.mealPlan.meals[i].calories;
                 user.foodStats.mealPlan.meals.splice(i, 1);
             }
         };

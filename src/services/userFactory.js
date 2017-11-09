@@ -78,7 +78,7 @@ function testData(User, amount) {
 
         // Create exercise data
         const muscleGroups = ["ben", "ryg", "biceps", "mave", "røv", "nakke", "triceps"];
-        const days = ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"];
+        const days = ["Mandag", "Tirsdag", "Onsdag", "Mandag", "Fredag", "Lørdag", "Søndag"];
 
         let trainingPases =[];
         for(let i = 0; i < 3; i++) {
