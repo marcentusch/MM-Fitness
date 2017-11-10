@@ -1,6 +1,12 @@
 const moment = require('moment'),
 utility      = require('./utility.js');
 
+module.exports = {
+    createNewUser,
+    testData,
+    updateWeight
+};
+
 // Create new user
 function createNewUser(user, User){
     User.create(user),
@@ -13,6 +19,7 @@ function createNewUser(user, User){
         }
     }
 }
+
 
 // Update weight
 function updateWeight(weight, user, User){
@@ -78,7 +85,7 @@ function testData(User, amount) {
 
         // Create exercise data
         const muscleGroups = ["ben", "ryg", "biceps", "mave", "røv", "nakke", "triceps"];
-        const days = ["Mandag", "Tirsdag", "Onsdag", "Mandag", "Fredag", "Lørdag", "Søndag"];
+        const days = ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"];
 
         let trainingPases =[];
         for(let i = 0; i < 3; i++) {
@@ -140,6 +147,7 @@ function testData(User, amount) {
         })
 
         const mealPlan = {
+            caloriesToday: totalCalories,
             totalCalories: totalCalories,
             totalCarbohydrates: totalCarbohydrates,
             totalFat: totalFat,
@@ -148,7 +156,6 @@ function testData(User, amount) {
         };
 
         const foodStats = {
-            totalCalories: utility.randomNumber(1900, 3000, 0),
             mealPlan: mealPlan
         }
 
@@ -227,8 +234,3 @@ function createTestWorkouts() {
     return assignedWorkouts;
 }
 
-module.exports = {
-    createNewUser,
-    testData,
-    updateWeight
-};

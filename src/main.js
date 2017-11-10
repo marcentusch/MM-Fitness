@@ -52,7 +52,7 @@ passport.deserializeUser(User.deserializeUser());
 // Creates test data. needs username = 1
 userFactory.testData(User, 10);
 
-
+// Run this to get execise data in DB
 /* Workout.remove({}).exec();
 const exercises = ["squats", "bænkpres", "dødløft", "biceps curls", "skulder pres", "mavebøjninger"];
 exercises.forEach((exercise) => {
@@ -102,12 +102,36 @@ app.get('/meal-plan', middleware.isLoggedIn, (req, res) => {
     if(rest === true) {
         for(let i = 0; i < user.foodStats.mealPlan.meals.length; i++) {
             if(user.foodStats.mealPlan.meals[i].meal === "post-workout") {
-                user.foodStats.mealPlan.totalCalories -= user.foodStats.mealPlan.meals[i].calories;
+                user.foodStats.mealPlan.today -= user.foodStats.mealPlan.meals[i].calories;
                 user.foodStats.mealPlan.meals.splice(i, 1);
             }
         };
     }
+    
     res.render('meal-plan', {user: user});
+});
+
+// Update Calories
+app.get('/meal-plan/update/:userId/calories/:calories', middleware.isLoggedIn, async (req, res) => {
+    const userId = req.params.userId;
+    const calories = req.params.calories;
+    
+    User.findById(userId, function (err, user) {
+        if (err) {
+            throw(err);
+        } 
+        
+        const newCaloriesToday = user.foodStats.mealPlan.caloriesToday -= calories;
+        user.foodStats.mealPlan.caloriesToday = newCaloriesToday;
+
+        // Update calories today
+        user.save(function (err, updatedUser) {
+            if (err){
+                throw(err); 
+            } 
+            res.json({"newCalories": newCaloriesToday});
+        });
+    });
 });
 
 // Inbox

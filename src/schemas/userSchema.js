@@ -43,6 +43,7 @@ module.exports =
     },
     foodStats: {
         mealPlan: {
+            caloriesToday: Number,
             totalCalories: Number,
             totalCarbohydrates: Number,
             totalFat: Number,
