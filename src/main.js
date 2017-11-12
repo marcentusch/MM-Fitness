@@ -80,12 +80,22 @@ app.get('/profile', middleware.isLoggedIn, (req, res) => {
     res.render('profile', {user: user});
 });
 
+
+// ===============================================================
+// WORKOUT ROUTES
+// ===============================================================
+
 // Training program
 app.get('/program', middleware.isLoggedIn, (req, res) => {
     const user = req.user;
     const today = utility.currentDayDK();
     res.render('program', {user: user, today: today});
 });
+
+
+// ===============================================================
+// MEAL ROUTES
+// ===============================================================
 
 // Meal plan
 app.get('/meal-plan', middleware.isLoggedIn, (req, res) => {
@@ -102,7 +112,7 @@ app.get('/meal-plan', middleware.isLoggedIn, (req, res) => {
     if(rest === true) {
         for(let i = 0; i < user.foodStats.mealPlan.meals.length; i++) {
             if(user.foodStats.mealPlan.meals[i].meal === "post-workout") {
-                user.foodStats.mealPlan.today -= user.foodStats.mealPlan.meals[i].calories;
+                user.foodStats.mealPlan.caloriesToday -= user.foodStats.mealPlan.meals[i].calories;
                 user.foodStats.mealPlan.meals.splice(i, 1);
             }
         };

@@ -4,14 +4,12 @@
 <script>
     function updateCalories(calories) {
         const url = "/meal-plan/update/<%=user._id%>/calories/" + calories;
-        console.log(url);
         let caloriesToday = $("#caloriesToday");
         $.ajax({
             url: url,
             type: 'get',
         })
         .done(function( data ) {
-            console.log( "Sample of data:", data );
             caloriesToday.html(data.newCalories);
         });
     }
@@ -19,7 +17,7 @@
 
 <h4 class="ml-4 my-2">Kost</h4>
 
-<div class="card m-1 mb-3">
+<div class="card my-1 mb-3">
     <div class="card-header bg-dark text-white">
         <h5>
             <span class="float-left">I dag </span> 
@@ -37,7 +35,7 @@
                 <div class="collapse mt-2" id="<%= meal.id %>">
                     <h5 class="mb-0"> <%= meal.name %>
                         <div class="mr-2 float-right" onclick="updateCalories( <%= meal.calories %> )">
-                            <i class="fa fa-check-square fa-lg text-secondary" aria-hidden="true"></i>
+                            <i class="fa fa-check-square fa-lg text-primary" aria-hidden="true"></i>
                         </div> 
                     </h5>
                     
