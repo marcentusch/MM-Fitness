@@ -1,11 +1,10 @@
 <% include partials/header %>
-	<script>$("#home").addClass("active");</script>
+	<script>
+		$("#home").addClass("active");
+		$("#title").text("Hjem");	
+	</script>
 
 	<div class="container">
-		
-		<h4>Min side</h4>
-
-		<hr>
 
 		<p>Nuværende vægt: <%= user.weightStats.currentWeight %>kg</p>
 		<% if(user.weightStats.weightProgress != null && user.weightStats.weightProgress != 0){ %>

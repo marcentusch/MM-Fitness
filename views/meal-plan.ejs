@@ -1,10 +1,17 @@
 <% include partials/header %>
 <% let mealPlan = user.foodStats.mealPlan %>
-    <script>$("#meal-plan").addClass("active");</script>
+    <script>
+        $("#meal-plan").addClass("active");
+        $("#title").text("Kost");
+    </script>
 
 <script>
-    function updateCalories(calories) {
-        const url = "/meal-plan/update/<%=user._id%>/calories/" + calories;
+    function updateCalories(mealId) {
+
+        let checkButton = $("." + mealId);
+        checkButton.prop("disabled", true);
+
+        const url = "/meal-plan/update/<%=user._id%>/mealId/" + mealId;
         let caloriesToday = $("#caloriesToday");
         $.ajax({
             url: url,
@@ -35,9 +42,15 @@
                 </a>
                 <div class="collapse mt-2" id="<%= meal.id %>">
                     <h5 class="mb-0"> <%= meal.name %>
-                        <div class="mr-2 float-right" onclick="updateCalories( <%= meal.calories %> )">
-                            <i class="fa fa-check-square fa-lg text-primary" aria-hidden="true"></i>
-                        </div> 
+                        <% if(meal.isChecked === false){ %>
+                            <button class="btn btn-lg bg-light p-2 float-right submit <%= meal.id %>" onclick="updateCalories(<%= meal.id %>)">
+                                <i class="fa fa-check-square fa-lg text-primary" aria-hidden="true"></i>
+                            </button> 
+                        <% } else { %>
+                            <button class="btn btn-lg bg-light p-2 float-right submit" disabled="true">
+                                <i class="fa fa-check-square fa-lg text-primary" aria-hidden="true"></i>
+                            </button> 
+                        <% } %>
                     </h5>
                     
                     <p> <%= meal.description %> </p>

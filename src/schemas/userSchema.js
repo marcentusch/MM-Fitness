@@ -20,7 +20,6 @@ module.exports =
             {
                 _id: false,                
                 pasNumber: String,
-                day: String,
                 muscleGroups: [
                     {
                         _id: false,
@@ -51,6 +50,7 @@ module.exports =
             meals: [
                 {
                     id: String,
+                    isChecked: Boolean,
                     meal: String,
                     name: String,
                     description: String,

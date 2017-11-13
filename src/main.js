@@ -101,37 +101,31 @@ app.get('/program', middleware.isLoggedIn, (req, res) => {
 app.get('/meal-plan', middleware.isLoggedIn, (req, res) => {
     const user = req.user;
     const today = utility.currentDayDK();
-    let rest = true;
-    
-    user.trainingStats.trainingPases.forEach((trainingpas) => {
-        if(trainingpas.day === today ){
-            rest = false;
-        }
-    });
-
-    if(rest === true) {
-        for(let i = 0; i < user.foodStats.mealPlan.meals.length; i++) {
-            if(user.foodStats.mealPlan.meals[i].meal === "post-workout") {
-                user.foodStats.mealPlan.caloriesToday -= user.foodStats.mealPlan.meals[i].calories;
-                user.foodStats.mealPlan.meals.splice(i, 1);
-            }
-        };
-    }
     
     res.render('meal-plan', {user: user});
 });
 
 // Update Calories
-app.post('/meal-plan/update/:userId/calories/:calories', middleware.isLoggedIn, async (req, res) => {
+app.post('/meal-plan/update/:userId/mealId/:mealId', middleware.isLoggedIn, async (req, res) => {
     const userId = req.params.userId;
-    const calories = req.params.calories;
+    const mealId = req.params.mealId;
     
     User.findById(userId, function (err, user) {
         if (err) {
             throw(err);
         } 
-        
-        const newCaloriesToday = user.foodStats.mealPlan.caloriesToday -= calories;
+
+        let meals = user.foodStats.mealPlan.meals;
+        let mealCalories = 0;
+
+        for(let i = 0; i < meals.length; i++){
+            if(meals[i].id === mealId){
+                mealCalories = meals[i].calories;
+                meals[i].isChecked = true;
+            }
+        }
+
+        const newCaloriesToday = user.foodStats.mealPlan.caloriesToday -= mealCalories;
         user.foodStats.mealPlan.caloriesToday = newCaloriesToday;
 
         // Update calories today
