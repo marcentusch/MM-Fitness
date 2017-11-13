@@ -1,5 +1,6 @@
 <% include partials/header %>
 <% let mealPlan = user.foodStats.mealPlan %>
+    <script>$("#meal-plan").addClass("active");</script>
 
 <script>
     function updateCalories(calories) {
@@ -7,7 +8,7 @@
         let caloriesToday = $("#caloriesToday");
         $.ajax({
             url: url,
-            type: 'get',
+            type: 'post',
         })
         .done(function( data ) {
             caloriesToday.html(data.newCalories);

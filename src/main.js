@@ -122,7 +122,7 @@ app.get('/meal-plan', middleware.isLoggedIn, (req, res) => {
 });
 
 // Update Calories
-app.get('/meal-plan/update/:userId/calories/:calories', middleware.isLoggedIn, async (req, res) => {
+app.post('/meal-plan/update/:userId/calories/:calories', middleware.isLoggedIn, async (req, res) => {
     const userId = req.params.userId;
     const calories = req.params.calories;
     
