@@ -9,6 +9,7 @@ passport                        = require('passport'),
 LocalStrategy                   = require('passport-local').Strategy,
 utility                         = require('./services/utility.js');
 moment                          = require('moment');
+schedule                        = require('node-schedule');
 
 // Require local files
 const middleware  = require('./middleware/index.js'),
@@ -23,12 +24,13 @@ mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/mm_fitness_app', {useMongoClient: true});
 const db = mongoose.connection;
 
-// Make user-schema
+// Schemas
+// user-schema
 const userSchema = mongoose.Schema(userData);
 userSchema.plugin(passportLocalMongoose);
 const User = mongoose.model('User', userSchema);
 
-// Make workout-schema
+// workout-schema
 const workoutSchema = mongoose.Schema(workoutData);
 const Workout = mongoose.model('Workout', workoutSchema);
 
@@ -58,6 +60,26 @@ const exercises = ["squats", "bænkpres", "dødløft", "biceps curls", "skulder 
 exercises.forEach((exercise) => {
     workoutFactory.createNewWorkout(Workout, exercise);
 });  */
+
+// Schedule
+var j = schedule.scheduleJob('0 0 * * *', function(){
+    User.find({}, (err, users) => {
+        if(err) {
+            throw err;
+        }
+        users.forEach((user) => {
+            user.foodStats.mealPlan.caloriesToday = user.foodStats.mealPlan.totalCalories;
+            user.foodStats.mealPlan.meals.forEach((meal) => {
+                meal.isChecked = false;
+            });
+            user.save(function (err, updatedUsers) {
+                if (err){
+                    throw(err); 
+                } 
+            });
+        });
+    });
+});
 
 
 // ===============================================================
