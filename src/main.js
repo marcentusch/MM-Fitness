@@ -67,10 +67,40 @@ exercises.forEach((exercise) => {
 // WEB SOCKETS 
 // ===============================================================
 io.on('connection', function(socket){
-    console.log("it works!!!");
-    /* socket.on("I want to chat", function(data){
-        console.log(data);
-    }); */
+    //console.log("it works!!!");
+
+    // Message from user
+    socket.on("user message", (data) => {
+
+        const newMessage = {
+            date: moment().format("DD/MM - hh:mm"),
+            message: data.message,
+            fromUser: true
+        }
+
+        User.findById(data.userId, (err, user) => {
+            if(err) {
+                throw err
+            } else {
+                user.messages.push(newMessage);
+                
+                user.save((err, updatedUser) => {
+                    if(err) {
+                        throw err;
+                    }
+                });
+            }
+        });
+    });
+
+    // Message from Mikael
+    socket.on("mikael message", (data) => {
+        socket.emit("message to user", {
+            date: moment().format("DD/MM - hh:mm"),            
+            message: data.message,
+            fromUser: false
+        });
+    });
 
 });
 
@@ -178,7 +208,8 @@ app.post('/meal-plan/update/:userId/mealId/:mealId', middleware.isLoggedIn, asyn
 
 // Inbox
 app.get('/inbox', middleware.isLoggedIn, (req, res) => {
-    res.render('inbox');
+    const user = req.user;
+    res.render('inbox', {user: user});
 });
 
 // News
@@ -205,6 +236,8 @@ app.get('/workout/:name', middleware.isLoggedIn, async (req, res) => {
     }
 });
 
+
+
 // ===============================================================
 // AUTH ROUTES
 // ===============================================================
@@ -228,6 +261,8 @@ app.post('/register', (req, res) => {
         });
     });
 });
+
+
 
 // ===============================================================
 // LOGIN ROUTES

@@ -1,18 +1,64 @@
 <% include partials/header %>
+
     <script>
-        
+        var socket = io();
         $("#inbox").addClass("active");
         $("#title").text("Indbakke");
-        var socket = io();
-        //socket.emit("I want to chat", {hvadsomhelst: "xD"});
+
+
+      
+        
+        function sendMessage(){
+            var chatBox = $("#message");
+            var message = chatBox.val();
+            chatBox.val("");
+
+            $("#heyImADiv").append("<p class='text-right'>" + message + "</p>")
+
+
+            socket.emit("user message", {
+                message: message,
+                userId: "<%= user._id %>"
+            });
+        }
+
+        // Mikael test gøgl
+        function messageFromMikael () {
+            socket.emit("mikael message", {
+                message: "hey fuckbois",
+            });
+        }
+
+        socket.on("message to user", (data) => {
+                $("#heyImADiv").append("<p>" + data.message + "</p>")
+        });
+        
+
+        
+        
     </script>
+
+    <button onclick="messageFromMikael()"> Besked fra Mikael</button>
+
+    <!-- Messages -->
+    <div id="heyImADiv">
+        <% user.messages.forEach((message) => { %>
+            <% if(message.fromUser === true) { %>
+                <p class="text-right"> <%= message.message %> </p>
+            <% } else { %>
+                <p> <%= message.message %> </p>                    
+            <% } %>
+        <% }) %>
+    </div>
+
+
 
     <!-- tekstfelt & send-knap -->
     <div>
         <div class="d-flex flex-column justify-content-end" style="min-height: calc(100vh - 55px); align-items: flex-end;">
             <div class="input-group stickyBottom">
-                <input class="form-control" type="text" placeholder="skriv en besked...">
-                <a class="btn btn-primary" href="#"><i class="fa fa-telegram fa-lg"></i></a>
+                <input id="message" class="form-control" type="text" placeholder="skriv en besked...">
+                <button class="btn btn-primary" onclick="sendMessage()"><i class="fa fa-telegram fa-lg"></i></button>
             </div> 
         </div>
     </div>

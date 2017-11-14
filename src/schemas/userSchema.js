@@ -65,7 +65,8 @@ module.exports =
     messages: [ 
         {
             date: String,
-            content: String
+            message: String,
+            fromUser: Boolean
         }
     ]
 };

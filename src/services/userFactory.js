@@ -32,7 +32,7 @@ function updateWeight(weight, user, User){
         // Create new weight
         user.weightStats.currentWeight = weight;
         const newWeight = {
-            date: moment().format("d/M/YY"),
+            date: moment().format("DD/MM/YY"),
             weight: weight
         };
         user.weightStats.allWeights.push(newWeight);
@@ -175,12 +175,15 @@ function testData(User, amount) {
             "sk8r boi 69"
         ];
 
+        const trueOrFalse = [true, false];
+
         const messages = [];
 
         for(let i = 0; i < 5; i++) {
             const message = {
                     date: utility.randomDate(),
-                    content: messageData[utility.randomNumber(0, messageData.length -1, 0)]
+                    message: messageData[utility.randomNumber(0, messageData.length -1, 0)],
+                    fromUser: trueOrFalse[utility.randomNumber(0,1,0)]
             }
             messages.push(message);
         }
@@ -204,7 +207,8 @@ function testData(User, amount) {
             User.findOneAndUpdate({ username: "1" }, { $set: { 
                 trainingStats: newUser.trainingStats,
                 weightStats: newUser.weightStats,
-                foodStats: newUser.foodStats
+                foodStats: newUser.foodStats,
+                messages: newUser.messages
             } }, { new: true }, function(err, doc) {
                 // console.log(doc);
             });
