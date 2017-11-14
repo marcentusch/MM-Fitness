@@ -1,7 +1,10 @@
 <% include partials/header %>
     <script>
+        
         $("#inbox").addClass("active");
-		$("#title").text("Indbakke");
+        $("#title").text("Indbakke");
+        var socket = io();
+        //socket.emit("I want to chat", {hvadsomhelst: "xD"});
     </script>
 
     <!-- tekstfelt & send-knap -->

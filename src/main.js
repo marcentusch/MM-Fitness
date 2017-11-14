@@ -1,15 +1,17 @@
 // Require packages
-const passportLocalMongoose     = require('passport-local-mongoose'),
-bodyparser                      = require('body-parser'),
-Chart                           = require('chart.js'),
-express                         = require('express'),
-app                             = express(),
-mongoose                        = require('mongoose'),
-passport                        = require('passport'),
-LocalStrategy                   = require('passport-local').Strategy,
-utility                         = require('./services/utility.js');
-moment                          = require('moment');
-schedule                        = require('node-schedule');
+const passportLocalMongoose = require('passport-local-mongoose'),
+bodyparser                  = require('body-parser'),
+Chart                       = require('chart.js'),
+express                     = require('express'),
+app                         = express(),
+server                      = require('http').Server(app),
+io                          = require('socket.io')(server),
+mongoose                    = require('mongoose'),
+passport                    = require('passport'),
+LocalStrategy               = require('passport-local').Strategy,
+utility                     = require('./services/utility.js'),
+moment                      = require('moment'),
+schedule                    = require('node-schedule');
 
 // Require local files
 const middleware  = require('./middleware/index.js'),
@@ -61,7 +63,21 @@ exercises.forEach((exercise) => {
     workoutFactory.createNewWorkout(Workout, exercise);
 });  */
 
-// Schedule
+// ===============================================================
+// WEB SOCKETS 
+// ===============================================================
+io.on('connection', function(socket){
+    console.log("it works!!!");
+    /* socket.on("I want to chat", function(data){
+        console.log(data);
+    }); */
+
+});
+
+// ===============================================================
+// SCHEDULE 
+// ===============================================================
+
 var j = schedule.scheduleJob('0 0 * * *', function(){
     User.find({}, (err, users) => {
         if(err) {
@@ -237,6 +253,6 @@ app.get('/logout', (req, res) => {
 });
 
 // Server listening
-app.listen(config.port, () => {
+server.listen(config.port, () => {
     console.log("Server listening on port " + config.port);
 });
