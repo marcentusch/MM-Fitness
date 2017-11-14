@@ -67,7 +67,6 @@ exercises.forEach((exercise) => {
 // WEB SOCKETS 
 // ===============================================================
 io.on('connection', function(socket){
-    //console.log("it works!!!");
 
     // Message from user
     socket.on("user message", (data) => {
@@ -80,7 +79,7 @@ io.on('connection', function(socket){
 
         User.findById(data.userId, (err, user) => {
             if(err) {
-                throw err
+                throw err;
             } else {
                 user.messages.push(newMessage);
                 
@@ -93,8 +92,32 @@ io.on('connection', function(socket){
         });
     });
 
+
+
     // Message from Mikael
     socket.on("mikael message", (data) => {
+
+        const newMessage = {
+            date: moment().format("DD/MM - hh:mm"),
+            message: data.message,
+            fromUser: false
+        }
+
+        
+        User.findOne({email: data.email}, (err, user) => {
+            if(err) {
+                throw err;
+            } else {
+                user.messages.push(newMessage);
+
+                user.save((err, updatedUser) => {
+                    if(err) {
+                        throw err;
+                    }
+                });
+            }
+        });
+
         socket.emit("message to user", {
             date: moment().format("DD/MM - hh:mm"),            
             message: data.message,

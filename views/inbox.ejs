@@ -26,6 +26,7 @@
         function messageFromMikael () {
             socket.emit("mikael message", {
                 message: "hey fuckbois",
+                email: "test-email"
             });
         }
 
@@ -41,14 +42,16 @@
     <button onclick="messageFromMikael()"> Besked fra Mikael</button>
 
     <!-- Messages -->
-    <div id="heyImADiv">
+    <div class="container">
+        <div id="heyImADiv">
         <% user.messages.forEach((message) => { %>
             <% if(message.fromUser === true) { %>
                 <p class="text-right"> <%= message.message %> </p>
-            <% } else { %>
-                <p> <%= message.message %> </p>                    
-            <% } %>
-        <% }) %>
+                <% } else { %>
+                    <p> <%= message.message %> </p>                    
+                <% } %>
+            <% }) %>
+        </div>
     </div>
 
 

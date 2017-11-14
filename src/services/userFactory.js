@@ -205,6 +205,7 @@ function testData(User, amount) {
         
         if(i === 0) {
             User.findOneAndUpdate({ username: "1" }, { $set: { 
+                email: "test-email",
                 trainingStats: newUser.trainingStats,
                 weightStats: newUser.weightStats,
                 foodStats: newUser.foodStats,
