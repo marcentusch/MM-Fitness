@@ -68,6 +68,8 @@ exercises.forEach((exercise) => {
 // ===============================================================
 io.on('connection', function(socket){
 
+    
+
     // Message from user
     socket.on("user message", (data) => {
 
@@ -104,7 +106,7 @@ io.on('connection', function(socket){
         }
 
         
-        User.findOne({email: data.email}, (err, user) => {
+        User.findById(data.userId, (err, user) => {
             if(err) {
                 throw err;
             } else {
@@ -119,6 +121,7 @@ io.on('connection', function(socket){
         });
 
         socket.emit("message to user", {
+            id: data.userId,
             date: moment().format("DD/MM - hh:mm"),            
             message: data.message,
             fromUser: false
@@ -237,7 +240,8 @@ app.get('/inbox', middleware.isLoggedIn, (req, res) => {
 
 // News
 app.get('/news', middleware.isLoggedIn, (req, res) => {
-    res.render('news');
+    const user = req.user;
+    res.render('news', {user: user});
 });
 
 // Update weight route

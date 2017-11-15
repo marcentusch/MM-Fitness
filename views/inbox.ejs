@@ -1,19 +1,17 @@
 <% include partials/header %>
-
+<!-- <link href="stylesheets/inbox.css" rel="stylesheet" type="text/css"> -->
     <script>
         var socket = io();
         $("#inbox").addClass("active");
         $("#title").text("Indbakke");
 
-
-      
-        
+        // Send a message
         function sendMessage(){
             var chatBox = $("#message");
             var message = chatBox.val();
             chatBox.val("");
 
-            $("#heyImADiv").append("<p class='text-right'>" + message + "</p>")
+            $("#messageDiv").append("<p class='text-right'>" + message + "</p>")
 
 
             socket.emit("user message", {
@@ -25,13 +23,13 @@
         // Mikael test gøgl
         function messageFromMikael () {
             socket.emit("mikael message", {
-                message: "hey fuckbois",
-                email: "test-email"
+                message: "Velkommen til min side",
+                userId: "<%= user._id %>"
             });
         }
 
         socket.on("message to user", (data) => {
-                $("#heyImADiv").append("<p>" + data.message + "</p>")
+            $("#messageDiv").append("<p>" + data.message + "</p>");
         });
         
 
@@ -43,16 +41,16 @@
 
     <!-- Messages -->
     <div class="container">
-        <div id="heyImADiv">
-        <% user.messages.forEach((message) => { %>
-            <% if(message.fromUser === true) { %>
-                <p class="text-right"> <%= message.message %> </p>
-                <% } else { %>
-                    <p> <%= message.message %> </p>                    
-                <% } %>
-            <% }) %>
+            <div id="messageDiv">
+            <% user.messages.forEach((message) => { %>
+                <% if(message.fromUser === true) { %>
+                    <p class="text-right"> <%= message.message %> </p>
+                    <% } else { %>
+                        <p> <%= message.message %> </p>                    
+                    <% } %>
+                <% }) %>
+            </div>
         </div>
-    </div>
 
 
 

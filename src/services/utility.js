@@ -9,7 +9,7 @@ module.exports = {
 // Utility functions
 function randomDate() {
     const someDate = randomNumber(1,27) + "-" + randomNumber(1, 12) + "-2017";
-    const randomDate = moment(someDate, "D-M-YYYY").format("d/M/YY");
+    const randomDate = moment(someDate, "D-M-YYYY").format("DD/M/YY");
     return randomDate;
 };
 

@@ -84,7 +84,7 @@ function testData(User, amount) {
 
 
         // Create exercise data
-        const muscleGroups = ["ben", "ryg", "biceps", "mave", "røv", "nakke", "triceps"];
+        const muscleGroups = ["ben", "ryg", "biceps", "mave", "skulder", "bryst", "triceps"];
 
         let trainingPases =[];
         for(let i = 0; i < 3; i++) {
@@ -114,7 +114,8 @@ function testData(User, amount) {
 
         // Create food data
         const eatTimes = ["Morgenmad", "Mellemmåltid", "Frokost", "post-workout", "Aftensmad"];
-        const foods = ["Nutella", "Smør", "Banan", "Blomme", "Mandler", "Mango", "Burger", "Sunde pommes frites", "Chips"];
+        const foods = ["Havregryn", "Rugbrød"];
+        const details = ["Easis müsli 140g", "to styk"];
 
         let meals = [];
 
@@ -124,7 +125,8 @@ function testData(User, amount) {
                 isChecked: false,
                 meal: eatTimes[i],
                 name: foods[utility.randomNumber(0, foods.length -1, 0)],
-                description: "beskrivelse..",
+                details: details[utility.randomNumber(0, details.length -1, 0)],
+                description: "Husk og mos bananen",
                 calories: utility.randomNumber(100, 500, 0),
                 carbohydrates: utility.randomNumber(0, 30),
                 fat: utility.randomNumber(0, 30),
@@ -167,12 +169,10 @@ function testData(User, amount) {
             "Voldemort did nothing wrong!",
             "Leave Britney alone!",
             "Never trust a fart - Mahatma Gandhi 2017",
-            "Godmorgen",
+            "Godmorgen chef",
             "Hvor ser du godt ud i dag, har du trænet?",
-            "7",
             "Husk vitaminpiller, det er godt for leveren",
-            ";-) ;-* kys tihi f9ser",
-            "sk8r boi 69"
+            ";-) ;-* kys tihi f9ser"
         ];
 
         const trueOrFalse = [true, false];
@@ -187,7 +187,30 @@ function testData(User, amount) {
             }
             messages.push(message);
         }
-            
+        //news
+        const titles = ["Nyt træningsprogram!", "Fedt event i weekenden", "Husk proteinpulver efter træning", "Husk gains", "Jeg har lige spist aftensmad!"];
+        const subdivision = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+        const content = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla hendrerit arcu sed fermentum tristique. Mauris fermentum vestibulum neque quis suscipit. Praesent non aliquam nibh. Integer consequat orci eget nunc consequat commodo. Mauris felis ipsum, interdum eget tristique sit amet, ornare sit amet tellus. Aenean non facilisis metus. Donec quis condimentum ante. Mauris nec dignissim ex, laoreet lobortis nunc. Pellentesque iaculis condimentum placerat. Aenean placerat lectus non lectus sollicitudin vestibulum.";
+        const imageUrl = "https://www.organicfacts.net/wp-content/uploads/2013/05/Vegetables4.jpg";
+        const link = "http://www.google.dk";
+        const linkText = "Google";
+        
+        const newsList = [];
+
+        for(let i = 0; i < 5; i++){
+            const news =
+            {
+                title: titles[utility.randomNumber(0, titles.length -1, 0)],
+                subdivision: subdivision,
+                content: content,
+                imageUrl: imageUrl,
+                link: link,
+                linkText: linkText,
+                date: utility.randomDate()
+            }
+            newsList.push(news);
+        }
+        
         // Create the actual user from above data
         let newUser = {
             username: usernames[utility.randomNumber(0, usernames.length -1, 0)],
@@ -197,7 +220,8 @@ function testData(User, amount) {
             weightStats: weightStats,
             trainingStats: trainingStats,
             foodStats: foodStats,
-            messages: messages
+            messages: messages,
+            news: newsList
         }
     
 
@@ -209,7 +233,8 @@ function testData(User, amount) {
                 trainingStats: newUser.trainingStats,
                 weightStats: newUser.weightStats,
                 foodStats: newUser.foodStats,
-                messages: newUser.messages
+                messages: newUser.messages,
+                news: newUser.news
             } }, { new: true }, function(err, doc) {
                 // console.log(doc);
             });

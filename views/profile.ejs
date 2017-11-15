@@ -5,13 +5,11 @@
     $("#title").text("Profil");
 </script>
 
-<div class="row">
-    <div class="col-6">
-        <label>Navn: <%= user.username %></label>
-        <label>Email: <%= user.email %></label>
-        <label></label>
-    </div>
-    <div class="col-6"></div>
+<div class="container">
+    <p>Navn: <%= user.username %></p>
+    <p>Email: <%= user.email %></p>
+    <p></p>
+    <a class="nav-link" id="logout" href="/logout"><i class="fa fa-sign-out" aria-hidden="true"></i> Log ud</a>
 </div>
 
 <% include partials/footer %>

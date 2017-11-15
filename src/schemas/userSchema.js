@@ -53,6 +53,7 @@ module.exports =
                     isChecked: Boolean,
                     meal: String,
                     name: String,
+                    details: String,
                     description: String,
                     calories: Number,
                     carbohydrates: Number,
@@ -67,6 +68,17 @@ module.exports =
             date: String,
             message: String,
             fromUser: Boolean
+        }
+    ],
+    news: [
+        {
+            title: String,
+            subdivision: String,
+            content: String,
+            imageUrl: String,
+            link: String,
+            linkText: String,
+            date: String
         }
     ]
 };
