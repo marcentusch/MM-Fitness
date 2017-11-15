@@ -289,6 +289,18 @@ app.post('/register', (req, res) => {
     });
 });
 
+// ===============================================================
+// Admin route
+// ===============================================================
+
+// front page
+app.get('/admin',  middleware.isLoggedIn, (req, res) => {
+    if(req.user.isAdmin) {
+        res.send("I AM THE ADMIN! FEEL MY WRATH PEASANTS");
+    } else {
+        res.send("You are not worthy!");
+    }
+});
 
 
 // ===============================================================

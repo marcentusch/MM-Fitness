@@ -1,5 +1,6 @@
 module.exports =
 {
+    isAdmin: Boolean,
     username: String,
     email: String,
     password: String,
