@@ -163,9 +163,14 @@ app.get('/', (req, res) => {
     res.render('login'); 
 });
 
+// Home
 app.get('/home', middleware.isLoggedIn, (req, res) => {
     const user = req.user;
-    res.render('home', {user: user});
+    if(req.user.isAdmin){
+        res.redirect('/admin');
+    }else{
+        res.render('home', {user: user});
+    }
 });
 
 // Profile
@@ -264,31 +269,6 @@ app.get('/workout/:name', middleware.isLoggedIn, async (req, res) => {
 });
 
 
-
-// ===============================================================
-// AUTH ROUTES
-// ===============================================================
-
-// Show signup form
-app.get('/register', (req, res) => {
-    res.render('register');
-});
-
-// Handling user signup
-app.post('/register', (req, res) => {
-    req.body.username;
-    req.body.password;
-    User.register(new User({username: req.body.username}), req.body.password, function(err, user){
-        if(err){
-            console.log(err);
-            return res.render('register');
-        }
-        passport.authenticate('local')(req, res, function(){
-            res.redirect('/home')
-        });
-    });
-});
-
 // ===============================================================
 // Admin route
 // ===============================================================
@@ -296,12 +276,53 @@ app.post('/register', (req, res) => {
 // front page
 app.get('/admin',  middleware.isLoggedIn, (req, res) => {
     if(req.user.isAdmin) {
-        res.send("I AM THE ADMIN! FEEL MY WRATH PEASANTS");
+        User.find({}, (err, users) => {
+            res.render('./admin/dashboard', {users: users});
+        });
     } else {
-        res.send("You are not worthy!");
+        res.redirect('home');
     }
 });
 
+// user page
+app.get('/admin/user/:userId', middleware.isLoggedIn, (req,res) => {
+    if(req.user.isAdmin) {
+        User.findById(req.params.userId, (err, user) => {
+            res.render('./admin/user', {user: user});
+        });
+    } else {
+        res.redirect('home');
+    }
+});
+
+// ===============================================================
+// AUTH ROUTES
+// ===============================================================
+
+// Show signup form
+app.get('/admin/register', (req, res) => {
+    res.render('admin/register');
+});
+
+// Handling user signup
+app.post('/admin/register', (req, res) => {
+    User.register(new User(
+        {
+            username: req.body.username,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName
+        }
+    ), 
+        req.body.password, function(err, user){
+        if(err){
+            console.log(err);
+            return res.render('admin/register');
+        }
+        passport.authenticate('local')(req, res, function(){
+            res.redirect('/home')
+        });
+    });
+});
 
 // ===============================================================
 // LOGIN ROUTES
@@ -317,7 +338,7 @@ app.post('/login', passport.authenticate('local', {
     successRedirect: '/home',
     failureRedirect: '/login'
 }), (req, res) => {
-    // Some function to callback
+
 });
 
 // Logout route

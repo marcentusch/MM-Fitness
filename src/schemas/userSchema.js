@@ -1,14 +1,21 @@
 module.exports =
 {
     isAdmin: Boolean,
+    firstName: String,
+    lastName: String,
     username: String,
-    email: String,
     password: String,
+    street: String,
+    houseNumber: String,
+    zipcode: Number,
+    town: String,
+    phone: String,
     avatarURL: String,
     weightStats: {
         currentWeight: Number,
         startWeight: Number,
         weightProgress: Number,
+        targetWeight: Number,
         allWeights: [
             {
                 date: String,

@@ -1,0 +1,21 @@
+<% include partials/header %>
+
+<div class="row">
+    <% users.forEach((user) => { %>
+        <div class="col-4">
+            <div class="card m-3">
+                <div class="card-header">
+                    <p><%= user.username %></p>
+                </div>
+                <div class="card-body">
+                    <p>Navn</p>
+                    <p>Adresse</p>
+                    <p>Lort</p>
+                    <a href="admin/user/<%= user._id %>" class="btn btn-link">Se bruger</a>
+                </div>
+            </div>
+        </div>
+    <% }); %>
+</div>
+
+<% include partials/footer %>

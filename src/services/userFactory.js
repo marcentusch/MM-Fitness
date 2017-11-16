@@ -56,12 +56,6 @@ function testData(User, amount) {
     
     for(let i = 0; i < amount; i++){
         
-        // User meta data
-        const usernames = ["Jens", "Brian", "Søren", "Ole", "Denise", "Maibrit", "Marc", "Jonas"];
-        const emails = ["foo@bar.dk", "test@test.dk"];
-        const password = "12345";
-        const avatarURL = "http://www.qygjxz.com/data/out/190/5691490-profile-pictures.png";
-        
         // Create weight data
         const weights = [];
 
@@ -76,6 +70,7 @@ function testData(User, amount) {
         const weightStats = {
             currentWeight: utility.randomNumber(50, 100, 1),
             startWeight: utility.randomNumber(50, 100, 1),
+            targetWeight: utility.randomNumber(50, 100, 1),
             weightProgress: 0,
             allWeights: weights
         }
@@ -210,12 +205,26 @@ function testData(User, amount) {
             }
             newsList.push(news);
         }
+
+        // User meta data
+        const firstNames = ["Jens", "Brian", "Søren", "Ole", "Denise", "Maibrit", "Marc", "Jonas"];
+        const lastNames = ["Pedersen", "Hansen", "Jensen", "Mogensen", "Erhardtsen", "Sørensen", "Bolvig", "Larmann"];
+        const usernames = ["foo@bar.dk", "test@test.dk"];
+        const password = "12345";
+        const avatarURL = "http://www.qygjxz.com/data/out/190/5691490-profile-pictures.png";
         
         // Create the actual user from above data
+
         let newUser = {
             username: usernames[utility.randomNumber(0, usernames.length -1, 0)],
-            email: emails[utility.randomNumber(0, emails.length -1, 0)],
+            firstName: firstNames[utility.randomNumber(0, firstNames.length -1, 0)],
+            lastName: lastNames[utility.randomNumber(0, lastNames.length -1, 0)],
             password: password,
+            street: "genvej",
+            houseNumber: "1",
+            zipcode: 2860,
+            town: "Søborg",
+            phone: "88888888 ",
             avatarURL: avatarURL,
             weightStats: weightStats,
             trainingStats: trainingStats,
@@ -230,7 +239,8 @@ function testData(User, amount) {
         if(i === 0) {
             User.findOneAndUpdate({ username: "1" }, { $set: { 
                 isAdmin: true,
-                email: "test-email",
+                firstName: "Tester",
+                lastName: "McTestersen",
                 trainingStats: newUser.trainingStats,
                 weightStats: newUser.weightStats,
                 foodStats: newUser.foodStats,
