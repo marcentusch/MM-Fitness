@@ -263,11 +263,7 @@ function createTestWorkouts() {
             {
                 name: exercises[utility.randomNumber(0, exercises.length -1, 0)],
                 sæt: utility.randomNumber(3, 5, 0),
-                reps: utility.randomNumber(10, 20, 0),
-                startWorkLoad: utility.randomNumber(10, 30, 0),
-                currentWorkLoad: utility.randomNumber(25, 40, 0),
-                WorkLoadProgress: utility.randomNumber(1, 5, 0),
-                workLoad: utility.randomNumber(10, 30, 0)
+                reps: utility.randomNumber(10, 20, 0)
             }
         assignedWorkouts.push(workOut);
     }

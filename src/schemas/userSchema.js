@@ -36,11 +36,7 @@ module.exports =
                             {
                                 name: String,
                                 sæt: String,
-                                reps: String,
-                                startWorkLoad: String,
-                                currentWorkLoad: String,
-                                WorkLoadProgress: String,
-                                workLoad: String
+                                reps: String
                             }                
                         ]
                     }
