@@ -13,6 +13,7 @@
         </div>
     </div>
 
+
     <a href="#" class="btn btn-primary">Chat</a>
 
     <div class="row my-5">
@@ -37,6 +38,38 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function toggleEdit(id) {
+            var x = document.getElementById("edit" + id);
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        }
+
+        function updateWorkout(trainingPas, muscleGroup, workoutName, workoutId) {
+            $.ajax({
+            type: 'POST',
+            url: $("form").attr("action"),
+            data: {
+                trainingPas: trainingPas,
+                muscleGroup: muscleGroup,
+                workoutName: workoutName,
+                formData: $("#form" + workoutId).serialize()
+            }, 
+            success: function(response) { 
+                $("#name" + workoutId).text(response.newWorkoutName);
+                $("#reps" + workoutId).text(response.newWorkoutReps + " gentagelser");
+                $("#saet" + workoutId).text(response.newWorkoutSaet + " sæt af");
+                $("#edit" + workoutId).hide();
+
+
+            },
+            });
+        }
+    </script>
     
     <div class="row my-5">
         <div class="col-12">
@@ -54,7 +87,7 @@
                 <div class="card-body">
                     <div class="row">
                         <% user.trainingStats.trainingPases.forEach((trainingPas) => { %>
-                            <div class="col-4">
+                            <div class="col-6">
                                 <div class="card m-1 my-4">
                                     <div class="card-header text-white bg-dark">
                                         <h5> Pas <%= trainingPas.pasNumber %> </h5>
@@ -64,10 +97,27 @@
                                         <h5 class="mt-4 text-capitalize"> <%= muscleGroup.name %> </h5>
                                         <div class="list-group list-unstyled" style="position: relative;">
                                             <% muscleGroup.assignedWorkouts.forEach((workout) => { %>
-                                                <p href="/workout/<%= workout.name %>" target="_blank" class=" mt-1"> 
-                                                    <span class="float-left text-capitalize"> <%= workout.name %> </span> 
-                                                    <span class="float-right"> <%= workout.sæt %> sæt af <%= workout.reps %> gentagelser </span>
-                                                </p>
+                                                <div id="noEdit<%= workout._id %>" class=" mt-1"> 
+                                                    <span> <i class="fa fa-trash text-danger" aria-hidden="true"></i> </span>
+                                                    <span onclick="toggleEdit('<%= workout._id %>')"> <i class="fa fa-pencil text-info" aria-hidden="true"></i> </span>
+                                                    <span id="name<%= workout._id %>"> <%= workout.name %> </span> 
+                                                    <span id="reps<%= workout._id %>" class="float-right"> <%= workout.reps %> gentagelser </span>
+                                                    <span id="saet<%= workout._id %>" class="float-right mr-1">  <%= workout.saet %> sæt af </span>
+                                                </div>
+                                                <div id="edit<%= workout._id %>" style="display: none;"  class="mt-1"> 
+                                                    <form id="form<%= workout._id %>" class="form-inline" action="<%=user._id%>/update/workout/<%=workout._id%>" type="POST">
+                                                        <div class="input-group">
+                                                            <input type="text" name="name" class="form-control"  placeholder="Navn">
+                                                            <input type="text" name="saet" class="form-control"  placeholder="Sæt">
+                                                            <input type="text" name="reps" class="form-control"  placeholder="Gentagelser">                                                          
+                                                            <button 
+                                                                type="button" 
+                                                                onclick="updateWorkout('<%=trainingPas.pasNumber%>' , '<%= muscleGroup.name %>' , '<%= workout.name %>', '<%= workout._id %>')" 
+                                                                class="btn btn-primary btn-sm">Gem
+                                                        </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
                                             <% }) %>
                                         </div>
                                     <% }) %>

@@ -295,6 +295,49 @@ app.get('/admin/user/:userId', middleware.isLoggedIn, (req,res) => {
     }
 });
 
+// Update Workout
+app.post('/admin/user/:userId/update/workout/:workoutId', middleware.isLoggedIn, async (req, res) => {
+    const userId = req.params.userId;
+
+    const trainingPas = req.body.trainingPas;
+    const muscleGroup = req.body.muscleGroup;
+    const workoutName = req.body.workoutName;
+    const workoutId = req.body.workoutId;
+
+    formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
+    
+    
+    User.findById(userId, function (err, user) {
+        if (err) {
+            throw(err);
+        } 
+
+
+        const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === trainingPas);
+        const muscleGroupIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups.findIndex(i => i.name === muscleGroup);
+        const workoutIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts.findIndex(i => i.name === workoutName);
+
+
+        user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].name = formData.name;        
+        user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].reps = formData.reps;        
+        user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].saet = formData.saet;        
+        
+
+        // Update new workout data
+        user.save(function (err, updatedUser) {
+            if (err){
+                throw(err); 
+            } 
+            res.json({
+                "newWorkoutName": formData.name,
+                "newWorkoutReps": formData.reps,
+                "newWorkoutSaet": formData.saet
+            });
+        });
+    });
+});
+
+
 // ===============================================================
 // AUTH ROUTES
 // ===============================================================

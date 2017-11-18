@@ -35,7 +35,7 @@ module.exports =
                         assignedWorkouts: [
                             {
                                 name: String,
-                                sæt: String,
+                                saet: String,
                                 reps: String,
                                 startWorkLoad: String,
                                 currentWorkLoad: String,
