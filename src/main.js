@@ -288,7 +288,9 @@ app.get('/admin',  middleware.isLoggedIn, (req, res) => {
 app.get('/admin/user/:userId', middleware.isLoggedIn, (req,res) => {
     if(req.user.isAdmin) {
         User.findById(req.params.userId, (err, user) => {
-            res.render('./admin/user', {user: user});
+            Workout.find({}, (err, workouts) => {
+                res.render('./admin/user', {user: user, workouts: workouts});
+            });
         });
     } else {
         res.redirect('home');

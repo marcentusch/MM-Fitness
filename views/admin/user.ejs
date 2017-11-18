@@ -1,5 +1,6 @@
 <% include partials/header %>
 
+
 <div class="container">
     <div class="row">
         <div class="col-8">
@@ -16,6 +17,7 @@
 
     <a href="#" class="btn btn-primary">Chat</a>
 
+    <!-- Vægt Card -->
     <div class="row my-5">
         <div class="col-12">
             <div class="card">
@@ -80,7 +82,7 @@
                             <h4>Træningsprogram</h4>
                         </div>
                         <div class="col-3">
-                            <a href="/" class="btn btn-primary float-right">Redigér</a>
+                            <button class="btn btn-primary float-right" onclick="appendPas()">Nyt pas</button>
                         </div>
                     </div>
                 </div>
@@ -90,7 +92,16 @@
                             <div class="col-6">
                                 <div class="card m-1 my-4">
                                     <div class="card-header text-white bg-dark">
-                                        <h5> Pas <%= trainingPas.pasNumber %> </h5>
+                                        <div class="row">
+                                            <div class="col-8">
+                                                <h5> Pas <%= trainingPas.pasNumber %> </h5>
+                                            </div>
+                                            <div class="col-4">
+                                                <button  class="btn btn-sm btn-success float-right">
+                                                    <i class="fa fa-lg fa-pencil-square-o" aria-hidden="true"></i>
+                                                </button>                                                    
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="card-body pt-0 bg-light">
                                     <% trainingPas.muscleGroups.forEach((muscleGroup) => { %>
@@ -120,6 +131,7 @@
                                                 </div>
                                             <% }) %>
                                         </div>
+                                        <hr>
                                     <% }) %>
                                     </div>        
                                 </div>
@@ -140,7 +152,7 @@
                             <h4>Kostplan</h4>
                         </div>
                         <div class="col-3">
-                            <a href="/" class="btn btn-primary float-right">Redigér</a>
+                            <a   href="/" class="btn btn-primary float-right">Nyt pas</a>
                         </div>
                     </div>
                 </div>
