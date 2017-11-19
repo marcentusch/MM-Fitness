@@ -71,6 +71,22 @@
             $("#form" + workoutId).find("input").val("");
         }
 
+        function deleteWorkout(trainingPas, muscleGroup, workoutName, workoutId) {
+            $.ajax({
+            type: 'POST',
+            url: '<%=user._id%>/delete/workout',
+            data: {
+                trainingPas: trainingPas,
+                muscleGroup: muscleGroup,
+                workoutName: workoutName,
+            }, 
+            success: function(response) { 
+                $("#noEdit" + workoutId).remove();
+                $("#edit" + workoutId).remove();
+                },
+            });
+        }
+
         
     </script>
     
@@ -110,10 +126,12 @@
                                         <div class="list-group list-unstyled" style="position: relative;">
                                             <% muscleGroup.assignedWorkouts.forEach((workout) => { %>
                                                 <div id="noEdit<%= workout._id %>" class=" mt-1"> 
-                                                <span class="editButtons<%= trainingPas.pasNumber %>" style="display: none;"> 
-                                                    <span> <i class="fa fa-trash text-danger" aria-hidden="true"></i> </span>
-                                                    <span onclick="toggleEdit('<%= workout._id %>')"> <i class="fa fa-pencil text-info" aria-hidden="true"></i> </span>
-                                                </span>
+                                                    <span class="editButtons<%= trainingPas.pasNumber %>" style="display: none;"> 
+                                                        <span onclick="deleteWorkout('<%=trainingPas.pasNumber%>' , '<%= muscleGroup.name %>' , '<%= workout.name %>', '<%= workout._id %>')"> 
+                                                            <i class="fa fa-trash text-danger" aria-hidden="true"></i> 
+                                                        </span>
+                                                        <span onclick="toggleEdit('<%= workout._id %>')"> <i class="fa fa-pencil text-info" aria-hidden="true"></i> </span>
+                                                    </span>
                                                     <span id="name<%= workout._id %>"> <%= workout.name %> </span> 
                                                     <span id="reps<%= workout._id %>" class="float-right"> <%= workout.reps %> gentagelser </span>
                                                     <span id="saet<%= workout._id %>" class="float-right mr-1">  <%= workout.saet %> sæt af </span>

@@ -356,6 +356,35 @@ app.post('/admin/user/:userId/update/workout/:workoutId', middleware.isLoggedIn,
     });
 });
 
+app.post('/admin/user/:userId/delete/workout', middleware.isLoggedIn, async (req, res) => {
+    const userId = req.params.userId;
+
+    const trainingPas = req.body.trainingPas;
+    const muscleGroup = req.body.muscleGroup;
+    const workoutName = req.body.workoutName;
+    
+    User.findById(userId, function (err, user) {
+        if (err) {
+            throw(err);
+        } 
+        
+        const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === trainingPas);
+        const muscleGroupIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups.findIndex(i => i.name === muscleGroup);
+        const workoutIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts.findIndex(i => i.name === workoutName);
+
+
+        user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts.splice(workoutIndex, 1);
+
+            // Update new workout data
+        user.save(function (err, updatedUser) {
+            if (err){
+                throw(err); 
+            } 
+            res.json({"msg": "stuff was deleted"});
+        });
+    });
+});
+
 
 // ===============================================================
 // AUTH ROUTES
