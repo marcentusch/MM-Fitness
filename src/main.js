@@ -308,21 +308,42 @@ app.post('/admin/user/:userId/update/workout/:workoutId', middleware.isLoggedIn,
 
     formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
     
+    // Data to be returned to ajax call 
+    returnData = {
+        "newWorkoutName": formData.name,
+        "newWorkoutReps": formData.reps,
+        "newWorkoutSaet": formData.saet
+    };
     
     User.findById(userId, function (err, user) {
         if (err) {
             throw(err);
         } 
 
-
         const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === trainingPas);
         const muscleGroupIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups.findIndex(i => i.name === muscleGroup);
         const workoutIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts.findIndex(i => i.name === workoutName);
+        
+        // Makes sure the old data is returned if nothing was entered
+        if(formData.name) {
+            user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].name = formData.name;        
+        } else {
+            returnData.newWorkoutName =  user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].name;
+        }
+        
+        if(formData.reps) {
+            user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].reps = formData.reps;
+        } else {
+            returnData.newWorkoutReps = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].reps;
+        }
 
+        if(formData.saet) {
+            user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].saet = formData.saet;        
+        } else {
+            returnData.newWorkoutSaet = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].saet;
+        }
+        
 
-        user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].name = formData.name;        
-        user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].reps = formData.reps;        
-        user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].saet = formData.saet;        
         
 
         // Update new workout data
@@ -330,11 +351,7 @@ app.post('/admin/user/:userId/update/workout/:workoutId', middleware.isLoggedIn,
             if (err){
                 throw(err); 
             } 
-            res.json({
-                "newWorkoutName": formData.name,
-                "newWorkoutReps": formData.reps,
-                "newWorkoutSaet": formData.saet
-            });
+            res.json(returnData);
         });
     });
 });
