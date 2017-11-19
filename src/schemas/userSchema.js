@@ -30,7 +30,6 @@ module.exports =
                 pasNumber: String,
                 muscleGroups: [
                     {
-                        _id: false,
                         name: String,
                         assignedWorkouts: [
                             {

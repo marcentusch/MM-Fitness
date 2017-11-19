@@ -4,10 +4,18 @@
 <div class="container">
     <div class="row">
         <div class="col-8">
-            <p>Navn: <%= user.firstName + " " + user.lastName %></p>
-            <p>Adresse: <%= user.street + " " + user.houseNumber %></p>
-            <p><%= user.zipcode + " " + user.town %></p>
-            <p>Telefon: <%= user.phone %></p>
+            <div class="row">
+                <div class="col-2">
+                    <p>Navn</p>
+                    <p>Adresse</p>
+                    <p>telefon</p>                    
+                </div>
+                <div class="col-5">
+                    <p> <%= user.firstName + " " + user.lastName %></p>
+                    <p><%= user.street + " " + user.houseNumber %> , <%= user.zipcode + " " + user.town %></p>
+                    <p> <%= user.phone %></p>                    
+                </div>
+            </div>
         </div>
         <div class="col-4">
             <img src="<%= user.avatarURL %>" width="200">
@@ -17,7 +25,7 @@
 
     <a href="#" class="btn btn-primary">Chat</a>
 
-    <!-- Vægt Card -->
+    <!-- Vægt -->
     <div class="row my-5">
         <div class="col-12">
             <div class="card">
@@ -32,15 +40,17 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <p> Start vægt: <%= user.weightStats.startWeight %></p>
-                    <p> Nuværende vægt: <%= user.weightStats.currentWeight %></p>
                     <p> Mål vægt: <%= user.weightStats.targetWeight %></p>
+                    <p> Nuværende vægt: <%= user.weightStats.currentWeight %></p>
                     <p> Vægt fremskridt: <%= user.weightStats.weightProgress.toFixed(1) %></p>
+                    <p> Start vægt: <%= user.weightStats.startWeight %></p>
                 </div>
             </div>
         </div>
     </div>
 
+
+    <!-- Træning -->
     <script>
         function toggleEdit(id) {
             $("#edit" + id).toggle();
@@ -84,6 +94,21 @@
                 $("#noEdit" + workoutId).remove();
                 $("#edit" + workoutId).remove();
                 },
+            });
+        }
+
+        function createWorkout(trainingPas, muscleGroup, muscleGroupId) {
+            $.ajax({
+            type: 'POST',
+            url: '<%=user._id%>/create/workout',
+            data: {
+                trainingPas: trainingPas,
+                muscleGroupId: muscleGroup,
+                formData: $("#createExc" + muscleGroupId).serialize()
+            }, 
+            success: function(response) { 
+                location.reload();
+                }
             });
         }
 
@@ -146,11 +171,28 @@
                                                                 type="button" 
                                                                 onclick="updateWorkout('<%=trainingPas.pasNumber%>' , '<%= muscleGroup.name %>' , '<%= workout.name %>', '<%= workout._id %>')" 
                                                                 class="btn btn-primary btn-sm">Gem
-                                                        </button>
+                                                            </button>
                                                         </div>
                                                     </form>
                                                 </div>
                                             <% }) %>
+                                            <div style="display: none;" class="mt-1 editButtons<%= trainingPas.pasNumber %>"> 
+                                                <i class="my-2 fa fa-plus-circle fa-lg text-success" aria-hidden="true"></i> 
+                                                    <strong> Ny øvelse </strong>
+                                                    
+                                                <form id="createExc<%= muscleGroup._id%>" class="form-inline" action="<%=user._id%>/create/workout" type="POST">
+                                                    <div class="input-group">
+                                                        <input type="text" name="name" class="form-control"  placeholder="Navn">
+                                                        <input type="number" name="saet" class="form-control"  placeholder="Sæt">
+                                                        <input type="number" name="reps" class="form-control"  placeholder="Gentagelser">                                                          
+                                                        <button 
+                                                            type="button" 
+                                                            onclick="createWorkout('<%=trainingPas.pasNumber%>' , '<%= muscleGroup.name %>', '<%= muscleGroup._id %>')" 
+                                                            class="btn btn-primary btn-sm">Opret
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
                                         </div>
                                         <hr>
                                     <% }) %>
