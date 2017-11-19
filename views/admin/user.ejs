@@ -43,13 +43,11 @@
 
     <script>
         function toggleEdit(id) {
-            var x = document.getElementById("edit" + id);
-            if (x.style.display === "none") {
-                x.style.display = "block";
-            } else {
-                x.style.display = "none";
-            }
+            $("#edit" + id).toggle();
         }
+        function toggleEditButtons(pasNumber) {
+            $(".editButtons" + pasNumber).toggle();
+        };
 
         function updateWorkout(trainingPas, muscleGroup, workoutName, workoutId) {
             $.ajax({
@@ -97,7 +95,7 @@
                                                 <h5> Pas <%= trainingPas.pasNumber %> </h5>
                                             </div>
                                             <div class="col-4">
-                                                <button  class="btn btn-sm btn-success float-right">
+                                                <button onclick="toggleEditButtons('<%= trainingPas.pasNumber %>')"  class="btn btn-sm btn-success float-right">
                                                     <i class="fa fa-lg fa-pencil-square-o" aria-hidden="true"></i>
                                                 </button>                                                    
                                             </div>
@@ -109,8 +107,10 @@
                                         <div class="list-group list-unstyled" style="position: relative;">
                                             <% muscleGroup.assignedWorkouts.forEach((workout) => { %>
                                                 <div id="noEdit<%= workout._id %>" class=" mt-1"> 
+                                                <span class="editButtons<%= trainingPas.pasNumber %>" style="display: none;"> 
                                                     <span> <i class="fa fa-trash text-danger" aria-hidden="true"></i> </span>
                                                     <span onclick="toggleEdit('<%= workout._id %>')"> <i class="fa fa-pencil text-info" aria-hidden="true"></i> </span>
+                                                </span>
                                                     <span id="name<%= workout._id %>"> <%= workout.name %> </span> 
                                                     <span id="reps<%= workout._id %>" class="float-right"> <%= workout.reps %> gentagelser </span>
                                                     <span id="saet<%= workout._id %>" class="float-right mr-1">  <%= workout.saet %> sæt af </span>
@@ -119,8 +119,8 @@
                                                     <form id="form<%= workout._id %>" class="form-inline" action="<%=user._id%>/update/workout/<%=workout._id%>" type="POST">
                                                         <div class="input-group">
                                                             <input type="text" name="name" class="form-control"  placeholder="Navn">
-                                                            <input type="text" name="saet" class="form-control"  placeholder="Sæt">
-                                                            <input type="text" name="reps" class="form-control"  placeholder="Gentagelser">                                                          
+                                                            <input type="number" name="saet" class="form-control"  placeholder="Sæt">
+                                                            <input type="number" name="reps" class="form-control"  placeholder="Gentagelser">                                                          
                                                             <button 
                                                                 type="button" 
                                                                 onclick="updateWorkout('<%=trainingPas.pasNumber%>' , '<%= muscleGroup.name %>' , '<%= workout.name %>', '<%= workout._id %>')" 
