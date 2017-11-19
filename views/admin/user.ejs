@@ -1,5 +1,10 @@
 <% include partials/header %>
 
+<style>
+    .vertical-line {
+        border-right: 1px solid rgba(200,200,200, .7);
+    }
+</style>
 
 <div class="container">
     <div class="row">
@@ -23,7 +28,7 @@
     </div>
 
 
-    <a href="#" class="btn btn-primary">Chat</a>
+    <a href="#" class="btn btn-outline-success">Chat med bruger </a>
 
     <!-- Vægt -->
     <div class="row my-5">
@@ -40,10 +45,16 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <p> Mål vægt: <%= user.weightStats.targetWeight %></p>
-                    <p> Nuværende vægt: <%= user.weightStats.currentWeight %></p>
-                    <p> Vægt fremskridt: <%= user.weightStats.weightProgress.toFixed(1) %></p>
-                    <p> Start vægt: <%= user.weightStats.startWeight %></p>
+                    <div class="row">
+                        <div class="col-3 vertical-line">
+                            <p class="my-1"> Nuværende vægt <span class="float-right"> <%= user.weightStats.currentWeight %> </span> </p>
+                            <p class="my-1"> Start vægt <span class="float-right"> <%= user.weightStats.startWeight %> </span> </p>                                              
+                        </div>
+                        <div class="col-3">
+                            <p class="my-1"> Mål vægt <span class="float-right"> <%= user.weightStats.targetWeight %> </span> </p>        
+                            <p class="my-1"> Vægt progression <span class="float-right"> <%= user.weightStats.weightProgress.toFixed(1) %> </span> </p>
+                        </div>
+                    </div>               
                 </div>
             </div>
         </div>
