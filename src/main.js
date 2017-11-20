@@ -298,6 +298,7 @@ app.get('/admin/user/:userId', middleware.isLoggedIn, (req,res) => {
     }
 });
 
+// Update the users targetweight
 app.post('/admin/user/:userId/update/weight', middleware.isLoggedIn, (req, res) => {
     const userId = req.params.userId;
     const newGoal = req.body.newGoal;
@@ -316,6 +317,35 @@ app.post('/admin/user/:userId/update/weight', middleware.isLoggedIn, (req, res) 
     });
 });
 
+// Create new trainingPas
+app.post('/admin/user/:userId/create/trainingpas', middleware.isLoggedIn, async (req, res) => {
+    const userId = req.params.userId;
+   
+    const newPas = {
+        pasNumber: '',
+        muscleGroups: []
+    }
+
+    console.log("HEEEEEEEEEEEEEEEEEEEEJ");
+
+    User.findById(userId, function (err, user) {
+        if (err) {
+            throw(err);
+        } 
+        console.log(user.trainingStats);
+        newPas.pasNumber = user.trainingStats.trainingPases.length + 1;
+        user.trainingStats.trainingPases.push(newPas);
+
+        user.save(function (err, updatedUser) {
+            if (err){
+                throw(err); 
+            } 
+            res.json({"message": "created new pas"});
+        });
+    });
+});
+
+// Create a new musclegroup in the specific trainingPas
 app.post('/admin/user/:userId/create/musclegroup', middleware.isLoggedIn, async (req, res) => {
     const userId = req.params.userId;
     const pas = req.body.trainingPas;
@@ -420,6 +450,31 @@ app.post('/admin/user/:userId/delete/workout', middleware.isLoggedIn, async (req
         user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts.splice(workoutIndex, 1);
 
             // Update new workout data
+        user.save(function (err, updatedUser) {
+            if (err){
+                throw(err); 
+            } 
+            res.json({"msg": "stuff was deleted"});
+        });
+    });
+});
+
+app.post('/admin/user/:userId/delete/pas', middleware.isLoggedIn, async (req, res) => {
+    const userId = req.params.userId;
+
+    console.log("Found the route!", req.body);
+    
+
+    User.findById(userId, function (err, user) {
+        if (err) {
+            throw(err);
+        } 
+        
+        const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === req.body.trainingPas);
+        user.trainingStats.trainingPases.splice(trainingPasIndex, 1);
+
+
+        // Update new workout data
         user.save(function (err, updatedUser) {
             if (err){
                 throw(err); 

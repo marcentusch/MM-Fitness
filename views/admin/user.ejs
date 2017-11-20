@@ -83,7 +83,7 @@
                             <h4>Træningsprogram</h4>
                         </div>
                         <div class="col-3">
-                            <button class="btn btn-outline-primary float-right pointer" onclick="appendPas()">Nyt pas</button>
+                            <button class="btn btn-outline-primary float-right pointer" onclick="createPas()">Nyt pas</button>
                         </div>
                     </div>
                 </div>
@@ -95,18 +95,28 @@
                                     <div class="card-header text-white bg-dark">
                                         <div class="row">
                                             <div class="col-8">
-                                                <h5> Pas <%= trainingPas.pasNumber %> </h5>
+                                                <h5>
+                                                    Pas <%= trainingPas.pasNumber %> 
+                                                </h5>
                                             </div>
                                             <div class="col-4">
                                                 <button onclick="toggleEditButtons('<%= trainingPas.pasNumber %>')"  class="btn btn-sm btn-success float-right pointer">
                                                     <i class="fa fa-lg fa-pencil-square-o" aria-hidden="true"></i>
                                                 </button>                                                    
+                                                <button style="display: none;" onclick="deletePas('<%= trainingPas.pasNumber %>')"  class="editButtons<%= trainingPas.pasNumber %> btn btn-sm btn-danger float-right pointer mr-2">
+                                                    <i class="fa fa-lg fa-times" aria-hidden="true"></i>
+                                                </button> 
                                             </div>
                                         </div>
                                     </div>
                                     <div class="card-body pt-0 bg-light">
                                     <% trainingPas.muscleGroups.forEach((muscleGroup) => { %>
-                                        <h5 class="mt-4 text-capitalize"> <%= muscleGroup.name %> </h5>
+                                        <h5 class="mt-4 text-capitalize">
+                                            <span class="editButtons<%= trainingPas.pasNumber %>" style="display: none;">
+                                                <i class="fa fa-trash text-danger pointer" aria-hidden="true"></i>
+                                            </span> 
+                                            <%= muscleGroup.name %> 
+                                        </h5>
                                         <div class="list-group list-unstyled" style="position: relative;">
                                             <% muscleGroup.assignedWorkouts.forEach((userWorkout) => { %>
                                                 <!-- Div for the workout details -->
@@ -115,7 +125,9 @@
                                                         <span onclick="deleteWorkout('<%=trainingPas.pasNumber%>' , '<%= muscleGroup.name %>' , '<%= userWorkout.name %>', '<%= userWorkout._id %>')"> 
                                                             <i class="fa fa-trash text-danger pointer" aria-hidden="true"></i> 
                                                         </span>
-                                                        <span onclick="toggleEdit('<%= userWorkout._id %>')"> <i class="fa fa-pencil text-info pointer" aria-hidden="true"></i> </span>
+                                                        <span onclick="toggleEdit('<%= userWorkout._id %>')">
+                                                            <i class="fa fa-pencil text-warning pointer" aria-hidden="true"></i>
+                                                        </span>
                                                     </span>
                                                     <span class="text-capitalize" id="name<%= userWorkout._id %>"> <%= userWorkout.name %> </span> 
                                                     <span id="reps<%= userWorkout._id %>" class="float-right"> <%= userWorkout.reps %> gentagelser </span>
@@ -209,5 +221,98 @@
     </div>
 
 </div>
+
+<script>
+    function updateWorkout(trainingPas, muscleGroup, workoutName, workoutId) {
+    $.ajax({
+    type: 'POST',
+    url: $("form").attr("action"),
+    data: {
+        trainingPas: trainingPas,
+        muscleGroup: muscleGroup,
+        workoutName: workoutName,
+        formData: $("#form" + workoutId).serialize()
+    }, 
+
+    success: function(response) { 
+        $("#name" + workoutId).text(response.newWorkoutName);
+        $("#reps" + workoutId).text(response.newWorkoutReps + " gentagelser");
+        $("#saet" + workoutId).text(response.newWorkoutSaet + " sæt af");
+        $("#edit" + workoutId).hide();
+        },
+    });
+    $("#form" + workoutId).find("input").val("");
+}
+
+function deleteWorkout(trainingPas, muscleGroup, workoutName, workoutId) {
+    $.ajax({
+    type: 'POST',
+    url: '<%=user._id%>/delete/workout',
+    data: {
+        trainingPas: trainingPas,
+        muscleGroup: muscleGroup,
+        workoutName: workoutName,
+    }, 
+    success: function(response) { 
+        $("#noEdit" + workoutId).remove();
+        $("#edit" + workoutId).remove();
+        },
+    });
+}
+
+function deletePas(trainingPas) {
+    $.ajax({
+    type: 'POST',
+    url: '<%=user._id%>/delete/pas',
+    data: {
+        trainingPas: trainingPas,
+    }, 
+    success: function(response) { 
+        location.reload();
+    },
+
+    });
+}
+
+function createWorkout(trainingPas, muscleGroup, muscleGroupId) {
+    $.ajax({
+    type: 'POST',
+    url: '<%= user._id %>/create/workout',
+    data: {
+        trainingPas: trainingPas,
+        muscleGroupId: muscleGroup,
+        formData: $("#createExc" + muscleGroupId).serialize()
+    }, 
+    success: function(response) { 
+        location.reload();
+        }
+    });
+}
+
+function createPas(){
+    $.ajax({
+    type: 'POST',
+    url: '<%= user._id %>/create/trainingpas',
+    data: {}, 
+    success: function(response) { 
+        location.reload();
+        }
+    });
+}
+
+function createMuscleGroup(trainingPas) {
+    $.ajax({
+    type: 'POST',
+    url: $("#muscleGroup" + trainingPas).attr("action"),
+    data: {
+        trainingPas: trainingPas,
+        formData: $("#muscleGroup" + trainingPas).serialize()
+    }, 
+    success: function(response) { 
+        location.reload();
+        }
+    });
+}
+</script>
 
 <% include partials/footer %>
