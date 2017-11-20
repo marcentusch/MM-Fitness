@@ -461,8 +461,6 @@ app.post('/admin/user/:userId/delete/workout', middleware.isLoggedIn, async (req
 
 app.post('/admin/user/:userId/delete/pas', middleware.isLoggedIn, async (req, res) => {
     const userId = req.params.userId;
-
-    console.log("Found the route!", req.body);
     
 
     User.findById(userId, function (err, user) {
@@ -472,6 +470,11 @@ app.post('/admin/user/:userId/delete/pas', middleware.isLoggedIn, async (req, re
         
         const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === req.body.trainingPas);
         user.trainingStats.trainingPases.splice(trainingPasIndex, 1);
+
+        // Makes sure that the passes above the deleted one gets updated their pasnumber
+        for(let i = trainingPasIndex; i < user.trainingStats.trainingPases.length; i ++) {
+            user.trainingStats.trainingPases[i].pasNumber = JSON.stringify(i +1);
+        }
 
 
         // Update new workout data
