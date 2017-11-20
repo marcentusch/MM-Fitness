@@ -1,7 +1,8 @@
 let workouts = require("../data/workouts.json");
 
 module.exports = {
-    createNewWorkout
+    createNewWorkout,
+    muscleGroups: ["ben", "ryg", "biceps", "mave", "skulder", "bryst", "triceps"]
 }
 
 /* function getWorkout(name){

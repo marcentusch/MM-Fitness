@@ -56,6 +56,7 @@ passport.deserializeUser(User.deserializeUser());
 // Creates test data. needs username = 1
 userFactory.testData(User, 10);
 
+
 // Run this to get execise data in DB
 /* Workout.remove({}).exec();
 const exercises = ["squats", "bænkpres", "dødløft", "biceps curls", "skulder pres", "mavebøjninger"];
@@ -289,12 +290,54 @@ app.get('/admin/user/:userId', middleware.isLoggedIn, (req,res) => {
     if(req.user.isAdmin) {
         User.findById(req.params.userId, (err, user) => {
             Workout.find({}, (err, workouts) => {
-                res.render('./admin/user', {user: user, workouts: workouts});
+                res.render('./admin/user', {user: user, workouts: workouts, muscleGroups: workoutFactory.muscleGroups});
             });
         });
     } else {
         res.redirect('home');
     }
+});
+
+app.post('/admin/user/:userId/update/weight', middleware.isLoggedIn, (req, res) => {
+    const userId = req.params.userId;
+    const newGoal = req.body.newGoal;
+    
+    User.findById(userId, function (err, user) {
+        if (err) {
+            throw(err);
+        } 
+        user.weightStats.targetWeight = newGoal;
+        user.save(function (err, updatedUser) {
+            if (err){
+                throw(err); 
+            } 
+            res.redirect('/admin/user/' + userId);
+        });
+    });
+});
+
+app.post('/admin/user/:userId/create/musclegroup', middleware.isLoggedIn, async (req, res) => {
+    const userId = req.params.userId;
+    const pas = req.body.trainingPas;
+    const formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
+    const muscleGroup = formData.muscleGroup;
+    const newMuscleGroup = {
+        name: muscleGroup,
+        assignedWorkouts: []
+    }
+
+    User.findById(userId, function (err, user) {
+        if (err) {
+            throw(err);
+        } 
+        user.trainingStats.trainingPases[pas -1].muscleGroups.push(newMuscleGroup);
+        user.save(function (err, updatedUser) {
+            if (err){
+                throw(err); 
+            } 
+            res.json({"message": "created new musclegroup"});
+        });
+    });
 });
 
 // Update Workout
@@ -306,6 +349,7 @@ app.post('/admin/user/:userId/update/workout/:workoutId', middleware.isLoggedIn,
     const workoutName = req.body.workoutName;
     const workoutId = req.body.workoutId;
 
+    // Format query string to JSON-object
     formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
     
     // Data to be returned to ajax call 
