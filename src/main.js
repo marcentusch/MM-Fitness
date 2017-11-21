@@ -409,7 +409,6 @@ app.post('/admin/user/:userId/update/workout/:workoutId', middleware.isLoggedIn,
 
     // Format query string to JSON-object
     formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
-    
     // Data to be returned to ajax call 
     returnData = {
         "newWorkoutName": formData.name,
@@ -456,11 +455,10 @@ app.post('/admin/user/:userId/update/workout/:workoutId', middleware.isLoggedIn,
     });
 });
 
-
+// Delete single pas
 app.post('/admin/user/:userId/delete/pas', middleware.isLoggedIn, async (req, res) => {
     const userId = req.params.userId;
     
-
     User.findById(userId, function (err, user) {
         if (err) {
             throw(err);
@@ -474,7 +472,6 @@ app.post('/admin/user/:userId/delete/pas', middleware.isLoggedIn, async (req, re
             user.trainingStats.trainingPases[i].pasNumber = JSON.stringify(i +1);
         }
 
-
         // Update new workout data
         user.save(function (err, updatedUser) {
             if (err){
@@ -485,12 +482,11 @@ app.post('/admin/user/:userId/delete/pas', middleware.isLoggedIn, async (req, re
     });
 });
 
+// Delete musclegroup in a pas
 app.post('/admin/user/:userId/delete/musclegroup', middleware.isLoggedIn, async (req, res) => {
     const userId = req.params.userId;
-
     const muscleGroup = req.body.muscleGroup;
     const trainingPas = req.body.trainingPas;
-    
 
     User.findById(userId, function (err, user) {
         if (err) {
@@ -507,11 +503,18 @@ app.post('/admin/user/:userId/delete/musclegroup', middleware.isLoggedIn, async 
             if (err){
                 throw(err); 
             } 
-            res.json({"msg": "stuff was deleted"});
+            res.json(
+                {
+                    muscleGroup: muscleGroup,
+                    trainingPas: trainingPas,
+                    msg: muscleGroup + " was deleted successfully"
+                }
+            );
         });
     });
 });
 
+// Delete a single workout
 app.post('/admin/user/:userId/delete/workout', middleware.isLoggedIn, async (req, res) => {
     const userId = req.params.userId;
 
@@ -540,8 +543,6 @@ app.post('/admin/user/:userId/delete/workout', middleware.isLoggedIn, async (req
         });
     });
 });
-
-
 
 // ===============================================================
 // AUTH ROUTES
