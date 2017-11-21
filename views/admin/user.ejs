@@ -112,7 +112,7 @@
                                     <div class="card-body pt-0 bg-light">
                                     <% trainingPas.muscleGroups.forEach((muscleGroup) => { %>
                                         <h5 class="mt-4 text-capitalize">
-                                            <span class="editButtons<%= trainingPas.pasNumber %>" style="display: none;">
+                                            <span onclick="deleteMuscleGroup('<%=trainingPas.pasNumber%>' , '<%= muscleGroup.name %>')" class="editButtons<%= trainingPas.pasNumber %>" style="display: none;">
                                                 <i class="fa fa-trash text-danger pointer" aria-hidden="true"></i>
                                             </span> 
                                             <%= muscleGroup.name %> 
@@ -223,6 +223,7 @@
 </div>
 
 <script>
+/* UPDATE */
     function updateWorkout(trainingPas, muscleGroup, workoutName, workoutId) {
     $.ajax({
     type: 'POST',
@@ -244,6 +245,7 @@
     $("#form" + workoutId).find("input").val("");
 }
 
+/* DELETE */
 function deleteWorkout(trainingPas, muscleGroup, workoutName, workoutId) {
     $.ajax({
     type: 'POST',
@@ -270,10 +272,24 @@ function deletePas(trainingPas) {
     success: function(response) { 
         location.reload();
     },
-
     });
 }
 
+function deleteMuscleGroup(trainingPas, muscleGroup) {
+    $.ajax({
+    type: 'POST',
+    url: '<%=user._id%>/delete/musclegroup',
+    data: {
+        trainingPas: trainingPas,
+        muscleGroup: muscleGroup
+    }, 
+    success: function(response) { 
+        location.reload();
+    },
+    });
+}
+
+/* CREATE */
 function createWorkout(trainingPas, muscleGroup, muscleGroupId) {
     $.ajax({
     type: 'POST',
@@ -282,7 +298,7 @@ function createWorkout(trainingPas, muscleGroup, muscleGroupId) {
         trainingPas: trainingPas,
         muscleGroupId: muscleGroup,
         formData: $("#createExc" + muscleGroupId).serialize()
-    }, 
+    },
     success: function(response) { 
         location.reload();
         }
@@ -313,6 +329,8 @@ function createMuscleGroup(trainingPas) {
         }
     });
 }
+
+
 </script>
 
 <% include partials/footer %>

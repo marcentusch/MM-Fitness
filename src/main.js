@@ -326,13 +326,11 @@ app.post('/admin/user/:userId/create/trainingpas', middleware.isLoggedIn, async 
         muscleGroups: []
     }
 
-    console.log("HEEEEEEEEEEEEEEEEEEEEJ");
 
     User.findById(userId, function (err, user) {
         if (err) {
             throw(err);
         } 
-        console.log(user.trainingStats);
         newPas.pasNumber = user.trainingStats.trainingPases.length + 1;
         user.trainingStats.trainingPases.push(newPas);
 
@@ -367,6 +365,36 @@ app.post('/admin/user/:userId/create/musclegroup', middleware.isLoggedIn, async 
             } 
             res.json({"message": "created new musclegroup"});
         });
+    });
+});
+
+app.post('/admin/user/:userId/create/workout', middleware.isLoggedIn, async (req, res) => {
+    const userId = req.params.userId;
+
+    const trainingPas = req.body.trainingPas;
+    const muscleGroup = req.body.muscleGroupId;
+    
+    let formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
+
+    
+    User.findById(userId, function (err, user) {
+        if (err) {
+            throw(err);
+        } 
+        
+        const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === trainingPas);
+        const muscleGroupIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups.findIndex(i => i.name === muscleGroup);
+
+
+        user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts.push(formData);
+
+        user.save(function (err, updatedUser) {
+            if (err){
+                throw(err); 
+            } 
+            res.json({"msg": "New workout was added"});
+        });
+
     });
 });
 
@@ -418,14 +446,68 @@ app.post('/admin/user/:userId/update/workout/:workoutId', middleware.isLoggedIn,
         }
         
 
-        
-
         // Update new workout data
         user.save(function (err, updatedUser) {
             if (err){
                 throw(err); 
             } 
             res.json(returnData);
+        });
+    });
+});
+
+
+app.post('/admin/user/:userId/delete/pas', middleware.isLoggedIn, async (req, res) => {
+    const userId = req.params.userId;
+    
+
+    User.findById(userId, function (err, user) {
+        if (err) {
+            throw(err);
+        } 
+        
+        const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === req.body.trainingPas);
+        user.trainingStats.trainingPases.splice(trainingPasIndex, 1);
+
+        // Makes sure that the passes above the deleted one gets updated their pasnumber
+        for(let i = trainingPasIndex; i < user.trainingStats.trainingPases.length; i ++) {
+            user.trainingStats.trainingPases[i].pasNumber = JSON.stringify(i +1);
+        }
+
+
+        // Update new workout data
+        user.save(function (err, updatedUser) {
+            if (err){
+                throw(err); 
+            } 
+            res.json({"msg": "stuff was deleted"});
+        });
+    });
+});
+
+app.post('/admin/user/:userId/delete/musclegroup', middleware.isLoggedIn, async (req, res) => {
+    const userId = req.params.userId;
+
+    const muscleGroup = req.body.muscleGroup;
+    const trainingPas = req.body.trainingPas;
+    
+
+    User.findById(userId, function (err, user) {
+        if (err) {
+            throw(err);
+        } 
+        
+        const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === req.body.trainingPas);
+        const muscleGroupIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups.findIndex(i => i.name === muscleGroup);
+
+        user.trainingStats.trainingPases[trainingPasIndex].muscleGroups.splice(muscleGroupIndex, 1);
+
+        // Update new workout data
+        user.save(function (err, updatedUser) {
+            if (err){
+                throw(err); 
+            } 
+            res.json({"msg": "stuff was deleted"});
         });
     });
 });
@@ -456,64 +538,6 @@ app.post('/admin/user/:userId/delete/workout', middleware.isLoggedIn, async (req
             } 
             res.json({"msg": "stuff was deleted"});
         });
-    });
-});
-
-app.post('/admin/user/:userId/delete/pas', middleware.isLoggedIn, async (req, res) => {
-    const userId = req.params.userId;
-    
-
-    User.findById(userId, function (err, user) {
-        if (err) {
-            throw(err);
-        } 
-        
-        const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === req.body.trainingPas);
-        user.trainingStats.trainingPases.splice(trainingPasIndex, 1);
-
-        // Makes sure that the passes above the deleted one gets updated their pasnumber
-        for(let i = trainingPasIndex; i < user.trainingStats.trainingPases.length; i ++) {
-            user.trainingStats.trainingPases[i].pasNumber = JSON.stringify(i +1);
-        }
-
-
-        // Update new workout data
-        user.save(function (err, updatedUser) {
-            if (err){
-                throw(err); 
-            } 
-            res.json({"msg": "stuff was deleted"});
-        });
-    });
-});
-
-app.post('/admin/user/:userId/create/workout', middleware.isLoggedIn, async (req, res) => {
-    const userId = req.params.userId;
-
-    const trainingPas = req.body.trainingPas;
-    const muscleGroup = req.body.muscleGroupId;
-    
-    let formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
-
-    
-    User.findById(userId, function (err, user) {
-        if (err) {
-            throw(err);
-        } 
-        
-        const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === trainingPas);
-        const muscleGroupIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups.findIndex(i => i.name === muscleGroup);
-
-
-        user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts.push(formData);
-
-        user.save(function (err, updatedUser) {
-            if (err){
-                throw(err); 
-            } 
-            res.json({"msg": "New workout was added"});
-        });
-
     });
 });
 
