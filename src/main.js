@@ -56,6 +56,7 @@ passport.deserializeUser(User.deserializeUser());
 // Creates test data. needs username = 1
 userFactory.testData(User, 10);
 
+
 // Run this to get execise data in DB
 /* Workout.remove({}).exec();
 const exercises = ["squats", "bænkpres", "dødløft", "biceps curls", "skulder pres", "mavebøjninger"];
@@ -163,9 +164,14 @@ app.get('/', (req, res) => {
     res.render('login'); 
 });
 
+// Home
 app.get('/home', middleware.isLoggedIn, (req, res) => {
     const user = req.user;
-    res.render('home', {user: user});
+    if(req.user.isAdmin){
+        res.redirect('/admin');
+    }else{
+        res.render('home', {user: user});
+    }
 });
 
 // Profile
@@ -264,32 +270,308 @@ app.get('/workout/:name', middleware.isLoggedIn, async (req, res) => {
 });
 
 
+// ===============================================================
+// Admin route
+// ===============================================================
+
+// front page
+app.get('/admin',  middleware.isLoggedIn, (req, res) => {
+    if(req.user.isAdmin) {
+        User.find({}, (err, users) => {
+            res.render('./admin/dashboard', {users: users});
+        });
+    } else {
+        res.redirect('home');
+    }
+});
+
+// user page
+app.get('/admin/user/:userId', middleware.isLoggedIn, (req,res) => {
+    if(req.user.isAdmin) {
+        User.findById(req.params.userId, (err, user) => {
+            Workout.find({}, (err, workouts) => {
+                res.render('./admin/user', {user: user, workouts: workouts, muscleGroups: workoutFactory.muscleGroups});
+            });
+        });
+    } else {
+        res.redirect('home');
+    }
+});
+
+// Update the users targetweight
+app.post('/admin/user/:userId/update/weight', middleware.isLoggedIn, (req, res) => {
+    const userId = req.params.userId;
+    const newGoal = req.body.newGoal;
+    
+    User.findById(userId, function (err, user) {
+        if (err) {
+            throw(err);
+        } 
+        user.weightStats.targetWeight = newGoal;
+        user.save(function (err, updatedUser) {
+            if (err){
+                throw(err); 
+            } 
+            res.redirect('/admin/user/' + userId);
+        });
+    });
+});
+
+// Create new trainingPas
+app.post('/admin/user/:userId/create/trainingpas', middleware.isLoggedIn, async (req, res) => {
+    const userId = req.params.userId;
+   
+    const newPas = {
+        pasNumber: '',
+        muscleGroups: []
+    }
+
+
+    User.findById(userId, function (err, user) {
+        if (err) {
+            throw(err);
+        } 
+        newPas.pasNumber = user.trainingStats.trainingPases.length + 1;
+        user.trainingStats.trainingPases.push(newPas);
+
+        user.save(function (err, updatedUser) {
+            if (err){
+                throw(err); 
+            } 
+            res.json({"message": "created new pas"});
+        });
+    });
+});
+
+// Create a new musclegroup in the specific trainingPas
+app.post('/admin/user/:userId/create/musclegroup', middleware.isLoggedIn, async (req, res) => {
+    const userId = req.params.userId;
+    const pas = req.body.trainingPas;
+    const formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
+    const muscleGroup = formData.muscleGroup;
+    const newMuscleGroup = {
+        name: muscleGroup,
+        assignedWorkouts: []
+    }
+
+    User.findById(userId, function (err, user) {
+        if (err) {
+            throw(err);
+        } 
+        user.trainingStats.trainingPases[pas -1].muscleGroups.push(newMuscleGroup);
+        user.save(function (err, updatedUser) {
+            if (err){
+                throw(err); 
+            } 
+            res.json({"message": "created new musclegroup"});
+        });
+    });
+});
+
+app.post('/admin/user/:userId/create/workout', middleware.isLoggedIn, async (req, res) => {
+    const userId = req.params.userId;
+
+    const trainingPas = req.body.trainingPas;
+    const muscleGroup = req.body.muscleGroupId;
+    
+    let formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
+
+    
+    User.findById(userId, function (err, user) {
+        if (err) {
+            throw(err);
+        } 
+        
+        const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === trainingPas);
+        const muscleGroupIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups.findIndex(i => i.name === muscleGroup);
+
+
+        user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts.push(formData);
+
+        user.save(function (err, updatedUser) {
+            if (err){
+                throw(err); 
+            } 
+            res.json({"msg": "New workout was added"});
+        });
+
+    });
+});
+
+// Update Workout
+app.post('/admin/user/:userId/update/workout/:workoutId', middleware.isLoggedIn, async (req, res) => {
+    const userId = req.params.userId;
+
+    const trainingPas = req.body.trainingPas;
+    const muscleGroup = req.body.muscleGroup;
+    const workoutName = req.body.workoutName;
+    const workoutId = req.body.workoutId;
+
+    // Format query string to JSON-object
+    formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
+    // Data to be returned to ajax call 
+    returnData = {
+        "newWorkoutName": formData.name,
+        "newWorkoutReps": formData.reps,
+        "newWorkoutSaet": formData.saet
+    };
+    
+    User.findById(userId, function (err, user) {
+        if (err) {
+            throw(err);
+        } 
+
+        const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === trainingPas);
+        const muscleGroupIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups.findIndex(i => i.name === muscleGroup);
+        const workoutIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts.findIndex(i => i.name === workoutName);
+        
+        // Makes sure the old data is returned if nothing was entered
+        if(formData.name) {
+            user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].name = formData.name;        
+        } else {
+            returnData.newWorkoutName =  user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].name;
+        }
+        
+        if(formData.reps) {
+            user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].reps = formData.reps;
+        } else {
+            returnData.newWorkoutReps = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].reps;
+        }
+
+        if(formData.saet) {
+            user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].saet = formData.saet;        
+        } else {
+            returnData.newWorkoutSaet = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].saet;
+        }
+        
+
+        // Update new workout data
+        user.save(function (err, updatedUser) {
+            if (err){
+                throw(err); 
+            } 
+            res.json(returnData);
+        });
+    });
+});
+
+// Delete single pas
+app.post('/admin/user/:userId/delete/pas', middleware.isLoggedIn, async (req, res) => {
+    const userId = req.params.userId;
+    
+    User.findById(userId, function (err, user) {
+        if (err) {
+            throw(err);
+        } 
+        
+        const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === req.body.trainingPas);
+        user.trainingStats.trainingPases.splice(trainingPasIndex, 1);
+
+        // Makes sure that the passes above the deleted one gets updated their pasnumber
+        for(let i = trainingPasIndex; i < user.trainingStats.trainingPases.length; i ++) {
+            user.trainingStats.trainingPases[i].pasNumber = JSON.stringify(i +1);
+        }
+
+        // Update new workout data
+        user.save(function (err, updatedUser) {
+            if (err){
+                throw(err); 
+            } 
+            res.json({"msg": "stuff was deleted"});
+        });
+    });
+});
+
+// Delete musclegroup in a pas
+app.post('/admin/user/:userId/delete/musclegroup', middleware.isLoggedIn, async (req, res) => {
+    const userId = req.params.userId;
+    const muscleGroup = req.body.muscleGroup;
+    const trainingPas = req.body.trainingPas;
+
+    User.findById(userId, function (err, user) {
+        if (err) {
+            throw(err);
+        } 
+        
+        const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === req.body.trainingPas);
+        const muscleGroupIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups.findIndex(i => i.name === muscleGroup);
+
+        user.trainingStats.trainingPases[trainingPasIndex].muscleGroups.splice(muscleGroupIndex, 1);
+
+        // Update new workout data
+        user.save(function (err, updatedUser) {
+            if (err){
+                throw(err); 
+            } 
+            res.json(
+                {
+                    muscleGroup: muscleGroup,
+                    trainingPas: trainingPas,
+                    msg: muscleGroup + " was deleted successfully"
+                }
+            );
+        });
+    });
+});
+
+// Delete a single workout
+app.post('/admin/user/:userId/delete/workout', middleware.isLoggedIn, async (req, res) => {
+    const userId = req.params.userId;
+
+    const trainingPas = req.body.trainingPas;
+    const muscleGroup = req.body.muscleGroup;
+    const workoutName = req.body.workoutName;
+    
+    User.findById(userId, function (err, user) {
+        if (err) {
+            throw(err);
+        } 
+        
+        const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === trainingPas);
+        const muscleGroupIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups.findIndex(i => i.name === muscleGroup);
+        const workoutIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts.findIndex(i => i.name === workoutName);
+
+
+        user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts.splice(workoutIndex, 1);
+
+            // Update new workout data
+        user.save(function (err, updatedUser) {
+            if (err){
+                throw(err); 
+            } 
+            res.json({"msg": "stuff was deleted"});
+        });
+    });
+});
 
 // ===============================================================
 // AUTH ROUTES
 // ===============================================================
 
 // Show signup form
-app.get('/register', (req, res) => {
-    res.render('register');
+app.get('/admin/register', (req, res) => {
+    res.render('admin/register');
 });
 
 // Handling user signup
-app.post('/register', (req, res) => {
-    req.body.username;
-    req.body.password;
-    User.register(new User({username: req.body.username}), req.body.password, function(err, user){
+app.post('/admin/register', (req, res) => {
+    User.register(new User(
+        {
+            username: req.body.username,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName
+        }
+    ), 
+        req.body.password, function(err, user){
         if(err){
             console.log(err);
-            return res.render('register');
+            return res.render('admin/register');
         }
         passport.authenticate('local')(req, res, function(){
             res.redirect('/home')
         });
     });
 });
-
-
 
 // ===============================================================
 // LOGIN ROUTES
@@ -305,7 +587,7 @@ app.post('/login', passport.authenticate('local', {
     successRedirect: '/home',
     failureRedirect: '/login'
 }), (req, res) => {
-    // Some function to callback
+
 });
 
 // Logout route

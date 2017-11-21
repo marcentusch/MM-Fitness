@@ -1,0 +1,15 @@
+<% include partials/header %>
+ 
+<div class="container">
+    <h4>Registrér ny bruger</h4>
+    <hr>
+    <form action="register" method="POST">
+        <input name="firstName" type="text" placeholder="Fornavn">
+        <input name="lastName" type="text" placeholder="Efternavn">
+        <input name="username" type="email" placeholder="email">
+        <input name="password" type="password" placeholder="password">
+        <button class="btn btn-primary">Submit</button>
+    </form>
+</div>
+
+<% include partials/footer %>

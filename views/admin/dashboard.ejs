@@ -1,0 +1,22 @@
+<% include partials/header %>
+
+<div class="row">
+    <% users.forEach((user) => { %>
+        <div class="col-4">
+            <div class="card m-3">
+                <div class="card-header">
+                    <p class="mb-0"><%= user.firstName + " " + user.lastName %></p>
+                </div>
+                <div class="card-body">
+                    <p> Nuværende vægt <span class="float-right"> <%= user.weightStats.currentWeight %> </span> </p>
+                    <p> Vægt progression <span class="float-right"> <%= user.weightStats.weightProgress.toFixed(1) %> </span> </p>
+                    <p> Mål vægt <span class="float-right"> <%= user.weightStats.targetWeight %> </span> </p>                    
+                    <a href="admin/user/<%= user._id %>" class="btn btn-sm btn-outline-success">Chat med bruger</a>
+                    <a href="admin/user/<%= user._id %>" class="btn-sm btn-link float-right">Detaljer</a>
+                </div>
+            </div>
+        </div>
+    <% }); %>
+</div>
+
+<% include partials/footer %>
