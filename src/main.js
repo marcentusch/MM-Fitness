@@ -19,7 +19,8 @@ config            = require('../config/global.config.json'),
 userData          = require('./schemas/userSchema.js'),
 workoutData       = require('./schemas/workoutSchema.js'),
 userFactory       = require('./services/userFactory.js'),
-workoutFactory    = require('./services/workoutFactory.js');
+workoutFactory    = require('./services/workoutFactory.js'),
+mealFactory       = require('./services/mealFactory.js');
 
 // Database stuff
 mongoose.Promise = global.Promise;
@@ -290,7 +291,12 @@ app.get('/admin/user/:userId', middleware.isLoggedIn, (req,res) => {
     if(req.user.isAdmin) {
         User.findById(req.params.userId, (err, user) => {
             Workout.find({}, (err, workouts) => {
-                res.render('./admin/user', {user: user, workouts: workouts, muscleGroups: workoutFactory.muscleGroups});
+                res.render('./admin/user-page/user', {
+                    user: user, 
+                    workouts: workouts, 
+                    muscleGroups: workoutFactory.muscleGroups,
+                    meals: mealFactory.meals
+                });
             });
         });
     } else {
@@ -317,6 +323,10 @@ app.post('/admin/user/:userId/update/weight', middleware.isLoggedIn, (req, res) 
     });
 });
 
+// ===============================================================
+// Admin - Training
+// ===============================================================
+
 // Create new trainingPas
 app.post('/admin/user/:userId/create/trainingpas', middleware.isLoggedIn, async (req, res) => {
     const userId = req.params.userId;
@@ -325,7 +335,6 @@ app.post('/admin/user/:userId/create/trainingpas', middleware.isLoggedIn, async 
         pasNumber: '',
         muscleGroups: []
     }
-
 
     User.findById(userId, function (err, user) {
         if (err) {
@@ -368,13 +377,15 @@ app.post('/admin/user/:userId/create/musclegroup', middleware.isLoggedIn, async 
     });
 });
 
+
+// Create new workout
 app.post('/admin/user/:userId/create/workout', middleware.isLoggedIn, async (req, res) => {
     const userId = req.params.userId;
 
     const trainingPas = req.body.trainingPas;
     const muscleGroup = req.body.muscleGroupId;
     
-    let formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
+    let formData = req.body.formData;
 
     
     User.findById(userId, function (err, user) {
@@ -477,7 +488,7 @@ app.post('/admin/user/:userId/delete/pas', middleware.isLoggedIn, async (req, re
             if (err){
                 throw(err); 
             } 
-            res.json({"msg": "stuff was deleted"});
+            res.json({msg: "Pas was deleted"});
         });
     });
 });
@@ -539,7 +550,37 @@ app.post('/admin/user/:userId/delete/workout', middleware.isLoggedIn, async (req
             if (err){
                 throw(err); 
             } 
-            res.json({"msg": "stuff was deleted"});
+            res.json({msg: "Deleted a single workout"});
+        });
+    });
+});
+
+// ===============================================================
+// Admin - Meals
+// ===============================================================
+
+// Update meal name
+app.post('/admin/user/:userId/update/mealName', middleware.isLoggedIn, async (req, res) => {
+    const userId = req.params.userId;
+
+    const mealName = req.body.mealName;
+
+    User.findById(userId, function (err, user) {
+        if (err) {
+            throw(err);
+        } 
+        
+        const formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
+
+        const mealIndex = user.foodStats.mealPlan.meals.findIndex(i => i.name === mealName);
+        user.foodStats.mealPlan.meals[mealIndex].name = formData.name;
+
+
+        user.save(function (err, updatedUser) {
+            if (err){
+                throw(err); 
+            } 
+            res.json({"msg": "Updated meal name"});
         });
     });
 });

@@ -1,0 +1,52 @@
+
+<div class="container">
+    <p>FUCK LORT</p>
+</div>
+<% include ../partials/header %>
+
+<style>
+    .vertical-line {
+        border-right: 1px solid rgba(200,200,200, .7);
+    }
+
+    .pointer{
+        cursor: pointer;
+    }
+</style>
+
+<script src="/js/user.js"></script>
+
+<div class="container">
+    <div class="row">
+        <div class="col-8">
+            <div class="row">
+                <div class="col-2">
+                    <p><strong>Navn:</strong></p>
+                    <p><strong>Adresse:</strong></p>
+                    <p><strong>E-mail:</strong></p>
+                    <p><strong>Telefon:</strong></p>                    
+                </div>
+                <div class="col-5">
+                    <p><%= user.firstName + " " + user.lastName %></p>
+                    <p><%= user.street + " " + user.houseNumber %> , <%= user.zipcode + " " + user.town %></p>
+                    <p><%= user.username %></p>
+                    <p><%= user.phone %></p>                    
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <img src="<%= user.avatarURL %>" width="200">
+        </div>
+    </div>
+
+    <a href="#" class="btn btn-outline-success">Chat med bruger </a>
+
+    <% include user-weight %>
+
+    <% include user-training %>
+
+    <% include user-meal-plan %>
+
+</div>
+
+<% include ../partials/footer %>
