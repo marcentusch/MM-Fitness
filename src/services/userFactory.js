@@ -116,7 +116,7 @@ function testData(User, amount) {
 
         for(let i = 0; i < 5; i++) {
             const meal = {
-                id: i,
+                id: i + 1,
                 isChecked: false,
                 meal: eatTimes[i],
                 name: foods[utility.randomNumber(0, foods.length -1, 0)],

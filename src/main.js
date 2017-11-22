@@ -559,6 +559,43 @@ app.post('/admin/user/:userId/delete/workout', middleware.isLoggedIn, async (req
 // Admin - Meals
 // ===============================================================
 
+// Create meal
+app.post('/admin/user/:userId/create/meal', middleware.isLoggedIn, async (req, res) => {
+    
+    const userId = req.params.userId;
+    const formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
+    
+    User.findById(userId, function (err, user) {
+        if (err) {
+            throw(err);
+        } 
+        const newMealId = user.foodStats.mealPlan.meals.length + 1;
+        
+        const newMeal = {
+            isChecked: false,
+            id: newMealId,
+            meal: formData.newMealName,
+            name: "<indsæt navn>",
+            details: "<indsæt detaljer>",
+            description: "<indsæt beskrivelse>",
+            calories: 0,
+            carbohydrates: 0,
+            fat: 0,
+            protein: 0
+        }
+
+        user.foodStats.mealPlan.meals.push(newMeal);
+
+        user.save(function (err, updatedUser) {
+            if (err){
+                throw(err); 
+            } 
+            res.json({"msg": "Created new meal"});
+        });
+    });
+
+});
+
 // Update meal name
 app.post('/admin/user/:userId/update/meal', middleware.isLoggedIn, async (req, res) => {
     const userId = req.params.userId;
@@ -571,22 +608,44 @@ app.post('/admin/user/:userId/update/meal', middleware.isLoggedIn, async (req, r
     User.findById(userId, function (err, user) {
         if (err) {
             throw(err);
-        } 
+        }
         
         const mealIndex = user.foodStats.mealPlan.meals.findIndex(i => i.id === mealId);
-        
+
         if(whatToUpdate === "name") {
             user.foodStats.mealPlan.meals[mealIndex].name = formData.name;
         } else if(whatToUpdate === "details") {
             user.foodStats.mealPlan.meals[mealIndex].details = formData.details;
         } else if(whatToUpdate === "description") {
             user.foodStats.mealPlan.meals[mealIndex].description = formData.description;
+        } else if(whatToUpdate === 'calories'){
+            user.foodStats.mealPlan.meals[mealIndex].calories = formData.calories;
+            let newTotalCalories = 0;
+            user.foodStats.mealPlan.meals.forEach((meal) => {
+               newTotalCalories += meal.calories; 
+            });
+            user.foodStats.mealPlan.totalCalories = newTotalCalories;
         } else if(whatToUpdate === 'carbs') {
             user.foodStats.mealPlan.meals[mealIndex].carbohydrates = formData.carbs;
+            let newTotalCarbohydrates = 0;
+            user.foodStats.mealPlan.meals.forEach((meal) => {
+                newTotalCarbohydrates += meal.carbohydrates; 
+            });
+            user.foodStats.mealPlan.totalCarbohydrates = newTotalCarbohydrates;
         } else if(whatToUpdate === 'fat'){
             user.foodStats.mealPlan.meals[mealIndex].fat = formData.fat;
+            let newTotalFat = 0;
+            user.foodStats.mealPlan.meals.forEach((meal) => {
+                newTotalFat += meal.fat; 
+            });
+            user.foodStats.mealPlan.totalFat = newTotalFat;
         } else if(whatToUpdate === 'protein'){
             user.foodStats.mealPlan.meals[mealIndex].protein = formData.protein;
+            let newTotalProtein = 0;
+            user.foodStats.mealPlan.meals.forEach((meal) => {
+                newTotalProtein += meal.protein; 
+            });
+            user.foodStats.mealPlan.totalProtein = newTotalProtein;
         }
 
         user.save(function (err, updatedUser) {
@@ -594,6 +653,44 @@ app.post('/admin/user/:userId/update/meal', middleware.isLoggedIn, async (req, r
                 throw(err); 
             } 
             res.json({"msg": "Updated meal name"});
+        });
+    });
+});
+
+// delete meal
+app.post('/admin/user/:userId/delete/meal', middleware.isLoggedIn, async (req, res) => {
+    const userId = req.params.userId;
+    const mealId = req.body.mealId; 
+    
+    User.findById(userId, function (err, user) {
+        if (err) {
+            throw(err);
+        } 
+        let mealPlan = user.foodStats.mealPlan;
+        // Getting meal-index
+        const mealIndex = mealPlan.meals.findIndex(i => i.id === mealId);
+        // Updating values
+        const newTotalCalories = mealPlan.totalCalories - mealPlan.meals[mealIndex].calories;
+        mealPlan.totalCalories = newTotalCalories;
+        const newTotalCarbohydrates = mealPlan.totalCarbohydrates - mealPlan.meals[mealIndex].carbohydrates;
+        mealPlan.totalCarbohydrates = newTotalCarbohydrates;
+        const newTotalProtein = mealPlan.totalProtein - mealPlan.meals[mealIndex].protein;
+        mealPlan.totalProtein = newTotalProtein;
+        const newTotalFat = mealPlan.totalFat - mealPlan.meals[mealIndex].fat;
+        mealPlan.totalFat = newTotalFat;
+        mealPlan.meals.splice(mealIndex, 1);
+
+        // Makes sure that the passes above the deleted one gets updated their pasnumber
+        for(let i = mealIndex; i < mealPlan.meals.length; i ++) {
+            mealPlan.meals[i].id = JSON.stringify(i + 1);
+        }
+
+        // Update new workout data
+        user.save(function (err, updatedUser) {
+            if (err){
+                throw(err); 
+            } 
+            res.json({msg: "Meal was deleted"});
         });
     });
 });

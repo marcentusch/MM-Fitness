@@ -9,14 +9,14 @@
                     </div>
                     <div class="col-6">
                         <!-- CARD HEADER FORM -->
-                        <form class="form-inline float-right" action="">
+                        <form id="newMealForm" class="form-inline float-right" action="">
                             <div class="form-group">
-                                <select class="form-control">
+                                <select name="newMealName" class="form-control">
                                     <% meals.forEach((meal) => { %>
                                         <option class="form-control"> <%= meal %> </option>
                                     <% }); %>
                                 </select>
-                                <button class="btn btn-outline-primary ml-2"> Nyt måltid</button>
+                                <button onclick="createMeal()" class="btn btn-outline-primary ml-2"> Nyt måltid</button>                                
                             </div>
                         </form>
                     </div>
@@ -26,13 +26,12 @@
                 <!-- CARD BODY -->
                 <div class="row my-3">
                     <div class="col-6 vertical-line">
-                        <p class="my-1"> Kalorier <span class="float-right"> <%= user.foodStats.mealPlan.totalCalories %> </span> </p>        
-                        <p class="my-1"> Kalorier idag <span class="float-right"> <%= user.foodStats.mealPlan.caloriesToday %> </span> </p>                                              
+                        <p class="my-1"> Kalorier <span class="float-right"> <%= user.foodStats.mealPlan.totalCalories %>kcal </span> </p>                                              
                     </div>
                     <div class="col-6">
-                        <p class="my-1"> Kulhydrater i alt <span class="float-right"> <%= user.foodStats.mealPlan.totalCarbohydrates %> </span> </p>
-                        <p class="my-1"> Fedt i alt <span class="float-right"> <%= user.foodStats.mealPlan.totalFat %></span> </p>
-                        <p class="my-1"> Protein i alt <span class="float-right"> <%= user.foodStats.mealPlan.totalProtein %></span> </p>
+                        <p class="my-1"> Kulhydrater i alt <span class="float-right"> <%= user.foodStats.mealPlan.totalCarbohydrates %>g </span> </p>
+                        <p class="my-1"> Fedt i alt <span class="float-right"> <%= user.foodStats.mealPlan.totalFat %>g </span> </p>
+                        <p class="my-1"> Protein i alt <span class="float-right"> <%= user.foodStats.mealPlan.totalProtein %>g </span> </p>
                     </div>
                 </div>  
                 <div class="row">
@@ -43,13 +42,16 @@
                                 <div class="card-header bg-dark text-white">
                                     <div class="row">
                                         <div class="col-6">
-                                            <h5> <%= meal.meal + " - " + meal.calories %> </h5> 
+                                            <h5> <%= meal.meal %> </h5> 
                                         </div>
                                         <div class="col-6">
                                             <!-- TOGGLE BUTTON TO SHOW EDIT BUTTONS -->
-                                            <button onclick="toggleEditClass('<%= meal._id %>')" class="btn btn-sm btn-success float-right pointer pt-2 ">
+                                            <button onclick="toggleEditClass('<%= meal._id %>')" class="btn btn-sm btn-success float-right pointer ">
                                                 <i class="fa fa-lg fa-pencil-square-o" aria-hidden="true"></i>
-                                            </button> 
+                                            </button>
+                                            <button style="display: none;" onclick="deleteMeal('<%= meal.id %>')" class="edit<%= meal._id %> btn btn-sm btn-danger float-right pointer mr-2">
+                                                <i class="fa fa-lg fa-times" aria-hidden="true"></i>
+                                            </button>  
                                         </div>
                                     </div>
                                 </div>
@@ -72,12 +74,12 @@
                                             </div>
                                         </form>
                                     </div>
-                                    <hr>
-                                    <p> <%= meal.details %> 
+                                    <h6> <%= meal.details %> 
                                         <span onclick="toggleEdit('<%= meal._id %>' + 'details')" class="float-left mr-1 mt-1 edit<%= meal._id %>" style="display: none;">
                                             <i class="fa fa-pencil text-warning pointer" aria-hidden="true"></i>
                                         </span>  
-                                    </p>
+                                    </h6>
+                                    <hr>
                                     <!-- EDIT MEAL DETAIL FORM -->
                                     <div id="edit<%= meal._id + 'details' %>" style="display: none">
                                         <form id="form<%= meal.id + 'details' %>" class="form-inline" action="" type="POST">
@@ -111,6 +113,24 @@
                                     </div>
                                     <!-- NUTRIENT LIST -->
                                     <ul class="list-group">
+                                        <li class="list-group-item p-2"> <span onclick="toggleEdit('<%= meal._id%>' + 'calories')" class="float-left mr-1 mt-1 edit<%= meal._id %>" style="display: none;">
+                                            <i class="fa fa-pencil text-warning pointer" aria-hidden="true"></i>
+                                        </span>  Energi: 
+                                        <span class="float-right"><%= meal.calories %>kcal </span>
+                                        <!-- CALORIES EDIT FORM -->
+                                        <div id="edit<%= meal._id + 'calories' %>" style="display: none">
+                                            <form id="form<%= meal.id + 'calories' %>" class="form-inline" action="" type="POST">
+                                                <div class="input-group">
+                                                    <input type="number" name="calories" class="form-control">
+                                                    <button 
+                                                        type="button" 
+                                                        onclick="updateCalories('<%= meal.id %>', '<%= meal.calories %>', 'calories')" 
+                                                        class="btn btn-outline-primary btn-sm">Opdater 
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div> 
+                                        </li>
                                         <li class="list-group-item p-2"> 
                                             <span onclick="toggleEdit('<%= meal._id%>' + 'carbs')" class="float-left mr-1 mt-1 edit<%= meal._id %>" style="display: none;">
                                                 <i class="fa fa-pencil text-warning pointer" aria-hidden="true"></i>
@@ -179,6 +199,22 @@
 </div>
 
 <script>
+
+    /* CREATE */
+    function createMeal(){
+        $.ajax({
+        type: 'POST',
+        url: '<%= user._id %>/create/meal',
+        data: {
+            formData: $("#newMealForm").serialize()
+        }, 
+        success: function(response) { 
+            location.reload();
+            },
+        });
+    }
+
+
     /* UPDATE */
     function updateMeal(mealId, mealName, whatToUpdate) {
         $.ajax({
@@ -221,6 +257,21 @@
             mealDescription: mealDescription,
             whatToUpdate: whatToUpdate,
             formData: $("#form" + mealId + 'description').serialize()
+        }, 
+        success: function(response) { 
+            location.reload();
+            }, 
+        });
+    }
+    function updateCalories(mealId, mealCalories, whatToUpdate) {
+        $.ajax({
+        type: 'POST',
+        url: "<%= user._id %>/update/meal",
+        data: {
+            mealId: mealId,
+            mealCalories: mealCalories,
+            whatToUpdate: whatToUpdate,
+            formData: $("#form" + mealId + 'calories').serialize()
         }, 
         success: function(response) { 
             location.reload();
@@ -275,6 +326,24 @@
             }, 
         });
     }
+
+    // DELETE
+    function deleteMeal(mealId) {
+    if (confirm('Slet måltid?')) {
+        $.ajax({
+        type: 'POST',
+        url: '<%=user._id%>/delete/meal',
+        data: {
+            mealId: mealId,
+        }, 
+        success: function(response) { 
+            location.reload();
+        },
+        });
+    } else {
+        // Gør ingenting
+    }
+}
 
 
 </script>
