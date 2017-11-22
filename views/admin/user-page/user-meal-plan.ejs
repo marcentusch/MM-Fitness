@@ -1,17 +1,18 @@
 <div class="row my-5">
     <div class="col-12">
         <div class="card">
+            <!-- CARD HEADER -->
             <div class="card-header">
                 <div class="row">
                     <div class="col-6">
                         <h4>Kostplan</h4>
                     </div>
                     <div class="col-6">
+                        <!-- CARD HEADER FORM -->
                         <form class="form-inline float-right" action="">
                             <div class="form-group">
                                 <select class="form-control">
                                     <% meals.forEach((meal) => { %>
-                                        
                                         <option class="form-control"> <%= meal %> </option>
                                     <% }); %>
                                 </select>
@@ -22,7 +23,7 @@
                 </div>
             </div>
             <div class="card-body">
-
+                <!-- CARD BODY -->
                 <div class="row my-3">
                     <div class="col-6 vertical-line">
                         <p class="my-1"> Kalorier <span class="float-right"> <%= user.foodStats.mealPlan.totalCalories %> </span> </p>        
@@ -34,8 +35,8 @@
                         <p class="my-1"> Protein i alt <span class="float-right"> <%= user.foodStats.mealPlan.totalProtein %></span> </p>
                     </div>
                 </div>  
-
                 <div class="row">
+                    <!-- MEALS -->
                     <% user.foodStats.mealPlan.meals.forEach((meal) => { %>
                         <div class="col-6">
                             <div class="card my-3">
@@ -45,6 +46,7 @@
                                             <h5> <%= meal.meal + " - " + meal.calories %> </h5> 
                                         </div>
                                         <div class="col-6">
+                                            <!-- TOGGLE BUTTON TO SHOW EDIT BUTTONS -->
                                             <button onclick="toggleEditClass('<%= meal._id %>')" class="btn btn-sm btn-success float-right pointer pt-2 ">
                                                 <i class="fa fa-lg fa-pencil-square-o" aria-hidden="true"></i>
                                             </button> 
@@ -57,6 +59,7 @@
                                             <i class="fa fa-pencil text-warning pointer" aria-hidden="true"></i>
                                         </span>  
                                     </h5>
+                                    <!-- EDIT MEAL NAME FORM -->
                                     <div id="edit<%= meal._id + meal.name %>" style="display: none">
                                         <form id="form<%= meal.id + meal.name %>" class="form-inline" action="" type="POST">
                                             <div class="input-group">
