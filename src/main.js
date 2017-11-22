@@ -560,21 +560,34 @@ app.post('/admin/user/:userId/delete/workout', middleware.isLoggedIn, async (req
 // ===============================================================
 
 // Update meal name
-app.post('/admin/user/:userId/update/mealName', middleware.isLoggedIn, async (req, res) => {
+app.post('/admin/user/:userId/update/meal', middleware.isLoggedIn, async (req, res) => {
     const userId = req.params.userId;
 
-    const mealName = req.body.mealName;
-
+    const whatToUpdate = req.body.whatToUpdate;
+    const formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
+    
+    const mealId = req.body.mealId;
+    
     User.findById(userId, function (err, user) {
         if (err) {
             throw(err);
         } 
         
-        const formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
-
-        const mealIndex = user.foodStats.mealPlan.meals.findIndex(i => i.name === mealName);
-        user.foodStats.mealPlan.meals[mealIndex].name = formData.name;
-
+        const mealIndex = user.foodStats.mealPlan.meals.findIndex(i => i.id === mealId);
+        
+        if(whatToUpdate === "name") {
+            user.foodStats.mealPlan.meals[mealIndex].name = formData.name;
+        } else if(whatToUpdate === "details") {
+            user.foodStats.mealPlan.meals[mealIndex].details = formData.details;
+        } else if(whatToUpdate === "description") {
+            user.foodStats.mealPlan.meals[mealIndex].description = formData.description;
+        } else if(whatToUpdate === 'carbs') {
+            user.foodStats.mealPlan.meals[mealIndex].carbohydrates = formData.carbs;
+        } else if(whatToUpdate === 'fat'){
+            user.foodStats.mealPlan.meals[mealIndex].fat = formData.fat;
+        } else if(whatToUpdate === 'protein'){
+            user.foodStats.mealPlan.meals[mealIndex].protein = formData.protein;
+        }
 
         user.save(function (err, updatedUser) {
             if (err){

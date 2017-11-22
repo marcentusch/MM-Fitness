@@ -66,7 +66,7 @@
                                                 <input type="text" name="name" class="form-control">
                                                 <button 
                                                     type="button" 
-                                                    onclick="updateMeal('<%= meal.id %>', '<%= meal.name %>')" 
+                                                    onclick="updateMeal('<%= meal.id %>', '<%= meal.name %>', 'name')" 
                                                     class="btn btn-outline-primary btn-sm">Opdater 
                                                 </button>
                                             </div>
@@ -74,27 +74,105 @@
                                     </div>
                                     <hr>
                                     <p> <%= meal.details %> 
-                                        <span class="float-left mr-1 mt-1 edit<%= meal._id %>" style="display: none;">
+                                        <span onclick="toggleEdit('<%= meal._id %>' + 'details')" class="float-left mr-1 mt-1 edit<%= meal._id %>" style="display: none;">
                                             <i class="fa fa-pencil text-warning pointer" aria-hidden="true"></i>
                                         </span>  
                                     </p>
+                                    <!-- EDIT MEAL DETAIL FORM -->
+                                    <div id="edit<%= meal._id + 'details' %>" style="display: none">
+                                        <form id="form<%= meal.id + 'details' %>" class="form-inline" action="" type="POST">
+                                            <div class="input-group">
+                                                <input type="text" name="details" class="form-control">
+                                                <button 
+                                                    type="button" 
+                                                    onclick="updateDetail('<%= meal.id %>', '<%= meal.details %>', 'details')" 
+                                                    class="btn btn-outline-primary btn-sm">Opdater 
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
                                     <p> <%= meal.description %> 
-                                        <span class="float-left mr-1 mt-1 edit<%= meal._id %>" style="display: none;">
+                                        <span onclick="toggleEdit('<%= meal._id%>' + 'description')" class="float-left mr-1 mt-1 edit<%= meal._id %>" style="display: none;">
                                             <i class="fa fa-pencil text-warning pointer" aria-hidden="true"></i>
                                         </span>  
                                     </p>
-        
+                                    <!-- EDIT MEAL DESCRIPTION FORM -->
+                                    <div id="edit<%= meal._id + 'description' %>" style="display: none">
+                                        <form id="form<%= meal.id + 'description' %>" class="form-inline" action="" type="POST">
+                                            <div class="input-group">
+                                                <input type="text" name="description" class="form-control">
+                                                <button 
+                                                    type="button" 
+                                                    onclick="updateDescription('<%= meal.id %>', '<%= meal.description %>', 'description')" 
+                                                    class="btn btn-outline-primary btn-sm">Opdater 
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <!-- NUTRIENT LIST -->
                                     <ul class="list-group">
-                                        <li class="list-group-item p-2"> Kulhydrater: <span class="float-right"><%= meal.carbohydrates %>g </span> </li>
-                                        <li class="list-group-item p-2"> Fedt: <span class="float-right"><%= meal.fat %>g </span> </li>
-                                        <li class="list-group-item p-2"> Protein:  <span class="float-right"><%= meal.protein %>g </span> </li>
+                                        <li class="list-group-item p-2"> 
+                                            <span onclick="toggleEdit('<%= meal._id%>' + 'carbs')" class="float-left mr-1 mt-1 edit<%= meal._id %>" style="display: none;">
+                                                <i class="fa fa-pencil text-warning pointer" aria-hidden="true"></i>
+                                            </span>  Kulhydrater: 
+                                            <span class="float-right"><%= meal.carbohydrates %>g </span>
+                                            <!-- CARBS EDIT FORM -->
+                                            <div id="edit<%= meal._id + 'carbs' %>" style="display: none">
+                                                <form id="form<%= meal.id + 'carbs' %>" class="form-inline" action="" type="POST">
+                                                    <div class="input-group">
+                                                        <input type="number" name="carbs" class="form-control">
+                                                        <button 
+                                                            type="button" 
+                                                            onclick="updateCarbs('<%= meal.id %>', '<%= meal.carbohydrates %>', 'carbs')" 
+                                                            class="btn btn-outline-primary btn-sm">Opdater 
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item p-2"> 
+                                            <span onclick="toggleEdit('<%= meal._id%>' + 'fat')" class="float-left mr-1 mt-1 edit<%= meal._id %>" style="display: none;">
+                                                <i class="fa fa-pencil text-warning pointer" aria-hidden="true"></i>
+                                            </span>  Fedt: 
+                                            <span class="float-right"><%= meal.fat %>g </span>
+                                            <!-- FAT EDIT FORM -->
+                                            <div id="edit<%= meal._id + 'fat' %>" style="display: none">
+                                                <form id="form<%= meal.id + 'fat' %>" class="form-inline" action="" type="POST">
+                                                    <div class="input-group">
+                                                        <input type="number" name="fat" class="form-control">
+                                                        <button 
+                                                            type="button" 
+                                                            onclick="updateFat('<%= meal.id %>', '<%= meal.fat %>', 'fat')" 
+                                                            class="btn btn-outline-primary btn-sm">Opdater 
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div> 
+                                        </li>
+                                        <li class="list-group-item p-2"> <span onclick="toggleEdit('<%= meal._id%>' + 'protein')" class="float-left mr-1 mt-1 edit<%= meal._id %>" style="display: none;">
+                                            <i class="fa fa-pencil text-warning pointer" aria-hidden="true"></i>
+                                        </span>  Protein: 
+                                        <span class="float-right"><%= meal.protein %>g </span>
+                                        <!-- PROTEIN EDIT FORM -->
+                                        <div id="edit<%= meal._id + 'protein' %>" style="display: none">
+                                            <form id="form<%= meal.id + 'protein' %>" class="form-inline" action="" type="POST">
+                                                <div class="input-group">
+                                                    <input type="number" name="protein" class="form-control">
+                                                    <button 
+                                                        type="button" 
+                                                        onclick="updateProtein('<%= meal.id %>', '<%= meal.protein %>', 'protein')" 
+                                                        class="btn btn-outline-primary btn-sm">Opdater 
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div> 
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
-                    <% }); %>    
+                    <% }); %>
                 </div>
-
             </div>
         </div>
     </div>
@@ -102,19 +180,101 @@
 
 <script>
     /* UPDATE */
-    function updateMeal(mealId, mealName) {
+    function updateMeal(mealId, mealName, whatToUpdate) {
         $.ajax({
         type: 'POST',
-        url: "<%= user._id %>/update/mealName",
+        url: "<%= user._id %>/update/meal",
         data: {
+            mealId: mealId,
             mealName: mealName,
+            whatToUpdate: whatToUpdate,
             formData: $("#form" + mealId + mealName).serialize()
         }, 
-
         success: function(response) { 
             location.reload();
             }, 
         });
     }
+
+    function updateDetail(mealId, mealDetails, whatToUpdate){
+        $.ajax({
+        type: 'POST',
+        url: "<%= user._id %>/update/meal",
+        data: {
+            mealId: mealId,
+            mealDetails: mealDetails,
+            whatToUpdate: whatToUpdate,
+            formData: $("#form" + mealId + 'details').serialize()
+        }, 
+        success: function(response) { 
+            location.reload();
+            }, 
+        });
+    }
+
+    function updateDescription(mealId, mealDescription, whatToUpdate){
+        $.ajax({
+        type: 'POST',
+        url: "<%= user._id %>/update/meal",
+        data: {
+            mealId: mealId,
+            mealDescription: mealDescription,
+            whatToUpdate: whatToUpdate,
+            formData: $("#form" + mealId + 'description').serialize()
+        }, 
+        success: function(response) { 
+            location.reload();
+            }, 
+        });
+    }
+
+    function updateCarbs(mealId, mealCarbs, whatToUpdate){
+        $.ajax({
+        type: 'POST',
+        url: "<%= user._id %>/update/meal",
+        data: {
+            mealId: mealId,
+            mealCarbs: mealCarbs,
+            whatToUpdate: whatToUpdate,
+            formData: $("#form" + mealId + 'carbs').serialize()
+        }, 
+        success: function(response) { 
+            location.reload();
+            }, 
+        });
+    }
+
+    function updateFat(mealId, mealFat, whatToUpdate){
+        $.ajax({
+        type: 'POST',
+        url: "<%= user._id %>/update/meal",
+        data: {
+            mealId: mealId,
+            mealFat: mealFat,
+            whatToUpdate: whatToUpdate,
+            formData: $("#form" + mealId + 'fat').serialize()
+        }, 
+        success: function(response) { 
+            location.reload();
+            }, 
+        });
+    }
+
+    function updateProtein(mealId, mealProtein, whatToUpdate){
+        $.ajax({
+        type: 'POST',
+        url: "<%= user._id %>/update/meal",
+        data: {
+            mealId: mealId,
+            mealProtein: mealProtein,
+            whatToUpdate: whatToUpdate,
+            formData: $("#form" + mealId + 'protein').serialize()
+        }, 
+        success: function(response) { 
+            location.reload();
+            }, 
+        });
+    }
+
 
 </script>

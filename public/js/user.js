@@ -1,4 +1,5 @@
 function toggleEdit(id) {
+    console.log(id);
     $("#edit" + id).toggle();
 }
 
