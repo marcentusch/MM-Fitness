@@ -289,6 +289,7 @@ app.get('/admin',  middleware.isLoggedIn, (req, res) => {
 // user page
 app.get('/admin/user/:userId', middleware.isLoggedIn, (req,res) => {
     if(req.user.isAdmin) {
+
         User.findById(req.params.userId, (err, user) => {
             Workout.find({}, (err, workouts) => {
                 res.render('./admin/user-page/user', {
@@ -299,6 +300,7 @@ app.get('/admin/user/:userId', middleware.isLoggedIn, (req,res) => {
                 });
             });
         });
+
     } else {
         res.redirect('home');
     }
@@ -306,21 +308,27 @@ app.get('/admin/user/:userId', middleware.isLoggedIn, (req,res) => {
 
 // Update the users targetweight
 app.post('/admin/user/:userId/update/weight', middleware.isLoggedIn, (req, res) => {
-    const userId = req.params.userId;
-    const newGoal = req.body.newGoal;
-    
-    User.findById(userId, function (err, user) {
-        if (err) {
-            throw(err);
-        } 
-        user.weightStats.targetWeight = newGoal;
-        user.save(function (err, updatedUser) {
-            if (err){
-                throw(err); 
+    if(req.user.isAdmin) {
+
+        const userId = req.params.userId;
+        const newGoal = req.body.newGoal;
+        
+        User.findById(userId, function (err, user) {
+            if (err) {
+                throw(err);
             } 
-            res.redirect('/admin/user/' + userId);
+            user.weightStats.targetWeight = newGoal;
+            user.save(function (err, updatedUser) {
+                if (err){
+                    throw(err); 
+                } 
+                res.redirect('/admin/user/' + userId);
+            });
         });
-    });
+
+    } else {
+        res.redirect('home');
+    }
 });
 
 // ===============================================================
@@ -329,230 +337,267 @@ app.post('/admin/user/:userId/update/weight', middleware.isLoggedIn, (req, res) 
 
 // Create new trainingPas
 app.post('/admin/user/:userId/create/trainingpas', middleware.isLoggedIn, async (req, res) => {
-    const userId = req.params.userId;
-   
-    const newPas = {
-        pasNumber: '',
-        muscleGroups: []
-    }
+    if(req.user.isAdmin) {
 
-    User.findById(userId, function (err, user) {
-        if (err) {
-            throw(err);
-        } 
-        newPas.pasNumber = user.trainingStats.trainingPases.length + 1;
-        user.trainingStats.trainingPases.push(newPas);
-
-        user.save(function (err, updatedUser) {
-            if (err){
-                throw(err); 
+        const userId = req.params.userId;
+       
+        const newPas = {
+            pasNumber: '',
+            muscleGroups: []
+        }
+    
+        User.findById(userId, function (err, user) {
+            if (err) {
+                throw(err);
             } 
-            res.json({"message": "created new pas"});
+            newPas.pasNumber = user.trainingStats.trainingPases.length + 1;
+            user.trainingStats.trainingPases.push(newPas);
+    
+            user.save(function (err, updatedUser) {
+                if (err){
+                    throw(err); 
+                } 
+                res.json({"message": "created new pas"});
+            });
         });
-    });
+
+    } else {
+        res.redirect('home');
+    }
 });
 
 // Create a new musclegroup in the specific trainingPas
 app.post('/admin/user/:userId/create/musclegroup', middleware.isLoggedIn, async (req, res) => {
-    const userId = req.params.userId;
-    const pas = req.body.trainingPas;
-    const formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
-    const muscleGroup = formData.muscleGroup;
-    const newMuscleGroup = {
-        name: muscleGroup,
-        assignedWorkouts: []
-    }
+    if(req.user.isAdmin) {
 
-    User.findById(userId, function (err, user) {
-        if (err) {
-            throw(err);
-        } 
-        user.trainingStats.trainingPases[pas -1].muscleGroups.push(newMuscleGroup);
-        user.save(function (err, updatedUser) {
-            if (err){
-                throw(err); 
+        const userId = req.params.userId;
+        const pas = req.body.trainingPas;
+        const formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
+        const muscleGroup = formData.muscleGroup;
+        const newMuscleGroup = {
+            name: muscleGroup,
+            assignedWorkouts: []
+        }
+    
+        User.findById(userId, function (err, user) {
+            if (err) {
+                throw(err);
             } 
-            res.json({"message": "created new musclegroup"});
+            user.trainingStats.trainingPases[pas -1].muscleGroups.push(newMuscleGroup);
+            user.save(function (err, updatedUser) {
+                if (err){
+                    throw(err); 
+                } 
+                res.json({"message": "created new musclegroup"});
+            });
         });
-    });
+        
+    } else {
+        res.redirect('home');
+    }
 });
 
 
 // Create new workout
 app.post('/admin/user/:userId/create/workout', middleware.isLoggedIn, async (req, res) => {
-    const userId = req.params.userId;
+    if(req.user.isAdmin) {
 
-    const trainingPas = req.body.trainingPas;
-    const muscleGroup = req.body.muscleGroupId;
+        const userId = req.params.userId;
     
-    let formData = req.body.formData;
-
-    
-    User.findById(userId, function (err, user) {
-        if (err) {
-            throw(err);
-        } 
+        const trainingPas = req.body.trainingPas;
+        const muscleGroup = req.body.muscleGroupId;
         
-        const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === trainingPas);
-        const muscleGroupIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups.findIndex(i => i.name === muscleGroup);
-
-
-        user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts.push(formData);
-
-        user.save(function (err, updatedUser) {
-            if (err){
-                throw(err); 
+        let formData = req.body.formData;
+        
+        User.findById(userId, function (err, user) {
+            if (err) {
+                throw(err);
             } 
-            res.json({"msg": "New workout was added"});
+            
+            const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === trainingPas);
+            const muscleGroupIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups.findIndex(i => i.name === muscleGroup);
+    
+            user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts.push(formData);
+    
+            user.save(function (err, updatedUser) {
+                if (err){
+                    throw(err); 
+                } 
+                res.json({"msg": "New workout was added"});
+            });
         });
-
-    });
+        
+    } else {
+        res.redirect('home');
+    }
 });
 
 // Update Workout
 app.post('/admin/user/:userId/update/workout/:workoutId', middleware.isLoggedIn, async (req, res) => {
-    const userId = req.params.userId;
-
-    const trainingPas = req.body.trainingPas;
-    const muscleGroup = req.body.muscleGroup;
-    const workoutName = req.body.workoutName;
-    const workoutId = req.body.workoutId;
-
-    // Format query string to JSON-object
-    formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
-    // Data to be returned to ajax call 
-    returnData = {
-        "newWorkoutName": formData.name,
-        "newWorkoutReps": formData.reps,
-        "newWorkoutSaet": formData.saet
-    };
+    if(req.user.isAdmin) {
+        
+        const userId = req.params.userId;
     
-    User.findById(userId, function (err, user) {
-        if (err) {
-            throw(err);
-        } 
-
-        const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === trainingPas);
-        const muscleGroupIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups.findIndex(i => i.name === muscleGroup);
-        const workoutIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts.findIndex(i => i.name === workoutName);
+        const trainingPas = req.body.trainingPas;
+        const muscleGroup = req.body.muscleGroup;
+        const workoutName = req.body.workoutName;
+        const workoutId = req.body.workoutId;
+    
+        // Format query string to JSON-object
+        formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
+        // Data to be returned to ajax call 
+        returnData = {
+            "newWorkoutName": formData.name,
+            "newWorkoutReps": formData.reps,
+            "newWorkoutSaet": formData.saet
+        };
         
-        // Makes sure the old data is returned if nothing was entered
-        if(formData.name) {
-            user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].name = formData.name;        
-        } else {
-            returnData.newWorkoutName =  user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].name;
-        }
-        
-        if(formData.reps) {
-            user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].reps = formData.reps;
-        } else {
-            returnData.newWorkoutReps = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].reps;
-        }
-
-        if(formData.saet) {
-            user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].saet = formData.saet;        
-        } else {
-            returnData.newWorkoutSaet = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].saet;
-        }
-        
-
-        // Update new workout data
-        user.save(function (err, updatedUser) {
-            if (err){
-                throw(err); 
+        User.findById(userId, function (err, user) {
+            if (err) {
+                throw(err);
             } 
-            res.json(returnData);
+    
+            const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === trainingPas);
+            const muscleGroupIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups.findIndex(i => i.name === muscleGroup);
+            const workoutIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts.findIndex(i => i.name === workoutName);
+            
+            // Makes sure the old data is returned if nothing was entered
+            if(formData.name) {
+                user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].name = formData.name;        
+            } else {
+                returnData.newWorkoutName =  user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].name;
+            }
+            
+            if(formData.reps) {
+                user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].reps = formData.reps;
+            } else {
+                returnData.newWorkoutReps = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].reps;
+            }
+    
+            if(formData.saet) {
+                user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].saet = formData.saet;        
+            } else {
+                returnData.newWorkoutSaet = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].saet;
+            }
+            
+    
+            // Update new workout data
+            user.save(function (err, updatedUser) {
+                if (err){
+                    throw(err); 
+                } 
+                res.json(returnData);
+            });
         });
-    });
+
+    } else {
+        res.redirect('home');
+    }
 });
 
 // Delete single pas
 app.post('/admin/user/:userId/delete/pas', middleware.isLoggedIn, async (req, res) => {
-    const userId = req.params.userId;
-    
-    User.findById(userId, function (err, user) {
-        if (err) {
-            throw(err);
-        } 
+    if(req.user.isAdmin) {
+
+        const userId = req.params.userId;
         
-        const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === req.body.trainingPas);
-        user.trainingStats.trainingPases.splice(trainingPasIndex, 1);
-
-        // Makes sure that the passes above the deleted one gets updated their pasnumber
-        for(let i = trainingPasIndex; i < user.trainingStats.trainingPases.length; i ++) {
-            user.trainingStats.trainingPases[i].pasNumber = JSON.stringify(i +1);
-        }
-
-        // Update new workout data
-        user.save(function (err, updatedUser) {
-            if (err){
-                throw(err); 
+        User.findById(userId, function (err, user) {
+            if (err) {
+                throw(err);
             } 
-            res.json({msg: "Pas was deleted"});
+            
+            const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === req.body.trainingPas);
+            user.trainingStats.trainingPases.splice(trainingPasIndex, 1);
+    
+            // Makes sure that the passes above the deleted one gets updated their pasnumber
+            for(let i = trainingPasIndex; i < user.trainingStats.trainingPases.length; i ++) {
+                user.trainingStats.trainingPases[i].pasNumber = JSON.stringify(i +1);
+            }
+    
+            // Update new workout data
+            user.save(function (err, updatedUser) {
+                if (err){
+                    throw(err); 
+                } 
+                res.json({msg: "Pas was deleted"});
+            });
         });
-    });
+        
+    } else {
+        res.redirect('home');
+    }
 });
 
 // Delete musclegroup in a pas
 app.post('/admin/user/:userId/delete/musclegroup', middleware.isLoggedIn, async (req, res) => {
-    const userId = req.params.userId;
-    const muscleGroup = req.body.muscleGroup;
-    const trainingPas = req.body.trainingPas;
-
-    User.findById(userId, function (err, user) {
-        if (err) {
-            throw(err);
-        } 
-        
-        const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === req.body.trainingPas);
-        const muscleGroupIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups.findIndex(i => i.name === muscleGroup);
-
-        user.trainingStats.trainingPases[trainingPasIndex].muscleGroups.splice(muscleGroupIndex, 1);
-
-        // Update new workout data
-        user.save(function (err, updatedUser) {
-            if (err){
-                throw(err); 
+    if(req.user.isAdmin) {
+        const userId = req.params.userId;
+        const muscleGroup = req.body.muscleGroup;
+        const trainingPas = req.body.trainingPas;
+    
+        User.findById(userId, function (err, user) {
+            if (err) {
+                throw(err);
             } 
-            res.json(
-                {
-                    muscleGroup: muscleGroup,
-                    trainingPas: trainingPas,
-                    msg: muscleGroup + " was deleted successfully"
-                }
-            );
+            
+            const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === req.body.trainingPas);
+            const muscleGroupIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups.findIndex(i => i.name === muscleGroup);
+    
+            user.trainingStats.trainingPases[trainingPasIndex].muscleGroups.splice(muscleGroupIndex, 1);
+    
+            // Update new workout data
+            user.save(function (err, updatedUser) {
+                if (err){
+                    throw(err); 
+                } 
+                res.json(
+                    {
+                        muscleGroup: muscleGroup,
+                        trainingPas: trainingPas,
+                        msg: muscleGroup + " was deleted successfully"
+                    }
+                );
+            });
         });
-    });
+        
+    } else {
+        res.redirect('home');
+    }
 });
 
 // Delete a single workout
 app.post('/admin/user/:userId/delete/workout', middleware.isLoggedIn, async (req, res) => {
-    const userId = req.params.userId;
-
-    const trainingPas = req.body.trainingPas;
-    const muscleGroup = req.body.muscleGroup;
-    const workoutName = req.body.workoutName;
+    if(req.user.isAdmin) {
+        const userId = req.params.userId;
     
-    User.findById(userId, function (err, user) {
-        if (err) {
-            throw(err);
-        } 
+        const trainingPas = req.body.trainingPas;
+        const muscleGroup = req.body.muscleGroup;
+        const workoutName = req.body.workoutName;
         
-        const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === trainingPas);
-        const muscleGroupIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups.findIndex(i => i.name === muscleGroup);
-        const workoutIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts.findIndex(i => i.name === workoutName);
-
-
-        user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts.splice(workoutIndex, 1);
-
-            // Update new workout data
-        user.save(function (err, updatedUser) {
-            if (err){
-                throw(err); 
+        User.findById(userId, function (err, user) {
+            if (err) {
+                throw(err);
             } 
-            res.json({msg: "Deleted a single workout"});
+            
+            const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === trainingPas);
+            const muscleGroupIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups.findIndex(i => i.name === muscleGroup);
+            const workoutIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts.findIndex(i => i.name === workoutName);
+    
+    
+            user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts.splice(workoutIndex, 1);
+    
+                // Update new workout data
+            user.save(function (err, updatedUser) {
+                if (err){
+                    throw(err); 
+                } 
+                res.json({msg: "Deleted a single workout"});
+            });
         });
-    });
+        
+    } else {
+        res.redirect('home');
+    }
 });
 
 // ===============================================================
@@ -561,138 +606,154 @@ app.post('/admin/user/:userId/delete/workout', middleware.isLoggedIn, async (req
 
 // Create meal
 app.post('/admin/user/:userId/create/meal', middleware.isLoggedIn, async (req, res) => {
-    
-    const userId = req.params.userId;
-    const formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
-    
-    User.findById(userId, function (err, user) {
-        if (err) {
-            throw(err);
-        } 
-        const newMealId = user.foodStats.mealPlan.meals.length + 1;
+    if(req.user.isAdmin) {
+
+        const userId = req.params.userId;
+        const formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
         
-        const newMeal = {
-            isChecked: false,
-            id: newMealId,
-            meal: formData.newMealName,
-            name: "<indsæt navn>",
-            details: "<indsæt detaljer>",
-            description: "<indsæt beskrivelse>",
-            calories: 0,
-            carbohydrates: 0,
-            fat: 0,
-            protein: 0
-        }
-
-        user.foodStats.mealPlan.meals.push(newMeal);
-
-        user.save(function (err, updatedUser) {
-            if (err){
-                throw(err); 
+        User.findById(userId, function (err, user) {
+            if (err) {
+                throw(err);
             } 
-            res.json({"msg": "Created new meal"});
+            const newMealId = user.foodStats.mealPlan.meals.length + 1;
+            
+            const newMeal = {
+                isChecked: false,
+                id: newMealId,
+                meal: formData.newMealName,
+                name: "<indsæt navn>",
+                details: "<indsæt detaljer>",
+                description: "<indsæt beskrivelse>",
+                calories: 0,
+                carbohydrates: 0,
+                fat: 0,
+                protein: 0
+            }
+    
+            user.foodStats.mealPlan.meals.push(newMeal);
+    
+            user.save(function (err, updatedUser) {
+                if (err){
+                    throw(err); 
+                } 
+                res.json({"msg": "Created new meal"});
+            });
         });
-    });
-
+        
+    } else {
+        res.redirect('home');
+    }
 });
 
 // Update meal name
 app.post('/admin/user/:userId/update/meal', middleware.isLoggedIn, async (req, res) => {
-    const userId = req.params.userId;
+    if(req.user.isAdmin) {
 
-    const whatToUpdate = req.body.whatToUpdate;
-    const formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
+        const userId = req.params.userId;
     
-    const mealId = req.body.mealId;
-    
-    User.findById(userId, function (err, user) {
-        if (err) {
-            throw(err);
-        }
+        const whatToUpdate = req.body.whatToUpdate;
+        const formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
         
-        const mealIndex = user.foodStats.mealPlan.meals.findIndex(i => i.id === mealId);
-
-        if(whatToUpdate === "name") {
-            user.foodStats.mealPlan.meals[mealIndex].name = formData.name;
-        } else if(whatToUpdate === "details") {
-            user.foodStats.mealPlan.meals[mealIndex].details = formData.details;
-        } else if(whatToUpdate === "description") {
-            user.foodStats.mealPlan.meals[mealIndex].description = formData.description;
-        } else if(whatToUpdate === 'calories'){
-            user.foodStats.mealPlan.meals[mealIndex].calories = formData.calories;
-            let newTotalCalories = 0;
-            user.foodStats.mealPlan.meals.forEach((meal) => {
-               newTotalCalories += meal.calories; 
+        const mealId = req.body.mealId;
+        
+        User.findById(userId, function (err, user) {
+            if (err) {
+                throw(err);
+            }
+            
+            const mealIndex = user.foodStats.mealPlan.meals.findIndex(i => i.id === mealId);
+    
+            if(whatToUpdate === "name") {
+                user.foodStats.mealPlan.meals[mealIndex].name = formData.name;
+            } else if(whatToUpdate === "details") {
+                user.foodStats.mealPlan.meals[mealIndex].details = formData.details;
+            } else if(whatToUpdate === "description") {
+                user.foodStats.mealPlan.meals[mealIndex].description = formData.description;
+            } else if(whatToUpdate === 'calories'){
+                user.foodStats.mealPlan.meals[mealIndex].calories = formData.calories;
+                let newTotalCalories = 0;
+                user.foodStats.mealPlan.meals.forEach((meal) => {
+                   newTotalCalories += meal.calories; 
+                });
+                user.foodStats.mealPlan.totalCalories = newTotalCalories;
+            } else if(whatToUpdate === 'carbs') {
+                user.foodStats.mealPlan.meals[mealIndex].carbohydrates = formData.carbs;
+                let newTotalCarbohydrates = 0;
+                user.foodStats.mealPlan.meals.forEach((meal) => {
+                    newTotalCarbohydrates += meal.carbohydrates; 
+                });
+                user.foodStats.mealPlan.totalCarbohydrates = newTotalCarbohydrates;
+            } else if(whatToUpdate === 'fat'){
+                user.foodStats.mealPlan.meals[mealIndex].fat = formData.fat;
+                let newTotalFat = 0;
+                user.foodStats.mealPlan.meals.forEach((meal) => {
+                    newTotalFat += meal.fat; 
+                });
+                user.foodStats.mealPlan.totalFat = newTotalFat;
+            } else if(whatToUpdate === 'protein'){
+                user.foodStats.mealPlan.meals[mealIndex].protein = formData.protein;
+                let newTotalProtein = 0;
+                user.foodStats.mealPlan.meals.forEach((meal) => {
+                    newTotalProtein += meal.protein; 
+                });
+                user.foodStats.mealPlan.totalProtein = newTotalProtein;
+            }
+    
+            user.save(function (err, updatedUser) {
+                if (err){
+                    throw(err); 
+                } 
+                res.json({"msg": "Updated meal name"});
             });
-            user.foodStats.mealPlan.totalCalories = newTotalCalories;
-        } else if(whatToUpdate === 'carbs') {
-            user.foodStats.mealPlan.meals[mealIndex].carbohydrates = formData.carbs;
-            let newTotalCarbohydrates = 0;
-            user.foodStats.mealPlan.meals.forEach((meal) => {
-                newTotalCarbohydrates += meal.carbohydrates; 
-            });
-            user.foodStats.mealPlan.totalCarbohydrates = newTotalCarbohydrates;
-        } else if(whatToUpdate === 'fat'){
-            user.foodStats.mealPlan.meals[mealIndex].fat = formData.fat;
-            let newTotalFat = 0;
-            user.foodStats.mealPlan.meals.forEach((meal) => {
-                newTotalFat += meal.fat; 
-            });
-            user.foodStats.mealPlan.totalFat = newTotalFat;
-        } else if(whatToUpdate === 'protein'){
-            user.foodStats.mealPlan.meals[mealIndex].protein = formData.protein;
-            let newTotalProtein = 0;
-            user.foodStats.mealPlan.meals.forEach((meal) => {
-                newTotalProtein += meal.protein; 
-            });
-            user.foodStats.mealPlan.totalProtein = newTotalProtein;
-        }
-
-        user.save(function (err, updatedUser) {
-            if (err){
-                throw(err); 
-            } 
-            res.json({"msg": "Updated meal name"});
         });
-    });
+        
+    } else {
+        res.redirect('home');
+    }
 });
 
 // delete meal
 app.post('/admin/user/:userId/delete/meal', middleware.isLoggedIn, async (req, res) => {
-    const userId = req.params.userId;
-    const mealId = req.body.mealId; 
-    
-    User.findById(userId, function (err, user) {
-        if (err) {
-            throw(err);
-        } 
-        let mealPlan = user.foodStats.mealPlan;
-        // Getting meal-index
-        const mealIndex = mealPlan.meals.findIndex(i => i.id === mealId);
-        // Updating values
-        const newTotalCalories = mealPlan.totalCalories - mealPlan.meals[mealIndex].calories;
-        mealPlan.totalCalories = newTotalCalories;
-        const newTotalCarbohydrates = mealPlan.totalCarbohydrates - mealPlan.meals[mealIndex].carbohydrates;
-        mealPlan.totalCarbohydrates = newTotalCarbohydrates;
-        const newTotalProtein = mealPlan.totalProtein - mealPlan.meals[mealIndex].protein;
-        mealPlan.totalProtein = newTotalProtein;
-        const newTotalFat = mealPlan.totalFat - mealPlan.meals[mealIndex].fat;
-        mealPlan.totalFat = newTotalFat;
-        mealPlan.meals.splice(mealIndex, 1);
-
-        // Makes sure that the passes above the deleted one gets updated their pasnumber
-        for(let i = mealIndex; i < mealPlan.meals.length; i ++) {
-            mealPlan.meals[i].id = JSON.stringify(i + 1);
-        }
-
-        // Update new workout data
-        user.save(function (err, updatedUser) {
-            if (err){
-                throw(err); 
+    if(req.user.isAdmin) {
+        
+        const userId = req.params.userId;
+        const mealId = req.body.mealId; 
+        
+        User.findById(userId, function (err, user) {
+            if (err) {
+                throw(err);
             } 
-            res.json({msg: "Meal was deleted"});
+            let mealPlan = user.foodStats.mealPlan;
+            // Getting meal-index
+            const mealIndex = mealPlan.meals.findIndex(i => i.id === mealId);
+            // Updating values
+            const newTotalCalories = mealPlan.totalCalories - mealPlan.meals[mealIndex].calories;
+            mealPlan.totalCalories = newTotalCalories;
+            const newTotalCarbohydrates = mealPlan.totalCarbohydrates - mealPlan.meals[mealIndex].carbohydrates;
+            mealPlan.totalCarbohydrates = newTotalCarbohydrates;
+            const newTotalProtein = mealPlan.totalProtein - mealPlan.meals[mealIndex].protein;
+            mealPlan.totalProtein = newTotalProtein;
+            const newTotalFat = mealPlan.totalFat - mealPlan.meals[mealIndex].fat;
+            mealPlan.totalFat = newTotalFat;
+            mealPlan.meals.splice(mealIndex, 1);
+    
+            // Makes sure that the passes above the deleted one gets updated their pasnumber
+            for(let i = mealIndex; i < mealPlan.meals.length; i ++) {
+                mealPlan.meals[i].id = JSON.stringify(i + 1);
+            }
+    
+            // Update new workout data
+            user.save(function (err, updatedUser) {
+                if (err){
+                    throw(err); 
+                } 
+                res.json({msg: "Meal was deleted"});
+            });
         });
-    });
+        
+    } else {
+        res.redirect('home');
+    }
 });
 
 // ===============================================================
