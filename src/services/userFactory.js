@@ -4,7 +4,8 @@ utility      = require('./utility.js');
 module.exports = {
     createNewUser,
     testData,
-    updateWeight
+    updateWeight,
+    newUser
 };
 
 // Create new user
@@ -48,6 +49,55 @@ function updateWeight(weight, user, User){
         });
     });
 }
+
+function newUser(userData) {
+    const newUser = {
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        username: userData.username,
+        password: "",
+        street: "",
+        houseNumber: "",
+        zipcode: 0,
+        town: "",
+        phone: "",
+        avatarURL: "",
+        weightStats: {
+            currentWeight: 0,
+            startWeight: 0,
+            weightProgress: 0,
+            targetWeight: 0,
+            allWeights: []
+        },
+        trainingStats: {
+            trainingPases:[
+                {             
+                    pasNumber: "",
+                    muscleGroups: [
+                        {
+                            name: "",
+                            assignedWorkouts: []
+                        }
+                    ],
+                }
+            ]
+        },
+        foodStats: {
+            mealPlan: {
+                caloriesToday: 0,
+                totalCalories: 0,
+                totalCarbohydrates: 0,
+                totalFat: 0,
+                totalProtein: 0,
+                meals: [],
+            }
+        },
+        messages: [],
+        news: []
+    };
+    return newUser;
+}
+
 
 // Function to make random users
 function testData(User, amount) {

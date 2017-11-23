@@ -72,7 +72,7 @@ io.on('connection', function(socket){
 
     
 
-    // Message from user
+    // Message from user to Mikael
     socket.on("user message", (data) => {
 
         const newMessage = {
@@ -98,7 +98,7 @@ io.on('connection', function(socket){
 
 
 
-    // Message from Mikael
+    // Message from Mikael to a specific user
     socket.on("mikael message", (data) => {
 
         const newMessage = {
@@ -293,6 +293,26 @@ app.get('/admin/user/:userId', middleware.isLoggedIn, (req,res) => {
         User.findById(req.params.userId, (err, user) => {
             Workout.find({}, (err, workouts) => {
                 res.render('./admin/user-page/user', {
+                    user: user, 
+                    workouts: workouts, 
+                    muscleGroups: workoutFactory.muscleGroups,
+                    meals: mealFactory.meals
+                });
+            });
+        });
+
+    } else {
+        res.redirect('home');
+    }
+});
+
+// user page
+app.get('/admin/user/:userId/chat', middleware.isLoggedIn, (req,res) => {
+    if(req.user.isAdmin) {
+
+        User.findById(req.params.userId, (err, user) => {
+            Workout.find({}, (err, workouts) => {
+                res.render('./admin/chat', {
                     user: user, 
                     workouts: workouts, 
                     muscleGroups: workoutFactory.muscleGroups,
@@ -768,11 +788,7 @@ app.get('/admin/register', (req, res) => {
 // Handling user signup
 app.post('/admin/register', (req, res) => {
     User.register(new User(
-        {
-            username: req.body.username,
-            firstName: req.body.firstName,
-            lastName: req.body.lastName
-        }
+        userFactory.newUser(req.body)
     ), 
         req.body.password, function(err, user){
         if(err){
