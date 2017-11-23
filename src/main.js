@@ -57,7 +57,6 @@ passport.deserializeUser(User.deserializeUser());
 // Creates test data. needs username = 1
 userFactory.testData(User, 10);
 
-
 // Run this to get execise data in DB
 /* Workout.remove({}).exec();
 const exercises = ["squats", "bænkpres", "dødløft", "biceps curls", "skulder pres", "mavebøjninger"];
@@ -66,15 +65,12 @@ exercises.forEach((exercise) => {
 });  */
 
 // ===============================================================
-// WEB SOCKETS 
+// WEB SOCKETS FOR CHAT
 // ===============================================================
 io.on('connection', function(socket){
 
-    
-
-    // Message from user to Mikael
+    // Handle user message from client to server
     socket.on("from user to server", (data) => {
-        console.log(data);
         let newMessage = {
             date: moment().format("DD/MM - hh:mm"),
             message: data.message,
@@ -95,12 +91,15 @@ io.on('connection', function(socket){
             }
         });
         newMessage.userId = data.userId;
-        socket.broadcast.emit('from server to mikael', newMessage);
+
+        // Send user message from server to client
+        socket.broadcast.emit('from server to admin', newMessage);
     });
 
+/*************************************************************************** */
 
-    // Message from Mikael to a specific user
-    socket.on("from mikael to server", (data) => {
+    // Handle admin message from client to server
+    socket.on("from admin to server", (data) => {
         let newMessage = {
             date: moment().format("DD/MM - hh:mm"),
             message: data.message,
@@ -122,6 +121,8 @@ io.on('connection', function(socket){
         });
 
         newMessage.userId = data.userId;
+
+        // Send admin message from server to client
         socket.broadcast.emit("from server to user", newMessage);
     });
 
@@ -772,7 +773,29 @@ app.post('/admin/user/:userId/delete/meal', middleware.isLoggedIn, async (req, r
 });
 
 // ===============================================================
-// AUTH ROUTES
+// DELETE A USER
+// ===============================================================
+
+app.post('/admin/delete/:userId', (req, res) => {
+    if(req.user.isAdmin) {
+
+        const userId = req.params.userId;
+
+        User.findByIdAndRemove(userId, (err, deletedUser) => {
+            if(err){
+                throw err;
+            } else {
+                res.redirect('/admin');
+            }
+        });
+
+    } else {
+        res.redirect('home');
+    }
+});
+
+// ===============================================================
+// AUTHENTICATION ROUTES
 // ===============================================================
 
 // Show signup form
@@ -780,7 +803,7 @@ app.get('/admin/register', (req, res) => {
     res.render('admin/register');
 });
 
-// Handling user signup
+// Register user
 app.post('/admin/register', (req, res) => {
     User.register(new User(
         userFactory.newUser(req.body)

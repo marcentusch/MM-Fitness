@@ -1,5 +1,9 @@
 <% include partials/header %>
 
+<script>
+    $("#home").addClass("active");
+</script>
+
 <div class="row">
     <% users.forEach((user) => { %>
         <div class="col-4">
@@ -15,7 +19,7 @@
                     <% } else { %>
                         <p> Brugeren har ikke indtastet data </p>
                     <% } %>
-                    <a href="admin/user/<%= user._id %>" class="btn btn-sm btn-outline-success">Chat med bruger</a>
+                    <a href="admin/user/<%= user._id %>/chat" class="btn btn-sm btn-outline-success">Chat med bruger</a>
                     <a href="admin/user/<%= user._id %>" class="btn-sm btn-link float-right">Detaljer</a>
                 </div>
             </div>

@@ -12,9 +12,27 @@
 
 <script src="/js/user.js"></script>
 
+<script>
+    function deleteUser(userId, userName) {
+    if (confirm('Er du sikker på du vil slette ' + userName)) {
+        $.ajax({
+            type: 'POST',
+            url: '/admin/delete/' + userId,
+            success: function(respones) {
+                window.location.replace("/admin");
+            }
+        });
+    } else {
+        // Gør ingenting
+    }
+}
+
+</script>
+
 <div class="container">
+    <button class="btn btn-sm btn-outline-danger float-right" onclick="deleteUser('<%=user._id%>' , '<%= user.firstName %>')"> Slet bruger</button>
     <div class="row">
-        <div class="col-8">
+        <div class="col-9">
             <div class="row">
                 <div class="col-2">
                     <p><strong>Navn:</strong></p>
@@ -30,11 +48,11 @@
                 </div>
             </div>
         </div>
-        <div class="col-4">
+        <div class="col-3">
             <img src="<%= user.avatarURL %>" width="200">
         </div>
     </div>
-
+    
     <a href="<%= user._id %>/chat" class="btn btn-outline-success">Chat med bruger </a>
 
     <% include user-weight %>

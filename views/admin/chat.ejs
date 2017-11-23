@@ -5,21 +5,21 @@
         $("#inbox").addClass("active");
         $("#title").text("Indbakke");
 
-        // Mikael sends a message to the user. The message is only saved in the user messages array.
-        // Vi skal bare lave en emit som gemmer beskeden i user DB
-        function messageFromMikael (userId) {
+        // Admin send message to server
+        function adminMessage (userId) {
             const message = $("#message").val();
-            $("#message").val();
-            socket.emit("from mikael to server", {
+            $("#message").val("");
+            
+            $("#messageDiv").append("<p class='text-right'>" + message + "</p>");
+            
+            socket.emit("from admin to server", {
                 message: message,
                 userId: userId
             });
-            $("#messageDiv").append("<p>" + message + "</p>");
-
         }
 
-        socket.on("from server to mikael", (data) => {
-            console.log("BRUGERBESKED TIL MIKAEL");
+        // Admin recieving message from server
+        socket.on("from server to admin", (data) => {
             $("#messageDiv").append("<p>" + data.message + "</p>");
         });
 
@@ -29,8 +29,8 @@
     <div class="container">
         <div id="messageDiv">
         <% user.messages.forEach((message) => { %>
-            <% if(message.fromUser === true) { %>
-                <p class="text-right"> <%= message.message %> </p>
+            <% if(message.fromUser === false) { %>
+                    <p class="text-right"> <%= message.message %> </p>
                 <% } else { %>
                     <p> <%= message.message %> </p>                    
                 <% } %>
@@ -38,14 +38,12 @@
         </div>
     </div>
 
-
-
     <!-- tekstfelt & send-knap -->
     <div>
         <div class="d-flex flex-column justify-content-end" style="min-height: calc(100vh - 55px); align-items: flex-end;">
             <div class="input-group stickyBottom">
                 <input id="message" class="form-control" type="text" placeholder="skriv en besked...">
-                <button class="btn btn-primary" onclick="messageFromMikael('<%= user._id %>')"><i class="fa fa-telegram fa-lg"></i></button>
+                <button class="btn btn-primary" onclick="adminMessage('<%= user._id %>')"><i class="fa fa-telegram fa-lg"></i></button>
             </div> 
         </div>
     </div>
