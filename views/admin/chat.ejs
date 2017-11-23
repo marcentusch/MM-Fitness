@@ -5,39 +5,22 @@
         $("#inbox").addClass("active");
         $("#title").text("Indbakke");
 
-
-        // Send a message
-        function sendMessage(userId){
-            var chatBox = $("#message");
-            var message = chatBox.val();
-            chatBox.val("");
-
-            $("#messageDiv").append("<p class='text-right'>" + message + "</p>")
-
-
-            socket.emit("mikael message", {
-                message: message,
-                userId: userId
-            });
-        }
-
         // Mikael sends a message to the user. The message is only saved in the user messages array.
         // Vi skal bare lave en emit som gemmer beskeden i user DB
-        function messageFromMikael2 (userId) {
+        function messageFromMikael (userId) {
             $("#message").val();
-            socket.emit("mikael message", {
+            socket.emit("from mikael to server", {
                 message: $("#message").val(),
                 userId: userId
             });
         }
 
-        socket.on("message to user", (data) => {
+        socket.on("from server to mikael", (data) => {
+            console.log("BRUGERBESKED TIL MIKAEL");
             $("#messageDiv").append("<p>" + data.message + "</p>");
         });
 
     </script>
-
-    <button onclick="messageFromMikael('<%= user._id %>')"> Besked fra Mikael</button>
 
     <!-- Messages -->
     <div class="container">
@@ -59,7 +42,7 @@
         <div class="d-flex flex-column justify-content-end" style="min-height: calc(100vh - 55px); align-items: flex-end;">
             <div class="input-group stickyBottom">
                 <input id="message" class="form-control" type="text" placeholder="skriv en besked...">
-                <button class="btn btn-primary" onclick="messageFromMikael2('<%= user._id %>')"><i class="fa fa-telegram fa-lg"></i></button>
+                <button class="btn btn-primary" onclick="messageFromMikael('<%= user._id %>')"><i class="fa fa-telegram fa-lg"></i></button>
             </div> 
         </div>
     </div>

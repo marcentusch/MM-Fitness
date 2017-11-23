@@ -14,26 +14,16 @@
             $("#messageDiv").append("<p class='text-right'>" + message + "</p>")
 
 
-            socket.emit("mikael message", {
+            socket.emit("from user to server", {
                 message: message,
                 userId: userId
             });
         }
 
-        // Mikael test gøgl
-        function messageFromMikael (userId) {
-            socket.emit("mikael message", {
-                message: "Velkommen til min side",
-                userId: userId
-            });
-        }
-
-        socket.on("message to user", (data) => {
+        socket.on("from server to user", (data) => {
+            console.log("apwoidjaowdijoawdija" + data);
             $("#messageDiv").append("<p>" + data.message + "</p>");
         });
-        
-
-        
         
     </script>
 

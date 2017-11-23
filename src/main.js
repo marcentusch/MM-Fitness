@@ -73,9 +73,9 @@ io.on('connection', function(socket){
     
 
     // Message from user to Mikael
-    socket.on("user message", (data) => {
-
-        const newMessage = {
+    socket.on("from user to server", (data) => {
+        console.log(data);
+        let newMessage = {
             date: moment().format("DD/MM - hh:mm"),
             message: data.message,
             fromUser: true
@@ -94,19 +94,18 @@ io.on('connection', function(socket){
                 });
             }
         });
+        newMessage.userId = data.userId;
+        socket.emit('from server to mikael', newMessage);
     });
 
 
-
     // Message from Mikael to a specific user
-    socket.on("mikael message", (data) => {
-
-        const newMessage = {
+    socket.on("from mikael to server", (data) => {
+        let newMessage = {
             date: moment().format("DD/MM - hh:mm"),
             message: data.message,
             fromUser: false
         }
-
         
         User.findById(data.userId, (err, user) => {
             if(err) {
@@ -122,12 +121,8 @@ io.on('connection', function(socket){
             }
         });
 
-        socket.emit("message to user", {
-            id: data.userId,
-            date: moment().format("DD/MM - hh:mm"),            
-            message: data.message,
-            fromUser: false
-        });
+        newMessage.userId = data.userId;
+        socket.emit("from server to user", newMessage);
     });
 
 });
@@ -795,9 +790,7 @@ app.post('/admin/register', (req, res) => {
             console.log(err);
             return res.render('admin/register');
         }
-        passport.authenticate('local')(req, res, function(){
-            res.redirect('/home')
-        });
+        res.redirect('/admin')
     });
 });
 
