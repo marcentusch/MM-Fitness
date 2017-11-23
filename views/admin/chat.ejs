@@ -8,11 +8,14 @@
         // Mikael sends a message to the user. The message is only saved in the user messages array.
         // Vi skal bare lave en emit som gemmer beskeden i user DB
         function messageFromMikael (userId) {
+            const message = $("#message").val();
             $("#message").val();
             socket.emit("from mikael to server", {
-                message: $("#message").val(),
+                message: message,
                 userId: userId
             });
+            $("#messageDiv").append("<p>" + message + "</p>");
+
         }
 
         socket.on("from server to mikael", (data) => {

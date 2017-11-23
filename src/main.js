@@ -95,7 +95,7 @@ io.on('connection', function(socket){
             }
         });
         newMessage.userId = data.userId;
-        socket.emit('from server to mikael', newMessage);
+        socket.broadcast.emit('from server to mikael', newMessage);
     });
 
 
@@ -122,7 +122,7 @@ io.on('connection', function(socket){
         });
 
         newMessage.userId = data.userId;
-        socket.emit("from server to user", newMessage);
+        socket.broadcast.emit("from server to user", newMessage);
     });
 
 });
