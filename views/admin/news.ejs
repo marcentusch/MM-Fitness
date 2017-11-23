@@ -1,8 +1,6 @@
 <% include partials/header %>
-<script>
-    $("#news").addClass("active");
-    $("#title").text("Nyheder");
 
+<script>
     function swapText(id){
         let text = $("#" + id).text();
         
@@ -14,11 +12,14 @@
     }
 </script>
 
-    <div class="container">
-        <% news.forEach((news) => { %>
+
+
+<div class="row mx-3">
+    <% news.forEach((news) => { %>
+        <div class="col-4">
             <div class="card my-3">
                 <div class="card-header">
-                    <h4><%= news.title %></h4>
+                    <h5><%= news.title %></h5>
                 </div>
                 <div class="card-body pb-2">
                     <p><i> <%= news.subdivision %> </i></p>
@@ -34,6 +35,9 @@
                     <p class="text-right m-1 text-secondary"><small><%= news.date %></small></p>
                 </div>
             </div>
-        <%});%>
-    </div>
+        </div>
+    <%});%>
+</div>
+
+
 <% include partials/footer %>

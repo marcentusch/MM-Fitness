@@ -18,9 +18,11 @@ const middleware  = require('./middleware/index.js'),
 config            = require('../config/global.config.json'),
 userData          = require('./schemas/userSchema.js'),
 workoutData       = require('./schemas/workoutSchema.js'),
+newsData          = require('./schemas/newsSchema.js'),
 userFactory       = require('./services/userFactory.js'),
 workoutFactory    = require('./services/workoutFactory.js'),
-mealFactory       = require('./services/mealFactory.js');
+mealFactory       = require('./services/mealFactory.js'),
+newsFactory       = require('./services/newsFactory.js');
 
 // Database stuff
 mongoose.Promise = global.Promise;
@@ -36,6 +38,10 @@ const User = mongoose.model('User', userSchema);
 // workout-schema
 const workoutSchema = mongoose.Schema(workoutData);
 const Workout = mongoose.model('Workout', workoutSchema);
+
+// news-schema
+const newsSchema = mongoose.Schema(newsData);
+const News = mongoose.model('News', newsSchema);
 
 // Setup
 app.use(express.static('public'));
@@ -63,6 +69,9 @@ const exercises = ["squats", "bænkpres", "dødløft", "biceps curls", "skulder 
 exercises.forEach((exercise) => {
     workoutFactory.createNewWorkout(Workout, exercise);
 });  */
+
+//run to get a news
+//newsFactory.createNewNews(News);
 
 // ===============================================================
 // WEB SOCKETS FOR CHAT
@@ -244,7 +253,9 @@ app.get('/inbox', middleware.isLoggedIn, (req, res) => {
 // News
 app.get('/news', middleware.isLoggedIn, (req, res) => {
     const user = req.user;
-    res.render('news', {user: user});
+    News.find({}, (err, news) =>{
+        res.render('news', {user: user, news: news});
+    });
 });
 
 // Update weight route
@@ -302,7 +313,7 @@ app.get('/admin/user/:userId', middleware.isLoggedIn, (req,res) => {
     }
 });
 
-// user page
+// chat page
 app.get('/admin/user/:userId/chat', middleware.isLoggedIn, (req,res) => {
     if(req.user.isAdmin) {
 
@@ -317,6 +328,17 @@ app.get('/admin/user/:userId/chat', middleware.isLoggedIn, (req,res) => {
             });
         });
 
+    } else {
+        res.redirect('home');
+    }
+});
+
+// news page
+app.get('/admin/news', middleware.isLoggedIn, (req,res) => {
+    if(req.user.isAdmin) {
+        News.find({}, (err, news) => {
+            res.render('./admin/news', {news: news});
+        });
     } else {
         res.redirect('home');
     }

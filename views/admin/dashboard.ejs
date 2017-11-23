@@ -4,12 +4,12 @@
     $("#home").addClass("active");
 </script>
 
-<div class="row">
+<div class="row mx-3">
     <% users.forEach((user) => { %>
         <div class="col-4">
-            <div class="card m-3">
+            <div class="card my-3">
                 <div class="card-header">
-                    <p class="mb-0"><%= user.firstName + " " + user.lastName %></p>
+                    <h5 class="mb-0"><%= user.firstName + " " + user.lastName %></h5>
                 </div>
                 <div class="card-body">
                     <% if(user.weightStats.currentWeight) { %>

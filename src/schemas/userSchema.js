@@ -76,16 +76,5 @@ module.exports =
             message: String,
             fromUser: Boolean
         }
-    ],
-    news: [
-        {
-            title: String,
-            subdivision: String,
-            content: String,
-            imageUrl: String,
-            link: String,
-            linkText: String,
-            date: String
-        }
     ]
 };
