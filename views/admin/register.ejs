@@ -4,60 +4,51 @@
     $("#register").addClass("active");
 </script>
 
-<!-- <div class="container">
-    <h4>Registrér ny bruger</h4>
-    <hr>
-    <form action="register" method="POST">
-        <div class="form-group row">
-            <input class="form-control col-6" name="firstName" type="text" placeholder="Fornavn">
-            <input class="form-control col-6" name="lastName" type="text" placeholder="Efternavn">
-        </div>
-        <div class="form-group row">
-            <input class="form-control col-6" name="username" type="email" placeholder="email">
-            <input class="form-control col-6" name="password" type="password" placeholder="password">
-        </div>
-        <button class="btn btn-outline-primary">Submit</button>
-    </form>
-</div> -->
-
 <div class="container">
     <h4>Registrér ny bruger</h4>
+    <hr class="my-5">
     <form action="register" method="POST">
         <div class="form-row">
             <div class="form-group col-md-6">
-                <label>Fornavn</label>
+                <label><span class="text-danger">*</span><strong> Fornavn</strong></label>
                 <input type="text" class="form-control" name="firstName" placeholder="fornavn">
             </div>
             <div class="form-group col-md-6">
-                <label>Efternavn</label>
+                <label><span class="text-danger">*</span><strong> Efternavn</strong></label>
                 <input type="text" class="form-control" name="lastName" placeholder="efternavn">
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-md-6">
-                <label>Email</label>
+                <label><span class="text-danger">*</span><strong> E-mail</strong></label>
                 <input type="email" class="form-control" name="username" placeholder="e-mail">
             </div>
             <div class="form-group col-md-6">
-                <label>Password</label>
+                <label><span class="text-danger">*</span><strong> Password</strong></label>
                 <input type="password" class="form-control" name="password" placeholder="password">
             </div>
         </div>
-        <div class="form-group">
-            <label>Address</label>
-            <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St" disabled>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label><span class="text-danger">*</span><strong> Adresse</strong></label>
+                <input type="text" class="form-control" placeholder="adresse" disabled>
+            </div>
+            <div class="form-group col-md-2">
+                <label><span class="text-danger">*</span><strong> Postnummer</strong></label>
+                <input type="text" class="form-control" placeholder="postnummer" disabled>
+            </div>
+            <div class="form-group col-md-4">
+                <label><span class="text-danger">*</span><strong> By</strong></label>
+                <input type="text" class="form-control" placeholder="by" disabled>
+            </div>
         </div>
         <div class="form-row">
             <div class="form-group col-md-6">
-                <label>City</label>
-                <input type="text" class="form-control" id="inputCity" disabled>
-            </div>
-            <div class="form-group col-md-2">
-                <label>Zip</label>
-                <input type="text" class="form-control" id="inputZip" disabled>
+                <label><span class="text-danger">*</span><strong> Telefon</strong></label>
+                <input type="text" class="form-control" placeholder="telefon" disabled>
             </div>
         </div>
-        <button class="btn btn-outline-primary">Registrér</button>
+        <button class="btn btn-outline-primary pointer">Registrér</button>
     </form> 
 </div>
 
