@@ -11,7 +11,8 @@
                         <!-- CARD HEADER FORM -->
                         <form id="newMealForm" class="form-inline float-right" action="">
                             <div class="form-group">
-                                <select name="newMealName" class="form-control">
+                                <select name="newMealName" class="form-control text-capitalize">
+                                    <option selected disabled> Vælg måltid </option>
                                     <% meals.forEach((meal) => { %>
                                         <option class="form-control"> <%= meal %> </option>
                                     <% }); %>
@@ -42,7 +43,7 @@
                                 <div class="card-header bg-dark text-white">
                                     <div class="row">
                                         <div class="col-6">
-                                            <h5> <%= meal.meal %> </h5> 
+                                            <h5 class="text-capitalize"> <%= meal.meal %> </h5> 
                                         </div>
                                         <div class="col-6">
                                             <!-- TOGGLE BUTTON TO SHOW EDIT BUTTONS -->
