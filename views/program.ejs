@@ -9,11 +9,7 @@
 <% trainingStats.trainingPases.forEach((trainingPas) => { %>
     <div class="card m-1 my-4">
         <div class="card-header text-white bg-dark">
-            <% if(today === trainingPas.day) {   %>
-                <h5> I dag - Pas <%= trainingPas.pasNumber %> </h5>
-            <% } else if(today !== trainingPas.day) { %>
-                <h5> <%= trainingPas.day %> - Pas <%= trainingPas.pasNumber %> </h5>
-            <% } %>
+            <h5> Pas <%= trainingPas.pasNumber %> </h5>
         </div>
     
         <div class="card-body pt-0 bg-light">
