@@ -795,6 +795,44 @@ app.post('/admin/user/:userId/delete/meal', middleware.isLoggedIn, async (req, r
 });
 
 // ===============================================================
+// Admin - NEWS
+// ===============================================================
+
+// Create new news
+app.post('/admin/news/create', (req, res) => {
+    const newNews = {
+        title: req.body.title,
+        subdivision: req.body.subdivision,
+        content: req.body.content,
+        imageUrl: "",
+        link: req.body.link,
+        linkText: req.body.linkText,
+        date: moment().format("DD/MM/YY")
+    }
+    News.create(newNews, (err) => {
+        if(err){
+            throw err;
+        } else {
+            res.redirect('/admin/news');
+        }
+    });
+});
+
+// Delete specific news
+app.post('/admin/news/delete/:newsId', (req, res) => {
+    const newsId = req.params.newsId;
+
+    News.findByIdAndRemove(newsId, (err) => {
+        if(err){
+            throw err;
+        } else {
+            res.json({"msg": "Deleted news"});
+        }
+    });
+});
+
+
+// ===============================================================
 // DELETE A USER
 // ===============================================================
 
