@@ -25,17 +25,32 @@
 
     </script>
 
-    <!-- Messages -->
-    <div class="container">
-        <div id="messageDiv">
+    <style>
+    
+    p:not(small) {
+        font-size: 20px;
+    }
+
+    </style>
+
+    
+
+    <!-- Messages  -->
+     <div id="messageDiv" class="container">
         <% user.messages.forEach((message) => { %>
-            <% if(message.fromUser === false) { %>
-                    <p class="text-right"> <%= message.message %> </p>
-                <% } else { %>
-                    <p> <%= message.message %> </p>                    
-                <% } %>
-            <% }) %>
-        </div>
+            <% if(message.fromUser === false) { %>            
+                <p class="">
+                    <span class="text-secondary font-weight-bold">  
+                        <small> <%= message.date %> </small> <%= user.firstName %>
+                    </span>:  <%= message.message %> 
+                </p>
+            <% } else { %>
+                <p class="">
+                    <span class="text-primary font-weight-bold"><small> <%= message.date %> </small> Mikael
+                    </span>: <%= message.message %>  
+                </p>                    
+            <% } %>
+        <% }) %>
     </div>
 
     <!-- tekstfelt & send-knap -->
