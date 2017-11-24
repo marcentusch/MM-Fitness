@@ -77,24 +77,26 @@
 
 <div class="row mx-3">
     <% users.forEach((user) => { %>
-        <div class="col-4">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0"><%= user.firstName + " " + user.lastName %></h5>
-                </div>
-                <div class="card-body">
-                    <% if(user.weightStats.currentWeight) { %>
-                        <p> Nuværende vægt <span class="float-right"> <%= user.weightStats.currentWeight %> </span> </p>
-                        <p> Vægt progression <span class="float-right"> <%= user.weightStats.weightProgress.toFixed(1) %> </span> </p>
-                        <p> Mål vægt <span class="float-right"> <%= user.weightStats.targetWeight %> </span> </p>                    
-                    <% } else { %>
-                        <p> Brugeren har ikke indtastet data </p>
-                    <% } %>
-                    <a href="admin/user/<%= user._id %>/chat" class="btn btn-sm btn-outline-success">Chat med bruger</a>
-                    <a href="admin/user/<%= user._id %>" class="btn-sm btn-link float-right">Detaljer</a>
+        <% if(user.isAdmin){} else { %>
+            <div class="col-4">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><%= user.firstName + " " + user.lastName %></h5>
+                    </div>
+                    <div class="card-body">
+                        <% if(user.weightStats.currentWeight) { %>
+                            <p> Nuværende vægt <span class="float-right"> <%= user.weightStats.currentWeight %> </span> </p>
+                            <p> Vægt progression <span class="float-right"> <%= user.weightStats.weightProgress.toFixed(1) %> </span> </p>
+                            <p> Mål vægt <span class="float-right"> <%= user.weightStats.targetWeight %> </span> </p>                    
+                        <% } else { %>
+                            <p> Brugeren har ikke indtastet data </p>
+                        <% } %>
+                        <a href="admin/user/<%= user._id %>/chat" class="btn btn-sm btn-outline-success">Chat med bruger</a>
+                        <a href="admin/user/<%= user._id %>" class="btn-sm btn-link float-right">Detaljer</a>
+                    </div>
                 </div>
             </div>
-        </div>
+        <% } %>
     <% }); %>
 </div>
 
