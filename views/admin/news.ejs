@@ -1,5 +1,9 @@
 <% include partials/header %>
 
+<script>
+    $("#news").addClass("active");
+</script>
+
 <!-- MODAL -->
 <div class="modal fade" id="modalNews" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -13,15 +17,15 @@
             <div class="modal-body">
                 <form action="/admin/news/create" method="POST">
                     <div class="form-group">
-                        <label><span class="text-danger">*</span>Titel</label>
+                        <label>Titel <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" name="title">
                     </div>
                     <div class="form-group">
-                        <label><span class="text-danger">*</span>Rubrik</label>
+                        <label>Rubrik <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" name="subdivision">
                     </div>
                     <div class="form-group">
-                        <label><span class="text-danger">*</span>Tekst</label>
+                        <label>Tekst <span class="text-danger">*</span></label>
                         <textarea type="text" class="form-control" name="content" cols="30" rows="10"></textarea>
                     </div>
                     <div class="form-group">
@@ -43,9 +47,11 @@
       </div>
 
 <!-- MODAL BUTTON -->
-<div class="row mx-3 mb-4">
+<div class="row mx-3 my-3">
     <div class="col-12">
-        <button class="btn btn-md btn-outline-primary float-right pointer" data-toggle="modal" data-target="#modalNews">Opret nyhed</button>
+        <button class="btn btn-md btn-outline-success float-right pointer" data-toggle="modal" data-target="#modalNews">
+                <i class="fa fa-plus-circle" aria-hidden="true"></i> Opret nyhed
+        </button>  
     </div>
 </div>
 
@@ -77,7 +83,7 @@
 
         <!-- NEWS CARDS -->
         <div class="col-4">
-            <div class="card my-3">
+            <div class="card mb-4">
                 <div class="card-header">
                     <div class="row">
                         <div class="col-6">

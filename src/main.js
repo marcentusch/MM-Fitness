@@ -858,11 +858,6 @@ app.post('/admin/delete/:userId', (req, res) => {
 // AUTHENTICATION ROUTES
 // ===============================================================
 
-// Show signup form
-app.get('/admin/register', (req, res) => {
-    res.render('admin/register');
-});
-
 // Register user
 app.post('/admin/register', (req, res) => {
     User.register(new User(
@@ -871,7 +866,7 @@ app.post('/admin/register', (req, res) => {
         req.body.password, function(err, user){
         if(err){
             console.log(err);
-            return res.render('admin/register');
+            return res.render('admin');
         }
         res.redirect('/admin')
     });

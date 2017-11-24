@@ -4,10 +4,81 @@
     $("#home").addClass("active");
 </script>
 
+<div class="modal fade" id="registerUserModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Registrér ny bruger</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span class="pointer" aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="/admin/register" method="POST">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label>Fornavn <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="firstName" placeholder="fornavn">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Efternavn <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="lastName" placeholder="efternavn">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label>E-mail <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" name="username" placeholder="e-mail">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Password <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" name="password" placeholder="password">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label>Adresse <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" placeholder="adresse" disabled>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Postnummer <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" placeholder="postnummer" disabled>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>By <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" placeholder="by" disabled>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label>Telefon <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" placeholder="telefon" disabled>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="float-right">
+                        <button type="button" class="btn btn-secondary pointer" data-dismiss="modal">Fortryd</button>
+                        <button class="btn btn-primary pointer">Registrér</button>
+                    </div>
+                </form> 
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mx-3 my-3">
+    <div class="col-12">
+        <button type="button" class="btn btn-md btn-outline-success float-right pointer" data-toggle="modal" data-target="#registerUserModal">
+                <i class="fa fa-plus-circle" aria-hidden="true"></i> Opret bruger
+        </button>
+    </div>
+</div>
+ 
+
 <div class="row mx-3">
     <% users.forEach((user) => { %>
         <div class="col-4">
-            <div class="card my-3">
+            <div class="card mb-4">
                 <div class="card-header">
                     <h5 class="mb-0"><%= user.firstName + " " + user.lastName %></h5>
                 </div>
