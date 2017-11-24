@@ -50,7 +50,31 @@
                                             <button onclick="toggleEditClass('<%= meal._id %>')" class="btn btn-sm btn-success float-right pointer ">
                                                 <i class="fa fa-lg fa-pencil-square-o" aria-hidden="true"></i>
                                             </button>
-                                            <button style="display: none;" onclick="deleteMeal('<%= meal.id %>')" class="edit<%= meal._id %> btn btn-sm btn-danger float-right pointer mr-2">
+
+                                            <!-- MODAL THAT'S ONLY SHOWN WHEN USER WANTS TO DELETE SPECIFIC MEAL -->
+                                            <div class="modal fade" id="deleteMeal<%= meal.id %>" role="dialog" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title text-dark">Bekræft valg</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span class="pointer" aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p class="text-dark">Er du sikker på, at du vil slette <span class="text-capitalize">'<%= meal.meal %>'</span>?</p>
+                                                            <p class="text-dark">Denne handling kan <strong>ikke</strong> fortrydes.</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary pointer" data-dismiss="modal">Fortryd</button>
+                                                            <button type="button" class="btn btn-danger pointer" onclick="deleteMeal('<%= meal.id %>')">Slet</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- BUTTON FOR SHOWING MODAL --> 
+                                            <button style="display: none;"  class="edit<%= meal._id %> btn btn-sm btn-danger float-right pointer mr-2" data-toggle="modal" data-target="#deleteMeal<%= meal.id %>">
                                                 <i class="fa fa-lg fa-times" aria-hidden="true"></i>
                                             </button>  
                                         </div>
@@ -330,7 +354,6 @@
 
     // DELETE
     function deleteMeal(mealId) {
-    if (confirm('Slet måltid?')) {
         $.ajax({
         type: 'POST',
         url: '<%=user._id%>/delete/meal',
@@ -341,9 +364,6 @@
             location.reload();
         },
         });
-    } else {
-        // Gør ingenting
-    }
 }
 
 
