@@ -818,8 +818,11 @@ app.post('/admin/news/create', (req, res) => {
     }
     News.create(newNews, (err) => {
         if(err){
-            throw err;
+            req.flash("error_messages", "Nyhed kunne ikke oprettes, prøv eventuelt igen.");
+            res.redirect('/admin/news');
+            return;
         } else {
+            req.flash("success_messages", "Nyhed oprettet!");
             res.redirect('/admin/news');
         }
     });
@@ -831,9 +834,12 @@ app.post('/admin/news/delete/:newsId', (req, res) => {
 
     News.findByIdAndRemove(newsId, (err) => {
         if(err){
-            throw err;
+            req.flash("error_messages", "Nyhed kunne ikke fjernes, prøv eventuelt igen.");
+            res.redirect('/admin/news');
+            return;
         } else {
-            res.json({"msg": "Deleted news"});
+            req.flash("success_messages", "Nyhed slettet!");
+            res.redirect('/admin/news');
         }
     });
 });
@@ -847,11 +853,14 @@ app.post('/admin/delete/:userId', (req, res) => {
     if(req.user.isAdmin) {
 
         const userId = req.params.userId;
-
+        
         User.findByIdAndRemove(userId, (err, deletedUser) => {
             if(err){
-                throw err;
+                req.flash("error_messages", "Noget gik galt. Prøv eventuelt igen.");
+                res.redirect('/admin');
+                return;
             } else {
+                req.flash("success_messages", "Brugeren er blevet slettet.");
                 res.redirect('/admin');
             }
         });
