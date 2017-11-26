@@ -48,8 +48,11 @@
         <% if(success_messages.length > 0){ %>
             <div class="row mx-3 mt-4">
                 <div class="col-12">
-                    <div class="alert alert-success" role="alert">
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <%= success_messages %>
+                        <button type="button" class="close pointer" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -59,8 +62,11 @@
         <% if(error_messages.length > 0){ %>
             <div class="row mx-3 mt-4">
                 <div class="col-12">
-                    <div class="alert alert-danger" role="alert">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <%= error_messages %>
+                        <button type="button" class="close pointer" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
                 </div>
             </div>
