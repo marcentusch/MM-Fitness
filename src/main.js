@@ -11,7 +11,8 @@ passport                    = require('passport'),
 LocalStrategy               = require('passport-local').Strategy,
 utility                     = require('./services/utility.js'),
 moment                      = require('moment'),
-schedule                    = require('node-schedule');
+schedule                    = require('node-schedule'),
+flash                       = require('connect-flash');
 
 // Require local files
 const middleware  = require('./middleware/index.js'),
@@ -47,6 +48,7 @@ const News = mongoose.model('News', newsSchema);
 app.use(express.static('public'));
 app.use(bodyparser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
+app.use(flash());
 app.use(require('express-session')({
     secret: "MM-Fitness er den vildeste app nogensinde!",
     resave: false,
@@ -877,7 +879,7 @@ app.post('/admin/register', (req, res) => {
 
 // Render login form
 app.get('/login', (req, res) => {
-    res.render('login');
+    res.render('login', {message: req.flash("error")});
 });
 
 // Login logic w. middleware
