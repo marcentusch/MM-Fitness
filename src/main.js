@@ -62,6 +62,12 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+app.use(function(req, res, next){
+    res.locals.success_messages = req.flash('success_messages');
+    res.locals.error_messages = req.flash('error_messages');
+    next();
+});
+
 // Creates test data. needs username = 1
 userFactory.testData(User, 10);
 
@@ -866,9 +872,11 @@ app.post('/admin/register', (req, res) => {
     ), 
         req.body.password, function(err, user){
         if(err){
-            console.log(err);
-            return res.render('admin');
+            req.flash("error_messages", "Brugeren eksisterer allerede!");
+            res.redirect('/admin');
+            return;
         }
+        req.flash("success_messages", "Ny bruger er blevet oprettet!");
         res.redirect('/admin')
     });
 });
@@ -879,7 +887,7 @@ app.post('/admin/register', (req, res) => {
 
 // Render login form
 app.get('/login', (req, res) => {
-    res.render('login', {message: req.flash("error")});
+    res.render('login');
 });
 
 // Login logic w. middleware
@@ -893,6 +901,7 @@ app.post('/login', passport.authenticate('local', {
 // Logout route
 app.get('/logout', (req, res) => {
     req.logout();
+    req.flash('success_messages', 'Du er blevet logget ud.');
     res.redirect('/');
 });
 

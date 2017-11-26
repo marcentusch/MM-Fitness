@@ -43,3 +43,25 @@
             </ul>
             </div>
         </nav>
+
+        <!-- Green alert -->
+        <% if(success_messages.length > 0){ %>
+            <div class="row mx-3 mt-4">
+                <div class="col-12">
+                    <div class="alert alert-success" role="alert">
+                        <%= success_messages %>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+
+        <!-- Red alert -->
+        <% if(error_messages.length > 0){ %>
+            <div class="row mx-3 mt-4">
+                <div class="col-12">
+                    <div class="alert alert-danger" role="alert">
+                        <%= error_messages %>
+                    </div>
+                </div>
+            </div>
+        <% } %>
