@@ -101,7 +101,7 @@ function newUser(userData) {
 // Function to make random users
 function testData(User, amount) {
     
-    User.remove( { username : { $ne: "1" } } ).exec();
+    User.remove( { firstName : { $ne: "tester" } } ).exec();
     
     for(let i = 0; i < amount; i++){
         
@@ -263,9 +263,23 @@ function testData(User, amount) {
         createNewUser(newUser, User);
         
         if(i === 0) {
+            
+            // Test admin user
             User.findOneAndUpdate({ username: "1" }, { $set: { 
                 isAdmin: true,
-                firstName: "Tester",
+                firstName: "tester",
+                lastName: "McTestersen",
+                trainingStats: newUser.trainingStats,
+                weightStats: newUser.weightStats,
+                foodStats: newUser.foodStats,
+                messages: newUser.messages
+            } }, { new: true }, function(err, doc) {
+                // console.log(doc);
+            });
+
+            // Test normal user
+            User.findOneAndUpdate({ username: "2" }, { $set: { 
+                firstName: "tester",
                 lastName: "McTestersen",
                 trainingStats: newUser.trainingStats,
                 weightStats: newUser.weightStats,

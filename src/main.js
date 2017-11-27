@@ -183,7 +183,17 @@ app.get('/home', middleware.isLoggedIn, (req, res) => {
     if(req.user.isAdmin){
         res.redirect('/admin');
     }else{
-        res.render('home', {user: user});
+        let nextMeal = {};
+        for(let i = 0; i < user.foodStats.mealPlan.meals.length; i++){
+            if(user.foodStats.mealPlan.meals[i].isChecked === false){
+                nextMeal = user.foodStats.mealPlan.meals[i];
+                break;
+            } else {
+                nextMeal = {};
+            }
+        }
+        res.render('home', {user: user, nextMeal: nextMeal});
+        
     }
 });
 
