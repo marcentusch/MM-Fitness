@@ -11,7 +11,8 @@ passport                    = require('passport'),
 LocalStrategy               = require('passport-local').Strategy,
 utility                     = require('./services/utility.js'),
 moment                      = require('moment'),
-schedule                    = require('node-schedule');
+schedule                    = require('node-schedule'),
+flash                       = require('connect-flash');
 
 // Require local files
 const middleware  = require('./middleware/index.js'),
@@ -47,6 +48,7 @@ const News = mongoose.model('News', newsSchema);
 app.use(express.static('public'));
 app.use(bodyparser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
+app.use(flash());
 app.use(require('express-session')({
     secret: "MM-Fitness er den vildeste app nogensinde!",
     resave: false,
@@ -59,6 +61,12 @@ app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
+app.use(function(req, res, next){
+    res.locals.success_messages = req.flash('success_messages');
+    res.locals.error_messages = req.flash('error_messages');
+    next();
+});
 
 // Creates test data. needs username = 1
 userFactory.testData(User, 10);
@@ -810,8 +818,11 @@ app.post('/admin/news/create', (req, res) => {
     }
     News.create(newNews, (err) => {
         if(err){
-            throw err;
+            req.flash("error_messages", "Nyhed kunne ikke oprettes, prøv eventuelt igen.");
+            res.redirect('/admin/news');
+            return;
         } else {
+            req.flash("success_messages", "Nyhed oprettet!");
             res.redirect('/admin/news');
         }
     });
@@ -823,9 +834,12 @@ app.post('/admin/news/delete/:newsId', (req, res) => {
 
     News.findByIdAndRemove(newsId, (err) => {
         if(err){
-            throw err;
+            req.flash("error_messages", "Nyhed kunne ikke fjernes, prøv eventuelt igen.");
+            res.redirect('/admin/news');
+            return;
         } else {
-            res.json({"msg": "Deleted news"});
+            req.flash("success_messages", "Nyhed slettet!");
+            res.redirect('/admin/news');
         }
     });
 });
@@ -839,11 +853,14 @@ app.post('/admin/delete/:userId', (req, res) => {
     if(req.user.isAdmin) {
 
         const userId = req.params.userId;
-
+        
         User.findByIdAndRemove(userId, (err, deletedUser) => {
             if(err){
-                throw err;
+                req.flash("error_messages", "Noget gik galt. Prøv eventuelt igen.");
+                res.redirect('/admin');
+                return;
             } else {
+                req.flash("success_messages", "Brugeren er blevet slettet.");
                 res.redirect('/admin');
             }
         });
@@ -864,9 +881,11 @@ app.post('/admin/register', (req, res) => {
     ), 
         req.body.password, function(err, user){
         if(err){
-            console.log(err);
-            return res.render('admin');
+            req.flash("error_messages", "Brugeren eksisterer allerede!");
+            res.redirect('/admin');
+            return;
         }
+        req.flash("success_messages", "Ny bruger er blevet oprettet!");
         res.redirect('/admin')
     });
 });
@@ -891,6 +910,7 @@ app.post('/login', passport.authenticate('local', {
 // Logout route
 app.get('/logout', (req, res) => {
     req.logout();
+    req.flash('success_messages', 'Du er blevet logget ud.');
     res.redirect('/');
 });
 

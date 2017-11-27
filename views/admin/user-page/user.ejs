@@ -17,8 +17,8 @@
         $.ajax({
             type: 'POST',
             url: '/admin/delete/' + userId,
-            success: function(respones) {
-                window.location.replace("/admin");
+            success: function(response) {
+                window.location.replace("/admin"); 
             }
         });
     }
@@ -40,8 +40,10 @@
                 <p>Denne handling kan <strong>ikke</strong> fortrydes.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary pointer" data-dismiss="modal">Fortryd</button>
-                <button type="button" class="btn btn-danger pointer" onclick="deleteUser('<%=user._id%>')">Slet</button>
+                <form action="/admin/delete/<%= user._id%>" method="POST">
+                    <button type="button" class="btn btn-secondary pointer" data-dismiss="modal">Fortryd</button>
+                    <button class="btn btn-danger pointer">Slet</button>
+                </form>
             </div>
             </div>
         </div>
