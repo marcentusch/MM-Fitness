@@ -8,4 +8,7 @@ function toggleEditClass(id) {
 
 function toggleEditButtons(pasNumber) {
     $(".editButtons" + pasNumber).toggle();
+    console.log("FROM TOGGLE FUNCITON", document.cookie);
+    document.cookie = pasNumber;
+
 };

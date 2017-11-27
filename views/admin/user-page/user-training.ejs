@@ -1,4 +1,13 @@
+<script>
 
+     
+    $( document ).ready( () => {
+        if(document.cookie) {
+            console.log(document.cookie);
+            toggleEditButtons(document.cookie);
+        }
+    } );
+</script>
 
 <!-- Træning -->
 <div class="row my-5">
@@ -179,6 +188,7 @@ function updateWorkout(trainingPas, muscleGroup, workoutName, workoutId) {
         location.reload();
         }, 
     });
+    document.cookie = trainingPas;
     $("#form" + workoutId).find("input").val("");
 }
 
