@@ -2,6 +2,7 @@ module.exports =
 {
     isAdmin: Boolean,
     lastEdit: String,
+    dateCreated: String,
     firstName: String,
     lastName: String,
     username: String,

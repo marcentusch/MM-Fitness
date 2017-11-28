@@ -1,20 +1,9 @@
-let workouts = require("../data/workouts.json");
 
 module.exports = {
     createNewWorkout,
-    muscleGroups: ["ben", "ryg", "biceps", "mave", "skulder", "bryst", "triceps"]
+    muscleGroups: ["ben", "ryg", "biceps", "core", "skulder", "bryst", "triceps"]
 }
 
-/* function getWorkout(name){
-    let workoutIndex = workouts.indexOf(name);
-    let newWorkout;
-    workouts.forEach((workout) => {
-        if(workout.name === name){
-            newWorkout = workout;
-        }
-    });
-    return newWorkout;
-} */
 
 
 function createNewWorkout(Workout, workout){

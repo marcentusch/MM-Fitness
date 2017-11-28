@@ -2,16 +2,18 @@
 <div class="row my-5">
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header bg-primary text-white">
                     <div class="row">
                         <div class="col-5">
-                            <h4>Vægt</h4>
+                            <h4 class="mb-0">Vægt</h4>
                         </div>
                         <div class="col-7">
                             <form class="form-inline float-right" action="<%= user._id %>/update/weight" method="post">
                                 <div class="form-group">
-                                    <input name="newGoal" required type="number" class="form-control mr-1" placeholder="indtast nyt mål...">
-                                    <button type="submit" class="btn btn-outline-primary pointer">Nyt mål</button>
+                                    <input name="newGoal" required type="number" class="form-control mr-1" placeholder="indtast ny målvægt...">
+                                    <button type="submit" class="btn btn-primary pointer">
+                                            <i class="fa fa-lg fa-pencil" aria-hidden="true"></i>
+                                    </button>
                                 </div>
                             </form>
                         </div>

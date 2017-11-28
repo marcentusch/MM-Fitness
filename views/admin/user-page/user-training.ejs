@@ -10,13 +10,15 @@
 <div class="row my-5">
     <div class="col-12">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header bg-primary text-white">
                 <div class="row">
                     <div class="col-9">
                         <h4>Træningsprogram</h4>
                     </div>
                     <div class="col-3">
-                        <button class="btn btn-outline-primary float-right pointer" onclick="createPas()">Nyt pas</button>
+                        <button class="btn btn-primary float-right pointer" onclick="createPas()">
+                            <i class="fa fa-lg fa-plus" aria-hidden="true"></i> 
+                        </button>
                     </div>
                 </div>
             </div>
@@ -24,8 +26,8 @@
                 <div class="row">
                     <% user.trainingStats.trainingPases.forEach((trainingPas) => { %>
                         <div class="col-6">
-                            <div class="card m-1 my-4">
-                                <div class="card-header text-white bg-dark">
+                            <div class="card border m-1 my-4">
+                                <div class="card-header">
                                     <div class="row">
                                         <div class="col-8">
                                             <h5>
@@ -33,8 +35,8 @@
                                             </h5>
                                         </div>
                                         <div class="col-4">
-                                            <button  class="btn btn-sm btn-success float-right pointer pt-2" onclick="toggleEditButtons('<%= trainingPas.pasNumber %>')" >
-                                                <i class="fa fa-lg fa-pencil-square-o" aria-hidden="true"></i>
+                                            <button  class="btn text-success btn-light float-right pointer p-1" onclick="toggleEditButtons('<%= trainingPas.pasNumber %>')" >
+                                                <i class="fa fa-lg fa-pencil" aria-hidden="true"></i>
                                             </button> 
                                             
                                             <!-- MODAL THAT'S ONLY SHOWN WHEN USER WANTS TO DELETE SPECIFIC PAS -->
@@ -60,14 +62,14 @@
                                             </div>
                                             
                                             <!-- BUTTON FOR SHOWING MODAL -->                                                
-                                            <button type="button" style="display: none;" class="editButtons<%= trainingPas.pasNumber %> btn btn-sm btn-danger float-right pointer mr-2" data-toggle="modal" data-target="#deleteTrainingPasModal<%= trainingPas.pasNumber %>">
+                                            <button  class="editButtons<%= trainingPas.pasNumber %> btn btn-light text-danger float-right pointer p-1" type="button" style="display: none;" data-toggle="modal" data-target="#deleteTrainingPasModal<%= trainingPas.pasNumber %>">
                                                 <i class="fa fa-lg fa-times" aria-hidden="true"></i>
                                             </button> 
                                             
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-body pt-0 bg-light">
+                                <div class="card-body pt-0">
                                 <% trainingPas.muscleGroups.forEach((muscleGroup) => { %>
 
                                     <div id="muscleGroup<%= muscleGroup._id %>">
@@ -112,7 +114,7 @@
                                                             <button 
                                                                 type="button" 
                                                                 onclick="updateWorkout('<%=trainingPas.pasNumber%>' , '<%= muscleGroup.name %>' , '<%= userWorkout.name %>', '<%= userWorkout._id %>')" 
-                                                                class="btn btn-primary btn-sm">Gem
+                                                                class="btn btn-outline-primary pointer btn-sm">Gem
                                                             </button>
                                                         </div>
                                                     </form>

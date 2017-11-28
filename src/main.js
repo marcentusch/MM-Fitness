@@ -181,7 +181,7 @@ app.get('/', (req, res) => {
 app.get('/home', middleware.isLoggedIn, (req, res) => {
     const user = req.user;
     if(req.user.isAdmin){
-        res.redirect('/admin');
+        res.redirect('/admin/dashboard');
     }else{
         let nextMeal = {};
         for(let i = 0; i < user.foodStats.mealPlan.meals.length; i++){
@@ -300,10 +300,54 @@ app.get('/workout/:name', middleware.isLoggedIn, async (req, res) => {
 // ===============================================================
 
 // front page
-app.get('/admin',  middleware.isLoggedIn, (req, res) => {
+app.get('/admin/dashboard/:sortBy?',  middleware.isLoggedIn, (req, res) => {
     if(req.user.isAdmin) {
         User.find({}, (err, users) => {
-            res.render('./admin/dashboard', {users: users});
+
+            // Default sort to first name
+            users.sort(function(a, b) {
+                if(a.firstName < b.firstName) return -1;
+                if(a.firstName > b.firstName) return 1;
+                return 0;
+            });
+
+            const sortBy = req.params.sortBy;
+            let sorted = "Fornavn";
+
+            if(sortBy === "firstName") {
+                sorted = "Fornavn";
+                users.sort(function(a, b) {
+                    if(a.firstName < b.firstName) return -1;
+                    if(a.firstName > b.firstName) return 1;
+                    return 0;
+                });
+            } else if(sortBy === "lastName") {
+                sorted = "Efternavn";                
+                users.sort(function(a, b) {
+                    if(a.lastName < b.lastName) return -1;
+                    if(a.lastName > b.lastName) return 1;
+                    return 0;
+                }); 
+            } else if(sortBy === "lastEdit") {
+                sorted = "Sidst redigeret"                
+                users.sort(function(a, b) {
+                    const bEdit = moment(b.lastEdit, "DD/MM - HH:mm").format("x");
+                    const aEdit = moment(a.lastEdit, "DD/MM - HH:mm").format("x");
+
+                    if(a.lastEdit !== "" || b.lastEdit !== "") {
+                       return -1;
+                    }
+                    
+                    return Number(bEdit) - Number(aEdit);
+                });
+            } else if(sortBy === "dateCreated") {
+                sorted = "Nyeste";                
+                users.sort(function(a, b) {
+                    return Number(b.dateCreated) - Number(a.dateCreated);
+                });
+            }
+            
+            res.render('./admin/dashboard', {users: users, sorted: sorted });
         });
     } else {
         res.redirect('home');
@@ -373,6 +417,8 @@ app.post('/admin/user/:userId/update/weight', middleware.isLoggedIn, (req, res) 
                 throw(err);
             } 
             user.weightStats.targetWeight = newGoal;
+            user.lastEdit = moment().format("DD/MM - HH:mm");
+            
             user.save(function (err, updatedUser) {
                 if (err){
                     throw(err); 
@@ -407,7 +453,8 @@ app.post('/admin/user/:userId/create/trainingpas', middleware.isLoggedIn, async 
             } 
             newPas.pasNumber = user.trainingStats.trainingPases.length + 1;
             user.trainingStats.trainingPases.push(newPas);
-    
+            user.lastEdit = moment().format("DD/MM - HH:mm");
+            
             user.save(function (err, updatedUser) {
                 if (err){
                     throw(err); 
@@ -880,11 +927,11 @@ app.post('/admin/delete/:userId', (req, res) => {
         User.findByIdAndRemove(userId, (err, deletedUser) => {
             if(err){
                 req.flash("error_messages", "Noget gik galt. Prøv eventuelt igen.");
-                res.redirect('/admin');
+                res.redirect('/admin/dashboard');
                 return;
             } else {
                 req.flash("success_messages", "Brugeren er blevet slettet.");
-                res.redirect('/admin');
+                res.redirect('/admin/dashboard');
             }
         });
 
@@ -905,11 +952,11 @@ app.post('/admin/register', (req, res) => {
         req.body.password, function(err, user){
         if(err){
             req.flash("error_messages", "Brugeren eksisterer allerede!");
-            res.redirect('/admin');
+            res.redirect('/admin/dashboard');
             return;
         }
         req.flash("success_messages", "Ny bruger er blevet oprettet!");
-        res.redirect('/admin')
+        res.redirect('/admin/dashboard')
     });
 });
 

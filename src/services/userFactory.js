@@ -52,6 +52,8 @@ function updateWeight(weight, user, User){
 
 function newUser(userData) {
     const newUser = {
+        lastEdit: "",
+        dateCreated: moment().format("x"),
         firstName: userData.firstName,
         lastName: userData.lastName,
         username: userData.username,
@@ -128,7 +130,7 @@ function testData(User, amount) {
 
 
         // Create exercise data
-        const muscleGroups = ["ben", "ryg", "biceps", "mave", "skulder", "bryst", "triceps"];
+        const muscleGroups = ["ben", "ryg", "biceps", "core", "skulder", "bryst", "triceps"];
 
         let trainingPases =[];
         for(let i = 0; i < 3; i++) {
@@ -247,17 +249,18 @@ function testData(User, amount) {
             firstName: firstNames[utility.randomNumber(0, firstNames.length -1, 0)],
             lastName: lastNames[utility.randomNumber(0, lastNames.length -1, 0)],
             password: password,
-            street: "genvej",
-            houseNumber: "1",
+            street: "Hovedgaden",
+            houseNumber: "12",
             zipcode: 2860,
             town: "Søborg",
-            phone: "88888888 ",
+            phone: "88888888",
             avatarURL: avatarURL,
             weightStats: weightStats,
             trainingStats: trainingStats,
             foodStats: foodStats,
             messages: messages,
-            lastEdit: ""
+            lastEdit: "",
+            dateCreated: moment().format("x")
         }
     
 

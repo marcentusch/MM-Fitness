@@ -2,7 +2,7 @@
     <div class="col-12">
         <div class="card">
             <!-- CARD HEADER -->
-            <div class="card-header">
+            <div class="card-header bg-primary text-white">
                 <div class="row">
                     <div class="col-6">
                         <h4>Kostplan</h4>
@@ -17,7 +17,9 @@
                                         <option class="form-control"> <%= meal %> </option>
                                     <% }); %>
                                 </select>
-                                <button onclick="createMeal()" class="btn btn-outline-primary ml-2"> Nyt måltid</button>                                
+                                <button onclick="createMeal()" class="btn btn-outline-primary text-white ml-2"> 
+                                    <i class="fa fa-lg fa-plus" aria-hidden="true"></i> 
+                                </button>                                
                             </div>
                         </form>
                     </div>
@@ -40,15 +42,15 @@
                     <% user.foodStats.mealPlan.meals.forEach((meal) => { %>
                         <div class="col-6">
                             <div class="card my-3">
-                                <div class="card-header bg-dark text-white">
+                                <div class="card-header ">
                                     <div class="row">
                                         <div class="col-6">
                                             <h5 class="text-capitalize"> <%= meal.meal %> </h5> 
                                         </div>
                                         <div class="col-6">
                                             <!-- TOGGLE BUTTON TO SHOW EDIT BUTTONS -->
-                                            <button onclick="toggleEditClass('<%= meal._id %>')" class="btn btn-sm btn-success float-right pointer ">
-                                                <i class="fa fa-lg fa-pencil-square-o" aria-hidden="true"></i>
+                                            <button onclick="toggleEditClass('<%= meal._id %>')" class="btn btn-light text-success float-right pointer p-2">
+                                                <i class="fa fa-lg fa-pencil" aria-hidden="true"></i>
                                             </button>
 
                                             <!-- MODAL THAT'S ONLY SHOWN WHEN USER WANTS TO DELETE SPECIFIC MEAL -->
@@ -74,13 +76,13 @@
                                             </div>
 
                                             <!-- BUTTON FOR SHOWING MODAL --> 
-                                            <button style="display: none;"  class="edit<%= meal._id %> btn btn-sm btn-danger float-right pointer mr-2" data-toggle="modal" data-target="#deleteMeal<%= meal.id %>">
+                                            <button style="display: none;"  class="edit<%= meal._id %> btn btn-light text-danger float-right pointer p-2" data-toggle="modal" data-target="#deleteMeal<%= meal.id %>">
                                                 <i class="fa fa-lg fa-times" aria-hidden="true"></i>
                                             </button>  
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-body bg-light">
+                                <div class="card-body">
                                     <h5> <%= meal.name %> 
                                         <span onclick="toggleEdit('<%= meal._id%>' + 'name')" class="float-left mr-1 edit<%= meal._id %>" style="display: none;">
                                             <i class="fa fa-pencil text-warning pointer" aria-hidden="true"></i>

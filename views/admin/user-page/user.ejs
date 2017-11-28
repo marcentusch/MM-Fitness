@@ -12,19 +12,6 @@
 
 <script src="/js/user.js"></script>
 
-<script>
-    function deleteUser(userId) {
-        $.ajax({
-            type: 'POST',
-            url: '/admin/delete/' + userId,
-            success: function(response) {
-                window.location.replace("/admin"); 
-            }
-        });
-    }
-
-</script>
-
     <!-- Modal for deleting user - ONLY SHOWN WHEN "Slet bruger" IS CLICKED -->
     <div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -51,31 +38,46 @@
 
 <div class="container mt-4">
     <!-- Delete user, trigger modal -->
-    <button type="button" class="btn btn-sm btn-outline-danger float-right pointer" data-toggle="modal" data-target="#deleteUserModal">Slet bruger</button>
+   
     
-    <div class="row">
-        <div class="col-9">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
             <div class="row">
-                <div class="col-2">
-                    <p><strong>Navn:</strong></p>
-                    <p><strong>Adresse:</strong></p>
-                    <p><strong>E-mail:</strong></p>
-                    <p><strong>Telefon:</strong></p>                    
+                <div class="col-9">
+                    <h4 class="mb-0"> <%= user.firstName  %> </h4>
                 </div>
-                <div class="col-5">
-                    <p><%= user.firstName + " " + user.lastName %></p>
-                    <p><%= user.street + " " + user.houseNumber %> , <%= user.zipcode + " " + user.town %></p>
-                    <p><%= user.username %></p>
-                    <p><%= user.phone %></p>                    
+                <div class="col-3">
+                    <button type="button" class="btn btn-primary float-right pointer" data-toggle="modal" data-target="#deleteUserModal">
+                            <i class="fa fa-lg fa-times" aria-hidden="true"></i>
+                    </button>   
                 </div>
             </div>
         </div>
-        <div class="col-3">
-            <img src="<%= user.avatarURL %>" width="200">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-9">
+                    <div class="row">
+                        <div class="col-2">
+                            <p><strong>Fulde navn:</strong></p>
+                            <p><strong>Adresse:</strong></p>
+                            <p><strong>E-mail:</strong></p>
+                            <p><strong>Telefon:</strong></p>                    
+                        </div>
+                        <div class="col-5">
+                            <p><%= user.firstName + " " + user.lastName %> </p>
+                            <p><%= user.street + " " + user.houseNumber %>, <%= user.zipcode + " " + user.town %></p>
+                            <p><%= user.username %></p>
+                            <p><%= user.phone %></p>                    
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <img src="<%= user.avatarURL %>" width="200">
+                </div>
+            </div>
+            <a href="<%= user._id %>/chat" class="btn btn-outline-success">Chat med <%= user.firstName %> </a>
         </div>
     </div>
-    
-    <a href="<%= user._id %>/chat" class="btn btn-outline-success">Chat med bruger </a>
 
     <% include user-weight %>
 
