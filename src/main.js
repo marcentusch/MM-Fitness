@@ -12,7 +12,8 @@ LocalStrategy               = require('passport-local').Strategy,
 utility                     = require('./services/utility.js'),
 moment                      = require('moment'),
 schedule                    = require('node-schedule'),
-flash                       = require('connect-flash');
+flash                       = require('connect-flash'),
+request                     = require('request');
 
 // Require local files
 const middleware  = require('./middleware/index.js'),
@@ -23,7 +24,15 @@ newsData          = require('./schemas/newsSchema.js'),
 userFactory       = require('./services/userFactory.js'),
 workoutFactory    = require('./services/workoutFactory.js'),
 mealFactory       = require('./services/mealFactory.js'),
-newsFactory       = require('./services/newsFactory.js');
+newsFactory       = require('./services/newsFactory.js'),
+env               = require('../env.json');
+
+// API stuff
+// Needs adress + apiKey
+const googleMapsBaseUrl = "https://maps.googleapis.com/maps/api/geocode/json?";
+// Needs key/latitude/longitude/units
+const darkWeatherBaseUrl = "https://api.darksky.net/forecast/";
+
 
 // Database stuff
 mongoose.Promise = global.Promise;
@@ -192,8 +201,20 @@ app.get('/home', middleware.isLoggedIn, (req, res) => {
                 nextMeal = {};
             }
         }
-        res.render('home', {user: user, nextMeal: nextMeal});
+
+        let currentWeather = "";
+        request(googleMapsBaseUrl + "address=" + user.zipcode + "+" + user.town + "&key=" + env.googleMapsSecret, function (error, response, body) {
+            const result = JSON.parse(response.body);
+            const latitude = result.results[0].geometry.location.lat;
+            const longitude = result.results[0].geometry.location.lng;
         
+            request(darkWeatherBaseUrl + config.service.darkSkyApi.apiSecret + "/" + latitude + "," + longitude + "/?units=si", function (error, response, body) {
+                const result = JSON.parse(response.body);
+                currentWeather = result.currently.summary;
+                currentTemperature = result.currently.temperature;
+                res.render('home', {user: user, nextMeal: nextMeal, currentWeather: currentWeather, temperature: currentTemperature});
+            });
+        });        
     }
 });
 
