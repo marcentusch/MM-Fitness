@@ -80,8 +80,15 @@
         <% if(user.isAdmin){} else { %>
             <div class="col-lg-4 col-md-6 col-sm-12">
                 <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="mb-0"><%= user.firstName + " " + user.lastName %></h5>
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><%= user.firstName + " " + user.lastName %> 
+                            <% if(user.lastEdit !== "") { %>
+                                <span class="float-right "> 
+                                    <small> sidst ændret <%= user.lastEdit %> 
+                                    </small> 
+                                </span>
+                            <% } %>
+                        </h5>
                     </div>
                     <div class="card-body">
                         <% if(user.weightStats.currentWeight) { %>

@@ -439,6 +439,8 @@ app.post('/admin/user/:userId/create/musclegroup', middleware.isLoggedIn, async 
                 throw(err);
             } 
             user.trainingStats.trainingPases[pas -1].muscleGroups.push(newMuscleGroup);
+            user.lastEdit = moment().format("DD/MM - HH:mm");
+            
             user.save(function (err, updatedUser) {
                 if (err){
                     throw(err); 
@@ -473,7 +475,8 @@ app.post('/admin/user/:userId/create/workout', middleware.isLoggedIn, async (req
             const muscleGroupIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups.findIndex(i => i.name === muscleGroup);
     
             user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts.push(formData);
-    
+            user.lastEdit = moment().format("DD/MM - HH:mm");
+            
             user.save(function (err, updatedUser) {
                 if (err){
                     throw(err); 
@@ -535,7 +538,8 @@ app.post('/admin/user/:userId/update/workout/:workoutId', middleware.isLoggedIn,
                 returnData.newWorkoutSaet = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].saet;
             }
             
-    
+            user.lastEdit = moment().format("DD/MM - HH:mm");
+            
             // Update new workout data
             user.save(function (err, updatedUser) {
                 if (err){
@@ -568,7 +572,8 @@ app.post('/admin/user/:userId/delete/pas', middleware.isLoggedIn, async (req, re
             for(let i = trainingPasIndex; i < user.trainingStats.trainingPases.length; i ++) {
                 user.trainingStats.trainingPases[i].pasNumber = JSON.stringify(i +1);
             }
-    
+            user.lastEdit = moment().format("DD/MM - HH:mm");
+            
             // Update new workout data
             user.save(function (err, updatedUser) {
                 if (err){
@@ -599,7 +604,8 @@ app.post('/admin/user/:userId/delete/musclegroup', middleware.isLoggedIn, async 
             const muscleGroupIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups.findIndex(i => i.name === muscleGroup);
     
             user.trainingStats.trainingPases[trainingPasIndex].muscleGroups.splice(muscleGroupIndex, 1);
-    
+            user.lastEdit = moment().format("DD/MM - HH:mm");
+            
             // Update new workout data
             user.save(function (err, updatedUser) {
                 if (err){
@@ -640,7 +646,8 @@ app.post('/admin/user/:userId/delete/workout', middleware.isLoggedIn, async (req
     
     
             user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts.splice(workoutIndex, 1);
-    
+            user.lastEdit = moment().format("DD/MM - HH:mm");
+            
                 // Update new workout data
             user.save(function (err, updatedUser) {
                 if (err){
@@ -686,7 +693,9 @@ app.post('/admin/user/:userId/create/meal', middleware.isLoggedIn, async (req, r
             }
     
             user.foodStats.mealPlan.meals.push(newMeal);
-    
+            
+            user.lastEdit = moment().format("DD/MM - HH:mm");
+
             user.save(function (err, updatedUser) {
                 if (err){
                     throw(err); 
@@ -753,6 +762,8 @@ app.post('/admin/user/:userId/update/meal', middleware.isLoggedIn, async (req, r
                 });
                 user.foodStats.mealPlan.totalProtein = newTotalProtein;
             }
+
+            user.lastEdit = moment();
     
             user.save(function (err, updatedUser) {
                 if (err){
@@ -796,6 +807,8 @@ app.post('/admin/user/:userId/delete/meal', middleware.isLoggedIn, async (req, r
             for(let i = mealIndex; i < mealPlan.meals.length; i ++) {
                 mealPlan.meals[i].id = JSON.stringify(i + 1);
             }
+
+            user.lastEdit = moment().format("DD/MM - HH:mm");            
     
             // Update new workout data
             user.save(function (err, updatedUser) {

@@ -256,7 +256,8 @@ function testData(User, amount) {
             weightStats: weightStats,
             trainingStats: trainingStats,
             foodStats: foodStats,
-            messages: messages
+            messages: messages,
+            lastEdit: ""
         }
     
 

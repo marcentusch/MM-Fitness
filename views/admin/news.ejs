@@ -86,14 +86,14 @@
         <!-- NEWS CARDS -->
         <div class="col-lg-4 col-md-6 col-sm-12">
             <div class="card mb-4">
-                <div class="card-header">
+                <div class="card-header bg-primary text-white">
                     <div class="row">
                         <div class="col-6">
-                            <h5><%= news.title %></h5>
+                            <h5 class="mb-0"><%= news.title %></h5>
                         </div>
                         <div class="col-6">
-                            <button  class="btn btn-sm btn-danger float-right pointer" data-toggle="modal" data-target="#deleteNewsModal<%= news._id %>">
-                                <i class="fa fa-lg fa-times" aria-hidden="true"></i>
+                            <button  class="btn p-0 m-0 btn-sm btn-primary float-right pointer" data-toggle="modal" data-target="#deleteNewsModal<%= news._id %>">
+                                <i class="fa fa-lg  fa-times" aria-hidden="true"></i>
                             </button>
                         </div>
                     </div>
