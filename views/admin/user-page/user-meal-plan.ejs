@@ -82,13 +82,13 @@
                                 </div>
                                 <div class="card-body bg-light">
                                     <h5> <%= meal.name %> 
-                                        <span onclick="toggleEdit('<%= meal._id + meal.name %>')" class="float-left mr-1 edit<%= meal._id %>" style="display: none;">
+                                        <span onclick="toggleEdit('<%= meal._id%>' + 'name')" class="float-left mr-1 edit<%= meal._id %>" style="display: none;">
                                             <i class="fa fa-pencil text-warning pointer" aria-hidden="true"></i>
                                         </span>  
                                     </h5>
                                     <!-- EDIT MEAL NAME FORM -->
-                                    <div id="edit<%= meal._id + meal.name %>" style="display: none">
-                                        <form id="form<%= meal.id + meal.name %>" class="form-inline" action="" type="POST">
+                                    <div id="edit<%= meal._id + 'name' %>" style="display: none">
+                                        <form id="form<%= meal.id + 'name' %>" class="form-inline" action="" type="POST">
                                             <div class="input-group">
                                                 <input type="text" name="name" class="form-control">
                                                 <button 
@@ -242,6 +242,7 @@
 
     /* UPDATE */
     function updateMeal(mealId, mealName, whatToUpdate) {
+        console.log("AWIDUHAWIDUHAWDIUHDAW", $("#form" + mealId + 'name').serialize());
         $.ajax({
         type: 'POST',
         url: "<%= user._id %>/update/meal",
@@ -249,7 +250,7 @@
             mealId: mealId,
             mealName: mealName,
             whatToUpdate: whatToUpdate,
-            formData: $("#form" + mealId + mealName).serialize()
+            formData: $("#form" + mealId + 'name').serialize()
         }, 
         success: function(response) { 
             location.reload();

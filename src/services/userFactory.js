@@ -294,7 +294,7 @@ function testData(User, amount) {
 
 // Helper function because too many nested objects and arrays in trainingStats
 function createTestWorkouts() {
-    const exercises = ["squats", "bænkpres", "dødløft", "biceps curls", "skulder pres", "mavebøjninger"];
+    const exercises = ["squats", "bench press", "deadlift", "biceps curls", "shoulder press", "sit ups", "punch press", "flyes", "incline cable flyes", "incline lateral raises", "triceps extensions", "lat pull", "seated row", "leg extension", "leg curls", "calf raises", "cable crunches"];
     
     let assignedWorkouts = [];
     for(let i = 0; i < 5; i++){

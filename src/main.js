@@ -72,11 +72,11 @@ app.use(function(req, res, next){
 userFactory.testData(User, 10);
 
 // Run this to get execise data in DB
-/* Workout.remove({}).exec();
-const exercises = ["squats", "bænkpres", "dødløft", "biceps curls", "skulder pres", "mavebøjninger"];
-exercises.forEach((exercise) => {
+/*  Workout.remove({}).exec(); */
+/* const exercises = ["squats", "bench press", "deadlift", "biceps curls", "shoulder press", "sit ups", "punch press", "flyes", "incline cable flyes", "incline lateral raises", "triceps extensions", "lat pull", "seated row", "leg extension", "leg curls", "calf raises", "cable crunches"];
+    exercises.forEach((exercise) => {
     workoutFactory.createNewWorkout(Workout, exercise);
-});  */
+}); */
 
 //run to get a news
 //newsFactory.createNewNews(News);
