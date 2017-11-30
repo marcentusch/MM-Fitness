@@ -11,6 +11,8 @@ module.exports =
     houseNumber: String,
     zipcode: Number,
     town: String,
+    latitude: String,
+    longitude: String,
     phone: String,
     avatarURL: String,
     weightStats: {

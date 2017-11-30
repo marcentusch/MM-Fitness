@@ -203,18 +203,53 @@ app.get('/home', middleware.isLoggedIn, (req, res) => {
         }
 
         let currentWeather = "";
-        request(googleMapsBaseUrl + "address=" + user.zipcode + "+" + user.town + "&key=" + env.googleMapsSecret, function (error, response, body) {
-            const result = JSON.parse(response.body);
-            const latitude = result.results[0].geometry.location.lat;
-            const longitude = result.results[0].geometry.location.lng;
-        
-            request(darkWeatherBaseUrl + config.service.darkSkyApi.apiSecret + "/" + latitude + "," + longitude + "/?units=si", function (error, response, body) {
+        if(!user.longitude) {
+            request(googleMapsBaseUrl + "address=" + user.zipcode + "+" + "Denmark" + "&key=" + env.googleMapsSecret, function (error, response, body) {
                 const result = JSON.parse(response.body);
-                currentWeather = result.currently.summary;
-                currentTemperature = result.currently.temperature;
-                res.render('home', {user: user, nextMeal: nextMeal, currentWeather: currentWeather, temperature: currentTemperature});
+                const latitude = result.results[0].geometry.location.lat;
+                const longitude = result.results[0].geometry.location.lng;
+
+                User.findById(user._id, function (err, user) {
+                    if (err) {
+                        throw(err);
+                    }
+                    user.longitude = longitude;
+                    user.latitude = latitude;
+            
+                    user.save(function (err, updatedUser) {
+                        if (err){
+                            throw(err); 
+                        } 
+                        
+                    });
+                });
+
+                request(darkWeatherBaseUrl + config.service.darkSkyApi.apiSecret + "/" + latitude + "," + longitude + "/?units=si", function (error, response, body) {
+                    const result = JSON.parse(response.body);               
+                    currentWeather = result.currently.summary;
+                    currentTemperature = result.currently.temperature;
+                    res.render('home', {user: user, nextMeal: nextMeal, currentWeather: currentWeather, temperature: currentTemperature});
+                });
+            });        
+        } else {
+            request(darkWeatherBaseUrl + config.service.darkSkyApi.apiSecret + "/" + user.latitude + "," + user.longitude + "/?units=si", function (error, response, body) {
+                const result = JSON.parse(response.body);
+
+                currentWeather = result.currently;
+
+                weatherToday = result.daily.data[0];
+                weatherTomorrow = result.daily.data[1];
+                
+                res.render('home', 
+                {
+                    user: user, 
+                    nextMeal: nextMeal, 
+                    currentWeather: currentWeather,
+                    weatherToday: weatherToday,
+                    weatherTomorrow: weatherTomorrow
+                });
             });
-        });        
+        }
     }
 });
 

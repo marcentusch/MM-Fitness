@@ -26,11 +26,10 @@
                         aria-expanded="false" aria-controls="<%= news._id %>" onclick="swapText('<%= news._id %>__')">
                         Læs mere...
                     </a>
-                        <div class="collapse mt-2" id="<%= news._id %>">
-                            <p class="card-text"><%= news.content %></p>
-                            <a href="<%= news.link %>" target="_blank"><%= news.linkText %></a>
-                        </div>
-                    
+                    <div class="collapse mt-2" id="<%= news._id %>">
+                        <p class="card-text"><%= news.content %></p>
+                        <a href="<%= news.link %>" target="_blank"><%= news.linkText %></a>
+                    </div>
                     <p class="text-right m-1 text-secondary"><small><%= news.date %></small></p>
                 </div>
             </div>
