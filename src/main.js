@@ -239,7 +239,7 @@ app.get('/home', middleware.isLoggedIn, (req, res) => {
 
                 weatherToday = result.daily.data[0];
                 weatherTomorrow = result.daily.data[1];
-                
+
                 res.render('home', 
                 {
                     user: user, 

@@ -1,4 +1,7 @@
 <% include partials/header %>
+
+<script src="skycons/skycons.js"></script>
+
 <script>
 	$("#home").addClass("active");
 	$("#title").text("Hjem");
@@ -29,19 +32,24 @@
             $("#" + id).text("Færre oplysninger");
         }
     }
-
 </script>
+
+
 
 <div>		
 	<div id="weatherCard" class="card mx-0 my-4">
-		<div class="card-header bg-warning text-white">
-			<h6 class="my-0"><%= currentWeather.summary %>, <%= currentWeather.temperature %>° degrees
-				<span>
-					<button class=" btn btn-sm bg-warning text-white p-0 float-right">
-						<i class="fa fa-lg fa-sun-o" aria-hidden="true"></i>
-					</button>
-				</span> 
-			</h6>
+		<div class="card-header bg-warning text-white py-1 ">
+			<div class="row">
+				<div class="col-10">
+					<h6 class="my-2 "><%= currentWeather.summary %>, <%= currentWeather.temperature %>° degrees
+						<span class="float-right">
+						</span> 
+					</h6>
+				</div>
+				<div class="col-2 pr-2">
+					<canvas class="float-right"  id="icon1" width="35" height="35"></canvas>
+				</div>
+			</div>
 		</div>
 		<div class="card-body py-1">
 			<a id="toggleLink" class="btn btn-link pl-0" onclick="swapText('toggleLink')" data-toggle="collapse" href="#weatherToggle" aria-expanded="false" aria-controls="weatherToggle">
@@ -49,12 +57,12 @@
 			</a>
 			<div class="collapse" id="weatherToggle">
 				<hr class="mt-2">
-				<h5>Today:</h5>
-				<p><%= weatherToday.summary %></p>
-				<p>Max temperature: <%= weatherToday.temperatureMax %>°</p>
-				<h5>Tomorrow:</h5>
-				<p><%= weatherTomorrow.summary %></p>
-				<p>Max temperature: <%= weatherTomorrow.temperatureMax %>°</p>
+				<h6>Today:</h6>
+				<label><%= weatherToday.summary %></label>
+				<label>Max temperature: <%= weatherToday.temperatureMax %>°</label>
+				<h6>Tomorrow:</h6>
+				<label><%= weatherTomorrow.summary %></label>
+				<label>Max temperature: <%= weatherTomorrow.temperatureMax %>°</label>
 			</div> 
 		</div>
 	</div>
@@ -178,5 +186,21 @@
 
 
 </script>
+
+<script>
+	var skycons = new Skycons({"color": "white"});
+	// on Android, a nasty hack is needed: {"resizeClear": true}
+	
+	
+	<% 
+	let test = currentWeather.icon.replace("&#34", "") 
+	test = test.replace("-", "_").toUpperCase();
+	test = test.replace("-", "_");
+	%>
+	skycons.add("icon1", Skycons.<%= test %>);
+	skycons.play();
+	
+</script>
+	
 
 <% include partials/footer %>
