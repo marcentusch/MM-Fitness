@@ -19,3 +19,13 @@ html, body {
 .pointer {
 	cursor: pointer;
 }
+
+.hundredHeight {
+	min-height: 100%;
+}
+
+#loginBackground {
+	background-image: url("https://static.pexels.com/photos/685530/pexels-photo-685530.jpeg");
+	background-size:cover;
+}
+
