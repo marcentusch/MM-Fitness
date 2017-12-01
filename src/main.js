@@ -1004,7 +1004,7 @@ app.post("/admin/user/:userId/update/isDisabled/:bool", (req, res) => {
                     throw(err); 
                 }
                 if(req.params.bool == 'false') {
-                    req.flash("success_messages", "Brugeren er blevet genaktiveret.");
+                    req.flash("success_messages", "Brugeren er blevet aktiveret.");
                     res.redirect('/admin/user/' + userId);
                 } else if(req.params.bool == 'true') {
                     req.flash("success_messages", "Brugeren er blevet deaktiveret.");
