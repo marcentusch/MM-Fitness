@@ -271,6 +271,40 @@ app.get('/program', middleware.isLoggedIn, (req, res) => {
     res.render('program', {user: user, today: today});
 });
 
+app.post('/update/trainingpas/timesTrained/:increase', middleware.isLoggedIn, (req, res) => {
+    const userId = req.user._id;
+    const trainingPas = req.body.trainingPas;
+    const increase = req.body.increase;
+
+
+    User.findById(userId, function (err, user) {
+        if (err) {
+            throw(err);
+        } 
+
+        const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === trainingPas);
+        let updatedTimesTrained = 0;
+        if(increase == "true") {
+            user.trainingStats.trainingPases[trainingPasIndex].timesTrained ++;
+            updatedTimesTrained = user.trainingStats.trainingPases[trainingPasIndex].timesTrained;            
+        } else {
+            user.trainingStats.trainingPases[trainingPasIndex].timesTrained --;
+            updatedTimesTrained = user.trainingStats.trainingPases[trainingPasIndex].timesTrained;
+        }
+        
+        // Update calories today
+        user.save(function (err) {
+            if (err){
+                throw(err); 
+            } 
+            res.json({"updatedTimesTrained": updatedTimesTrained})
+        });
+    });
+    
+});
+
+
+
 
 // ===============================================================
 // MEAL ROUTES
@@ -286,7 +320,9 @@ app.get('/meal-plan', middleware.isLoggedIn, (req, res) => {
 
 // Update Calories
 app.post('/meal-plan/update/:userId/mealId/:mealId', middleware.isLoggedIn, async (req, res) => {
-    const userId = req.params.userId;
+/*     const userId = req.params.userId; */
+    // UPDATE IN THE VIEW, DOES NOT NEED USER ID IN PARAMS
+    const userId = req.user._id;
     const mealId = req.params.mealId;
     
     User.findById(userId, function (err, user) {

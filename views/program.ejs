@@ -8,8 +8,25 @@
 
 <% trainingStats.trainingPases.forEach((trainingPas) => { %>
     <div class="card mx-0 my-4">
-        <div class="card-header text-white bg-primary">
-            <h5> Pas <%= trainingPas.pasNumber %> </h5>
+        <div class="card-header text-white bg-primary py-0">
+            <div class="row">
+                <div class="col-9 pb-0 pt-2">
+                    <h5>
+                        <span class="vertical-line pr-2"> Pas <%= trainingPas.pasNumber %> </span> 
+                        Trænet <span id="timesTrained<%=trainingPas.pasNumber%>"><%= trainingPas.timesTrained %></span> gange
+                    </h5>
+                </div>
+                <div class="col-3 pb-0">
+                    <span class="float-right pt-2">
+                        <button class="btn bg-primary text-white p-0" onclick="updateTimesTrained('<%=trainingPas.pasNumber%>','false')">
+                            <i class="fa fa-lg fa-arrow-down mr-1" aria-hidden="true"></i>
+                        </button>
+                        <button class="btn bg-primary text-white p-0" onclick="updateTimesTrained('<%=trainingPas.pasNumber%>','true')">
+                            <i class="fa fa-lg fa-arrow-up" aria-hidden="true"></i>
+                        </button>
+                    </span>
+                </div>
+            </div>
         </div>
     
         <div class="card-body pt-0">
@@ -26,10 +43,26 @@
                     </a>
                 <% }) %>
             </div>
-
         <% }) %>
         </div>        
     </div>
 <% }) %>
+
+<script>
+    function updateTimesTrained(trainingPas, increase){
+    $.ajax({
+    type: 'POST',
+    url: 'update/trainingpas/timesTrained/' + increase,
+    data: {
+        trainingPas: trainingPas,
+        increase: increase
+    },
+    success: function(response) { 
+            const updatedTimesTrained = response.updatedTimesTrained;
+            $("#timesTrained" + trainingPas).text(updatedTimesTrained);
+        }
+    });
+}
+</script>
 
 <% include partials/footer %>

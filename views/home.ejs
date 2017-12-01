@@ -52,7 +52,7 @@
 			</div>
 		</div>
 		<div class="card-body py-1">
-			<a id="toggleLink" class="btn btn-link pl-0" onclick="swapText('toggleLink')" data-toggle="collapse" href="#weatherToggle" aria-expanded="false" aria-controls="weatherToggle">
+			<a id="weatherToggleLink" class="btn btn-link pl-0" onclick="swapText('weatherToggleLink')" data-toggle="collapse" href="#weatherToggle" aria-expanded="false" aria-controls="weatherToggle">
 				Flere oplysninger
 			</a>
 			<div class="collapse" id="weatherToggle">
@@ -115,13 +115,6 @@
 			</h6>
 		</div>
 		<div class="card-body">
-			<% if(user.weightStats.weightProgress != null && user.weightStats.weightProgress != 0){ %>
-				<% if(user.weightStats.weightProgress < 0){ %>
-					<p>Du har taget <%= Math.abs(user.weightStats.weightProgress).toFixed(1) %>kg på siden du startede</p>
-				<% } else { %>
-					<p>Du har tabt dig <%= Math.abs(user.weightStats.weightProgress).toFixed(1) %>kg siden du startede</p>
-				<% } %>
-			<% } %>	
 			<form action="/update/weight" method="POST">
 				<div class="form-row">
 					<div class="form-group col-8">
@@ -132,10 +125,41 @@
 					</div>
 				</div>
 			</form>
-			<canvas id="myChart" width="100" height="80"></canvas>
+			<a id="weightToggleLink" class="btn btn-link pl-0" onclick="swapText('weightToggleLink')" data-toggle="collapse" href="#weightToggle" aria-expanded="false" aria-controls="weatherToggle">
+				Flere oplysninger
+			</a>
+			<div class="collapse" id="weightToggle">
+				<% if(user.weightStats.weightProgress != null && user.weightStats.weightProgress != 0){ %>
+					<% if(user.weightStats.weightProgress < 0){ %>
+						<p>Du har taget <%= Math.abs(user.weightStats.weightProgress).toFixed(1) %>kg på siden du startede</p>
+					<% } else { %>
+						<p>Du har tabt dig <%= Math.abs(user.weightStats.weightProgress).toFixed(1) %>kg siden du startede</p>
+					<% } %>
+				<% } %>	
+				<canvas id="myChart" width="100" height="80"></canvas>
+			</div>
 		</div>
 	</div>
 
+	<% 
+	let totalTimesTrained = 0;
+	user.trainingStats.trainingPases.forEach((pas) => {
+		totalTimesTrained += pas.timesTrained;
+	});
+	%>
+	<div class="card mx-0 my-4">
+		<div class="card-header bg-danger text-white">
+			<h6 class="mb-0">
+				I denne uge har du trænet <%= totalTimesTrained %> gange
+			</h6>
+		</div>
+		<div class="card-body">
+			<% user.trainingStats.trainingPases.forEach((pas) => { %>
+				<p> Pas <%= pas.pasNumber %> <span class="float-right"><%= pas.timesTrained %> gange </span></p>
+			<% }) %>
+			
+		</div>
+	</div>
 
 </div>
 

@@ -16,6 +16,10 @@ html, body {
     width: 100%;
 }
 
+.vertical-line {
+	border-right: 1px solid rgba(220,220,220, .8);
+}
+
 .pointer {
 	cursor: pointer;
 }
@@ -26,6 +30,11 @@ html, body {
 
 .opCard {
 	background-color: rgba(255, 255, 255, 0.92);
+}
+
+.biggerText {
+	font-size: 24px;
+	font-weight: bold;
 }
 
 .hundredHeight {

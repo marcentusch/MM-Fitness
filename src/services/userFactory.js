@@ -76,6 +76,7 @@ function newUser(userData) {
             trainingPases:[
                 {             
                     pasNumber: "",
+                    timesTrained: 0,
                     muscleGroups: [
                         {
                             name: "",
@@ -151,6 +152,7 @@ function testData(User, amount) {
                     }
                 ],
                 pasNumber: i + 1,
+                timesTrained: utility.randomNumber(0, 3)
             }
             trainingPases.push(trainingPas);  
         }

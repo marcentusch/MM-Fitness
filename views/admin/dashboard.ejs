@@ -111,9 +111,9 @@
                     </div>
                     <div class="card-body">
                         <% if(user.weightStats.currentWeight) { %>
-                            <p> Nuværende vægt <span class="float-right"> <%= user.weightStats.currentWeight %> </span> </p>
-                            <p> Vægt progression <span class="float-right"> <%= user.weightStats.weightProgress.toFixed(1) %> </span> </p>
-                            <p> Mål vægt <span class="float-right"> <%= user.weightStats.targetWeight %> </span> </p>                    
+                            <p> Nuværende vægt <span class="float-right"> <%= user.weightStats.currentWeight %>kg </span> </p>
+                            <p> Vægt progression <span class="float-right"> <%= user.weightStats.weightProgress.toFixed(1) %>kg </span> </p>
+                            <p> Mål vægt <span class="float-right"> <%= user.weightStats.targetWeight %>kg </span> </p>                    
                         <% } else { %>
                             <p> Brugeren har ikke indtastet data </p>
                         <% } %>
