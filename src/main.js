@@ -360,7 +360,7 @@ app.get('/admin/dashboard/:sortBy?',  middleware.isLoggedIn, (req, res) => {
     if(req.user.isAdmin) {
         User.find({}, (err, users) => {
 
-            // Default sort to first name
+            // Default sort to first name when loading page
             users.sort(function(a, b) {
                 if(a.firstName < b.firstName) return -1;
                 if(a.firstName > b.firstName) return 1;
@@ -403,6 +403,22 @@ app.get('/admin/dashboard/:sortBy?',  middleware.isLoggedIn, (req, res) => {
                 });
             }
             
+            // Filters enabled users
+            const disabledUsers = users.filter(function (user) {
+                return user.isDisabled === true;
+            });
+
+            // Filters disabled users
+            users = users.filter(function (user) {
+                return user.isDisabled === false;
+            });
+
+            // Pushing disabled users to enabled user-array
+            // in order to get disabled users in bottom
+            disabledUsers.forEach((user) => {
+                users.push(user);
+            });
+
             res.render('./admin/dashboard', {users: users, sorted: sorted });
         });
     } else {
@@ -970,6 +986,37 @@ app.post('/admin/news/delete/:newsId', (req, res) => {
     });
 });
 
+// ===============================================================
+// ACTIVATE/DEACTIVATE A USER
+// ===============================================================
+
+app.post("/admin/user/:userId/update/isDisabled/:bool", (req, res) => {
+    if(req.user.isAdmin) {
+
+        const userId = req.params.userId;
+
+        User.findById(userId, (err, user) => {
+
+            user.isDisabled = req.params.bool;
+
+            user.save(function (err, updatedUser) {
+                if (err){
+                    throw(err); 
+                }
+                if(req.params.bool == 'false') {
+                    req.flash("success_messages", "Brugeren er blevet genaktiveret.");
+                    res.redirect('/admin/user/' + userId);
+                } else if(req.params.bool == 'true') {
+                    req.flash("success_messages", "Brugeren er blevet deaktiveret.");
+                    res.redirect('/admin/dashboard');
+                }
+            });
+        });
+
+    } else {
+        res.redirect('home');
+    }
+});
 
 // ===============================================================
 // DELETE A USER

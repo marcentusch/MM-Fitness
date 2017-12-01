@@ -1,6 +1,7 @@
 module.exports =
 {
     isAdmin: Boolean,
+    isDisabled: Boolean,
     lastEdit: String,
     dateCreated: String,
     firstName: String,

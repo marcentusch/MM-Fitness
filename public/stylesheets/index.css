@@ -20,6 +20,10 @@ html, body {
 	cursor: pointer;
 }
 
+.isDisabled {
+	opacity: 0.5;
+}
+
 .hundredHeight {
 	min-height: 100%;
 }

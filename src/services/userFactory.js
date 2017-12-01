@@ -52,6 +52,7 @@ function updateWeight(weight, user, User){
 
 function newUser(userData) {
     const newUser = {
+        isDisabled: false,
         lastEdit: "",
         dateCreated: moment().format("x"),
         firstName: userData.firstName,
@@ -245,6 +246,7 @@ function testData(User, amount) {
         // Create the actual user from above data
 
         let newUser = {
+            isDisabled: false,
             username: usernames[utility.randomNumber(0, usernames.length -1, 0)],
             firstName: firstNames[utility.randomNumber(0, firstNames.length -1, 0)],
             lastName: lastNames[utility.randomNumber(0, lastNames.length -1, 0)],
