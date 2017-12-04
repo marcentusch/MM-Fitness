@@ -61,7 +61,7 @@ function newUser(userData) {
         password: "",
         street: "",
         houseNumber: "",
-        zipcode: 0,
+        zipcode: 2620,
         town: "",
         phone: "",
         avatarURL: "",
