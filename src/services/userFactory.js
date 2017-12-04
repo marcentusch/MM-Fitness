@@ -59,11 +59,10 @@ function newUser(userData) {
         lastName: userData.lastName,
         username: userData.username,
         password: "",
-        street: "",
-        houseNumber: "",
-        zipcode: 2620,
-        town: "",
-        phone: "",
+        address: userData.address,
+        zipcode: userData.zipcode,
+        town: userData.town,
+        phone: userData.phone,
         avatarURL: "",
         weightStats: {
             currentWeight: 0,
@@ -73,18 +72,6 @@ function newUser(userData) {
             allWeights: []
         },
         trainingStats: {
-            trainingPases:[
-                {             
-                    pasNumber: "",
-                    timesTrained: 0,
-                    muscleGroups: [
-                        {
-                            name: "",
-                            assignedWorkouts: []
-                        }
-                    ],
-                }
-            ]
         },
         foodStats: {
             mealPlan: {
@@ -253,8 +240,7 @@ function testData(User, amount) {
             firstName: firstNames[utility.randomNumber(0, firstNames.length -1, 0)],
             lastName: lastNames[utility.randomNumber(0, lastNames.length -1, 0)],
             password: password,
-            street: "Hovedgaden",
-            houseNumber: "12",
+            address: "Hovedgaden 12",
             zipcode: 2860,
             town: "Søborg",
             phone: "88888888",

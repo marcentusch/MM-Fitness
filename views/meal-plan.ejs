@@ -39,7 +39,7 @@
             <% mealPlan.meals.forEach((meal) => { %>
                 <a class="btn btn-outline-primary my-1" data-toggle="collapse" href="#<%= meal.id %>" aria-expanded="false" aria-controls="<%= meal.id %>">
                      <span class="float-left text-capitalize"><%= meal.meal %></span>
-                     <span class="float-right"><%= meal.calories %></span>
+                     <span class="float-right"><%= meal.calories %> kcal</span>
                 </a>
                 <div class="collapse mt-2" id="<%= meal.id %>">
                     <h5 class="mb-0"> <%= meal.name %>

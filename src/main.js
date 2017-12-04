@@ -78,7 +78,7 @@ app.use(function(req, res, next){
 });
 
 // Creates test data. needs username = 1
-userFactory.testData(User, 10);
+// userFactory.testData(User, 10);
 
 // Run this to get execise data in DB
 /*  Workout.remove({}).exec(); */
@@ -892,6 +892,7 @@ app.post('/admin/user/:userId/update/meal', middleware.isLoggedIn, async (req, r
                 user.foodStats.mealPlan.meals[mealIndex].calories = formData.calories;
                 let newTotalCalories = 0;
                 user.foodStats.mealPlan.meals.forEach((meal) => {
+                    console.log("i found a meal on the user");
                    newTotalCalories += meal.calories; 
                 });
                 user.foodStats.mealPlan.totalCalories = newTotalCalories;
@@ -918,7 +919,7 @@ app.post('/admin/user/:userId/update/meal', middleware.isLoggedIn, async (req, r
                 user.foodStats.mealPlan.totalProtein = newTotalProtein;
             }
 
-            user.lastEdit = moment();
+            user.lastEdit = moment().format("DD/MM - HH:mm");
     
             user.save(function (err, updatedUser) {
                 if (err){
