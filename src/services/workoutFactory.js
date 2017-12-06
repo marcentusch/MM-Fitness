@@ -16,7 +16,6 @@ function createNewWorkout(Workout, workout){
         if(err){
             console.log(err);
         } else{
-            console.log("Workout created: " + newWorkout);
             return newWorkout;
         }
     }

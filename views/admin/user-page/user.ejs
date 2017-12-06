@@ -84,13 +84,12 @@
                             <button class="btn bg-primary border-white text-white pointer" data-toggle="modal" data-target="#deactivateUserModal">Deaktivér</button>
                             <button class="btn bg-primary border-white text-white pointer" data-toggle="modal" data-target="#deleteUserModal">Slet</button>
                         <% } else { %>
-                            <form action="/admin/user/<%= user._id %>/update/isDisabled/false" method="POST">
-                                <div class="btn-group float-right">
+                            <div class="btn-group float-right">
+                                <form action="/admin/user/<%= user._id %>/update/isDisabled/false" method="POST">
                                     <button class="btn bg-primary border-white text-white pointer">Aktivér</button>
-                                    <button class="btn bg-primary border-white text-white pointer" data-toggle="modal" data-target="#deleteUserModal">Slet</button>
-
-                                </div>
-                            </form>
+                                </form>
+                            </div>
+                            <button class="btn bg-primary border-white text-white pointer" data-toggle="modal" data-target="#deleteUserModal">Slet</button>
                         <% } %>
                     </div>
                 </div>
