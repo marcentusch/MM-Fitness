@@ -3,7 +3,6 @@ module.exports ={
 }
 
 function createNewNews(News){
-    console.log("HEWR!");
     News.create({
         title: "Titel",
         subdivision: "Rubrik",

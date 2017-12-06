@@ -892,7 +892,6 @@ app.post('/admin/user/:userId/update/meal', middleware.isLoggedIn, async (req, r
                 user.foodStats.mealPlan.meals[mealIndex].calories = formData.calories;
                 let newTotalCalories = 0;
                 user.foodStats.mealPlan.meals.forEach((meal) => {
-                    console.log("i found a meal on the user");
                    newTotalCalories += meal.calories; 
                 });
                 user.foodStats.mealPlan.totalCalories = newTotalCalories;
