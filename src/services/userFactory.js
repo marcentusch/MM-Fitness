@@ -9,7 +9,8 @@ module.exports = {
     testData,
     updateWeight,
     newUser,
-    getWeather
+    getWeather,
+    updateTimesTrained
 };
 
 // Create new user
@@ -64,6 +65,33 @@ function getWeather(User, user, googleSecret, config, callback) {
     }
 }
 
+
+// Update timesTrained
+function updateTimesTrained(User, user, trainingPas, increase, callback) {
+    User.findById(user._id, function (err, user) {
+        if (err) {
+            throw(err);
+        } 
+
+        const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === trainingPas);
+        let updatedTimesTrained = 0;
+        if(increase == "true") {
+            user.trainingStats.trainingPases[trainingPasIndex].timesTrained ++;
+            updatedTimesTrained = user.trainingStats.trainingPases[trainingPasIndex].timesTrained;            
+        } else {
+            user.trainingStats.trainingPases[trainingPasIndex].timesTrained --;
+            updatedTimesTrained = user.trainingStats.trainingPases[trainingPasIndex].timesTrained;
+        }
+        
+        // Update calories today
+        user.save(function (err) {
+            if (err){
+                throw(err); 
+            } 
+            callback(updatedTimesTrained);
+        });
+    });
+}
 
 
 // Update weight

@@ -217,35 +217,12 @@ app.get('/program', middleware.isLoggedIn, (req, res) => {
 });
 
 app.post('/update/trainingpas/timesTrained/:increase', middleware.isLoggedIn, (req, res) => {
-    const userId = req.user._id;
     const trainingPas = req.body.trainingPas;
     const increase = req.body.increase;
 
-
-    User.findById(userId, function (err, user) {
-        if (err) {
-            throw(err);
-        } 
-
-        const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === trainingPas);
-        let updatedTimesTrained = 0;
-        if(increase == "true") {
-            user.trainingStats.trainingPases[trainingPasIndex].timesTrained ++;
-            updatedTimesTrained = user.trainingStats.trainingPases[trainingPasIndex].timesTrained;            
-        } else {
-            user.trainingStats.trainingPases[trainingPasIndex].timesTrained --;
-            updatedTimesTrained = user.trainingStats.trainingPases[trainingPasIndex].timesTrained;
-        }
-        
-        // Update calories today
-        user.save(function (err) {
-            if (err){
-                throw(err); 
-            } 
-            res.json({"updatedTimesTrained": updatedTimesTrained})
-        });
+    userFactory.updateTimesTrained(User, req.user, trainingPas, increase, (updatedTimesTrained) => {
+        res.json({"updatedTimesTrained": updatedTimesTrained})        
     });
-    
 });
 
 
