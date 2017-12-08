@@ -1,11 +1,15 @@
 const moment = require('moment'),
-utility      = require('./utility.js');
+utility      = require('./utility.js'),
+request                     = require('request');
+
+
 
 module.exports = {
     createNewUser,
     testData,
     updateWeight,
-    newUser
+    newUser,
+    getWeather
 };
 
 // Create new user
@@ -20,6 +24,46 @@ function createNewUser(user, User){
         }
     }
 }
+
+// Find forecast for a user
+function getWeather(User, user, googleSecret, config, callback) {
+    const googleMapsBaseUrl = "https://maps.googleapis.com/maps/api/geocode/json?";
+    const darkWeatherBaseUrl = "https://api.darksky.net/forecast/";
+
+    let currentWeather = "";
+    if(!user.longitude) {
+        request(googleMapsBaseUrl + "address=" + user.address + "+" + user.zipcode + "+" + "Denmark" + "&key=" + googleSecret, function (error, response, body) {
+            const result = JSON.parse(response.body);
+            const latitude = result.results[0].geometry.location.lat;
+            const longitude = result.results[0].geometry.location.lng;
+
+            User.findById(user._id, function (err, user) {
+                if (err) {
+                    throw(err);
+                }
+                user.longitude = longitude;
+                user.latitude = latitude;
+        
+                user.save(function (err, updatedUser) {
+                    if (err){
+                        throw(err); 
+                    } 
+                    
+                });
+            });
+            request(darkWeatherBaseUrl + config.service.darkSkyApi.apiSecret + "/" + latitude + "," + longitude + "/?units=si", function (error, response, body) {
+                const result = JSON.parse(response.body);               
+                callback(result);
+            });
+        });        
+    } else {
+        request(darkWeatherBaseUrl + config.service.darkSkyApi.apiSecret + "/" + user.latitude + "," + user.longitude + "/?units=si", function (error, response, body) {
+            const result = JSON.parse(response.body);
+            callback(result);
+        });
+    }
+}
+
 
 
 // Update weight

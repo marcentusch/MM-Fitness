@@ -12,8 +12,7 @@ LocalStrategy               = require('passport-local').Strategy,
 utility                     = require('./services/utility.js'),
 moment                      = require('moment'),
 schedule                    = require('node-schedule'),
-flash                       = require('connect-flash'),
-request                     = require('request');
+flash                       = require('connect-flash');
 
 // Require local files
 const middleware  = require('./middleware/index.js'),
@@ -26,12 +25,6 @@ workoutFactory    = require('./services/workoutFactory.js'),
 mealFactory       = require('./services/mealFactory.js'),
 newsFactory       = require('./services/newsFactory.js'),
 env               = require('../env.json');
-
-// API stuff
-// Needs adress + apiKey
-const googleMapsBaseUrl = "https://maps.googleapis.com/maps/api/geocode/json?";
-// Needs key/latitude/longitude/units
-const darkWeatherBaseUrl = "https://api.darksky.net/forecast/";
 
 
 // Database stuff
@@ -78,16 +71,15 @@ app.use(function(req, res, next){
 });
 
 // Creates test data. needs username = 1
-// userFactory.testData(User, 10);
+userFactory.testData(User, 10);
 
 // Run this to get execise data in DB
-/*  Workout.remove({}).exec(); */
 /* const exercises = ["squats", "bench press", "deadlift", "biceps curls", "shoulder press", "sit ups", "punch press", "flyes", "incline cable flyes", "incline lateral raises", "triceps extensions", "lat pull", "seated row", "leg extension", "leg curls", "calf raises", "cable crunches"];
     exercises.forEach((exercise) => {
     workoutFactory.createNewWorkout(Workout, exercise);
 }); */
 
-//run to get a news
+//run to get news test data in DB
 //newsFactory.createNewNews(News);
 
 // ===============================================================
@@ -192,64 +184,17 @@ app.get('/home', middleware.isLoggedIn, (req, res) => {
     if(req.user.isAdmin){
         res.redirect('/admin/dashboard');
     }else{
-        let nextMeal = {};
-        for(let i = 0; i < user.foodStats.mealPlan.meals.length; i++){
-            if(user.foodStats.mealPlan.meals[i].isChecked === false){
-                nextMeal = user.foodStats.mealPlan.meals[i];
-                break;
-            } else {
-                nextMeal = {};
-            }
-        }
+        const nextMeal = mealFactory.findNextMeal(user.foodStats.mealPlan.meals);
+        const weather = userFactory.getWeather(User, user, env.googleMapsSecret, config, (weather) => {
 
-        let currentWeather = "";
-        if(!user.longitude) {
-            request(googleMapsBaseUrl + "address=" + user.zipcode + "+" + "Denmark" + "&key=" + env.googleMapsSecret, function (error, response, body) {
-                const result = JSON.parse(response.body);
-                const latitude = result.results[0].geometry.location.lat;
-                const longitude = result.results[0].geometry.location.lng;
-
-                User.findById(user._id, function (err, user) {
-                    if (err) {
-                        throw(err);
-                    }
-                    user.longitude = longitude;
-                    user.latitude = latitude;
-            
-                    user.save(function (err, updatedUser) {
-                        if (err){
-                            throw(err); 
-                        } 
-                        
-                    });
-                });
-
-                request(darkWeatherBaseUrl + config.service.darkSkyApi.apiSecret + "/" + latitude + "," + longitude + "/?units=si", function (error, response, body) {
-                    const result = JSON.parse(response.body);               
-                    currentWeather = result.currently.summary;
-                    currentTemperature = result.currently.temperature;
-                    res.render('home', {user: user, nextMeal: nextMeal, currentWeather: currentWeather, temperature: currentTemperature});
-                });
-            });        
-        } else {
-            request(darkWeatherBaseUrl + config.service.darkSkyApi.apiSecret + "/" + user.latitude + "," + user.longitude + "/?units=si", function (error, response, body) {
-                const result = JSON.parse(response.body);
-
-                currentWeather = result.currently;
-
-                weatherToday = result.daily.data[0];
-                weatherTomorrow = result.daily.data[1];
-
-                res.render('home', 
-                {
-                    user: user, 
-                    nextMeal: nextMeal, 
-                    currentWeather: currentWeather,
-                    weatherToday: weatherToday,
-                    weatherTomorrow: weatherTomorrow
-                });
+            res.render('home', {
+                user: user, 
+                nextMeal: nextMeal, 
+                currentWeather: weather.currently,
+                weatherToday: weather.daily.data[0],
+                weatherTomorrow: weather.daily.data[1]
             });
-        }
+        });
     }
 });
 
