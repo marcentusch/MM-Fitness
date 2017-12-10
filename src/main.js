@@ -9,13 +9,13 @@ io                          = require('socket.io')(server),
 mongoose                    = require('mongoose'),
 passport                    = require('passport'),
 LocalStrategy               = require('passport-local').Strategy,
-utility                     = require('./services/utility.js'),
 moment                      = require('moment'),
 schedule                    = require('node-schedule'),
 flash                       = require('connect-flash');
 
 // Require local files
 const middleware  = require('./middleware/index.js'),
+utility           = require('./services/utility.js'),
 config            = require('../config/global.config.json'),
 userData          = require('./schemas/userSchema.js'),
 workoutData       = require('./schemas/workoutSchema.js'),
@@ -80,7 +80,7 @@ userFactory.testData(User, 10);
 }); */
 
 //run to get news test data in DB
-//newsFactory.createNewNews(News);
+//newsFactory.createTestNews(News);
 
 // ===============================================================
 // WEB SOCKETS FOR CHAT
@@ -206,7 +206,7 @@ app.get('/profile', middleware.isLoggedIn, (req, res) => {
 
 
 // ===============================================================
-// WORKOUT ROUTES
+// USER - WORKOUT ROUTES
 // ===============================================================
 
 // Training program
@@ -229,7 +229,7 @@ app.post('/update/trainingpas/timesTrained/:increase', middleware.isLoggedIn, (r
 
 
 // ===============================================================
-// MEAL ROUTES
+// USER - MEAL ROUTES
 // ===============================================================
 
 // Meal plan
@@ -242,36 +242,8 @@ app.get('/meal-plan', middleware.isLoggedIn, (req, res) => {
 
 // Update Calories
 app.post('/meal-plan/update/:userId/mealId/:mealId', middleware.isLoggedIn, async (req, res) => {
-/*     const userId = req.params.userId; */
-    // UPDATE IN THE VIEW, DOES NOT NEED USER ID IN PARAMS
-    const userId = req.user._id;
-    const mealId = req.params.mealId;
-    
-    User.findById(userId, function (err, user) {
-        if (err) {
-            throw(err);
-        } 
-
-        let meals = user.foodStats.mealPlan.meals;
-        let mealCalories = 0;
-
-        for(let i = 0; i < meals.length; i++){
-            if(meals[i].id === mealId){
-                mealCalories = meals[i].calories;
-                meals[i].isChecked = true;
-            }
-        }
-
-        const newCaloriesToday = user.foodStats.mealPlan.caloriesToday -= mealCalories;
-        user.foodStats.mealPlan.caloriesToday = newCaloriesToday;
-
-        // Update calories today
-        user.save(function (err, updatedUser) {
-            if (err){
-                throw(err); 
-            } 
-            res.json({"newCalories": newCaloriesToday});
-        });
+    userFactory.updateCalories(User, req.user, req.params.mealId, (newCaloriesToday) => {
+        res.json({"newCalories": newCaloriesToday});
     });
 });
 
@@ -786,69 +758,14 @@ app.post('/admin/user/:userId/create/meal', middleware.isLoggedIn, async (req, r
     }
 });
 
-// Update meal name
+// Update meal 
 app.post('/admin/user/:userId/update/meal', middleware.isLoggedIn, async (req, res) => {
     if(req.user.isAdmin) {
 
-        const userId = req.params.userId;
-    
-        const whatToUpdate = req.body.whatToUpdate;
-        const formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
-        
-        const mealId = req.body.mealId;
-        
-        User.findById(userId, function (err, user) {
-            if (err) {
-                throw(err);
-            }
-            
-            const mealIndex = user.foodStats.mealPlan.meals.findIndex(i => i.id === mealId);
-    
-            if(whatToUpdate === "name") {
-                user.foodStats.mealPlan.meals[mealIndex].name = formData.name;
-            } else if(whatToUpdate === "details") {
-                user.foodStats.mealPlan.meals[mealIndex].details = formData.details;
-            } else if(whatToUpdate === "description") {
-                user.foodStats.mealPlan.meals[mealIndex].description = formData.description;
-            } else if(whatToUpdate === 'calories'){
-                user.foodStats.mealPlan.meals[mealIndex].calories = formData.calories;
-                let newTotalCalories = 0;
-                user.foodStats.mealPlan.meals.forEach((meal) => {
-                   newTotalCalories += meal.calories; 
-                });
-                user.foodStats.mealPlan.totalCalories = newTotalCalories;
-            } else if(whatToUpdate === 'carbs') {
-                user.foodStats.mealPlan.meals[mealIndex].carbohydrates = formData.carbs;
-                let newTotalCarbohydrates = 0;
-                user.foodStats.mealPlan.meals.forEach((meal) => {
-                    newTotalCarbohydrates += meal.carbohydrates; 
-                });
-                user.foodStats.mealPlan.totalCarbohydrates = newTotalCarbohydrates;
-            } else if(whatToUpdate === 'fat'){
-                user.foodStats.mealPlan.meals[mealIndex].fat = formData.fat;
-                let newTotalFat = 0;
-                user.foodStats.mealPlan.meals.forEach((meal) => {
-                    newTotalFat += meal.fat; 
-                });
-                user.foodStats.mealPlan.totalFat = newTotalFat;
-            } else if(whatToUpdate === 'protein'){
-                user.foodStats.mealPlan.meals[mealIndex].protein = formData.protein;
-                let newTotalProtein = 0;
-                user.foodStats.mealPlan.meals.forEach((meal) => {
-                    newTotalProtein += meal.protein; 
-                });
-                user.foodStats.mealPlan.totalProtein = newTotalProtein;
-            }
-
-            user.lastEdit = moment().format("DD/MM - HH:mm");
-    
-            user.save(function (err, updatedUser) {
-                if (err){
-                    throw(err); 
-                } 
-                res.json({"msg": "Updated meal name"});
-            });
+        mealFactory.updateMeal(User, req.params.userId, req.body.mealId, req.body.whatToUpdate, req.body.formData, () => {
+            res.json({"msg": "Updated meal"});
         });
+
         
     } else {
         res.redirect('home');
@@ -858,44 +775,9 @@ app.post('/admin/user/:userId/update/meal', middleware.isLoggedIn, async (req, r
 // delete meal
 app.post('/admin/user/:userId/delete/meal', middleware.isLoggedIn, async (req, res) => {
     if(req.user.isAdmin) {
-        
-        const userId = req.params.userId;
-        const mealId = req.body.mealId; 
-        
-        User.findById(userId, function (err, user) {
-            if (err) {
-                throw(err);
-            } 
-            let mealPlan = user.foodStats.mealPlan;
-            // Getting meal-index
-            const mealIndex = mealPlan.meals.findIndex(i => i.id === mealId);
-            // Updating values
-            const newTotalCalories = mealPlan.totalCalories - mealPlan.meals[mealIndex].calories;
-            mealPlan.totalCalories = newTotalCalories;
-            const newTotalCarbohydrates = mealPlan.totalCarbohydrates - mealPlan.meals[mealIndex].carbohydrates;
-            mealPlan.totalCarbohydrates = newTotalCarbohydrates;
-            const newTotalProtein = mealPlan.totalProtein - mealPlan.meals[mealIndex].protein;
-            mealPlan.totalProtein = newTotalProtein;
-            const newTotalFat = mealPlan.totalFat - mealPlan.meals[mealIndex].fat;
-            mealPlan.totalFat = newTotalFat;
-            mealPlan.meals.splice(mealIndex, 1);
-    
-            // Makes sure that the passes above the deleted one gets updated their pasnumber
-            for(let i = mealIndex; i < mealPlan.meals.length; i ++) {
-                mealPlan.meals[i].id = JSON.stringify(i + 1);
-            }
-
-            user.lastEdit = moment().format("DD/MM - HH:mm");            
-    
-            // Update new workout data
-            user.save(function (err, updatedUser) {
-                if (err){
-                    throw(err); 
-                } 
-                res.json({msg: "Meal was deleted"});
-            });
+        mealFactory.deleteMeal(User, req.params.userId, req.body.mealId, () => {
+            res.json({msg: "Meal was deleted"});            
         });
-        
     } else {
         res.redirect('home');
     }
@@ -907,18 +789,9 @@ app.post('/admin/user/:userId/delete/meal', middleware.isLoggedIn, async (req, r
 
 // Create new news
 app.post('/admin/news/create', (req, res) => {
-    const newNews = {
-        title: req.body.title,
-        subdivision: req.body.subdivision,
-        content: req.body.content,
-        imageUrl: "",
-        link: req.body.link,
-        linkText: req.body.linkText,
-        date: moment().format("DD/MM/YY")
-    }
-    News.create(newNews, (err) => {
-        if(err){
-            req.flash("error_messages", "Nyhed kunne ikke oprettes, prøv eventuelt igen.");
+    newsFactory.createNewNews(News, req.body, (status) => {
+        if(status === "not created") {
+            req.flash("error_messages", "Nyhed kunne ikke fjernes, prøv eventuelt igen.");
             res.redirect('/admin/news');
             return;
         } else {
@@ -930,10 +803,8 @@ app.post('/admin/news/create', (req, res) => {
 
 // Delete specific news
 app.post('/admin/news/delete/:newsId', (req, res) => {
-    const newsId = req.params.newsId;
-
-    News.findByIdAndRemove(newsId, (err) => {
-        if(err){
+    newsFactory.deleteNews(News, req.params.newsId, (status) => {
+        if(status === "not deleted") {
             req.flash("error_messages", "Nyhed kunne ikke fjernes, prøv eventuelt igen.");
             res.redirect('/admin/news');
             return;

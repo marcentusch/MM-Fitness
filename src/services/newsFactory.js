@@ -1,8 +1,42 @@
-module.exports ={
-    createNewNews
+moment = require('moment');
+
+module.exports = {
+    createNewNews,
+    deleteNews,
+    createTestNews
 }
 
-function createNewNews(News){
+function createNewNews(News, formData, callback) {
+    const newNews = {
+        title: formData.title,
+        subdivision: formData.subdivision,
+        content: formData.content,
+        imageUrl: "",
+        link: formData.link,
+        linkText: formData.linkText,
+        date: moment().format("DD/MM/YY")
+    }
+    News.create(newNews, (err) => {
+        if(err){
+            callback("not created")
+        } else {
+            callback("created");
+        }
+    });
+}
+
+
+function deleteNews(News, newsId, callback) {
+    News.findByIdAndRemove(newsId, (err) => {
+        if(err){
+            callback("not deleted");
+        } else {
+            callback("deleted");
+        }
+    });
+}
+
+function createTestNews(News){
     News.create({
         title: "Titel",
         subdivision: "Rubrik",

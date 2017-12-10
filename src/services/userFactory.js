@@ -10,7 +10,8 @@ module.exports = {
     updateWeight,
     newUser,
     getWeather,
-    updateTimesTrained
+    updateTimesTrained,
+    updateCalories
 };
 
 // Create new user
@@ -63,6 +64,37 @@ function getWeather(User, user, googleSecret, config, callback) {
             callback(result);
         });
     }
+}
+
+function updateCalories(User, user, mealId, callback) {
+    const userId = user._id;
+    
+    User.findById(userId, function (err, user) {
+        if (err) {
+            throw(err);
+        } 
+
+        let meals = user.foodStats.mealPlan.meals;
+        let mealCalories = 0;
+
+        for(let i = 0; i < meals.length; i++){
+            if(meals[i].id === mealId){
+                mealCalories = meals[i].calories;
+                meals[i].isChecked = true;
+            }
+        }
+
+        const newCaloriesToday = user.foodStats.mealPlan.caloriesToday -= mealCalories;
+        user.foodStats.mealPlan.caloriesToday = newCaloriesToday;
+
+        // Update calories today
+        user.save(function (err, updatedUser) {
+            if (err){
+                throw(err); 
+            } 
+            callback(newCaloriesToday);
+        });
+    });
 }
 
 
