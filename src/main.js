@@ -352,7 +352,7 @@ app.get('/admin/dashboard/:sortBy?',  middleware.isLoggedIn, (req, res) => {
             res.render('./admin/dashboard', {users: users, sorted: sorted });
         });
     } else {
-        res.redirect('home');
+        res.redirect('/home');
     }
 });
 
