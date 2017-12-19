@@ -199,6 +199,12 @@ var j = schedule.scheduleJob('0 0 * * *', () => {
 // ROUTES 
 // ===============================================================
 
+/* 
+   Grundet problemer med asynkrone kald til databasen lægger der en del funktionalitet i nogle ruterne
+   som burder lægge i nogle af de forskellige factories. Vi har fundet løsningen relativt sent og har derfor
+   ikke haft tid til at rykke det ud fra alle ruterne 
+*/
+
 // Root route
 app.get('/', (req, res) => {
     res.render('login'); 

@@ -10,8 +10,6 @@
             const message = $("#message").val();
             $("#message").val("");
 
-            
-            
             $("#messageDiv").append("<p> <small> Mikael </small> - " + message + " </p>");
             
             socket.emit("from admin to server", {
@@ -30,21 +28,16 @@
     </script>
 
     <style>
-    
-    p:not(small) {
-        font-size: 20px;
-    }
-
+        p:not(small) {
+            font-size: 20px;
+        }
     </style>
-
-    
 
     <!-- Messages  -->
      <div id="messageDiv" class="container">
         <% user.messages.forEach((message) => { %>
             <% if(message.fromUser === false) { %>    
                 <p> <small> Mikael - </small> <%= message.message %></p>        
-               
             <% } else { %>
                 <p> <small> <%= user.firstName  %> - </small> <%= message.message %></p>  
                                
