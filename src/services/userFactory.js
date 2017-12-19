@@ -1,8 +1,6 @@
 const moment = require('moment'),
 utility      = require('./utility.js'),
-request                     = require('request');
-
-
+request      = require('request');
 
 module.exports = {
     createNewUser,
@@ -50,7 +48,6 @@ function getWeather(User, user, googleSecret, config, callback) {
                     if (err){
                         throw(err); 
                     } 
-                    
                 });
             });
             request(darkWeatherBaseUrl + config.service.darkSkyApi.apiSecret + "/" + latitude + "," + longitude + "/?units=si", function (error, response, body) {
@@ -125,7 +122,6 @@ function updateTimesTrained(User, user, trainingPas, increase, callback) {
     });
 }
 
-
 // Update weight
 function updateWeight(weight, user, User){
     const userId = user._id;
@@ -189,9 +185,11 @@ function newUser(userData) {
         },
         messages: []
     };
+    if(userData.isAdmin) {
+        newUser.isAdmin = userData.isAdmin;
+    }
     return newUser;
 }
-
 
 // Function to make random users
 function testData(User, amount) {
@@ -363,7 +361,7 @@ function testData(User, amount) {
         if(i === 0) {
             
             // Test admin user
-            User.findOneAndUpdate({ username: "1" }, { $set: { 
+            User.findOneAndUpdate({ username: "admin" }, { $set: { 
                 isAdmin: true,
                 firstName: "tester",
                 lastName: "McTestersen",
@@ -377,6 +375,17 @@ function testData(User, amount) {
 
             // Test normal user
             User.findOneAndUpdate({ username: "2" }, { $set: { 
+                firstName: "tester",
+                lastName: "McTestersen",
+                trainingStats: newUser.trainingStats,
+                weightStats: newUser.weightStats,
+                foodStats: newUser.foodStats,
+                messages: newUser.messages
+            } }, { new: true }, function(err, doc) {
+                // console.log(doc);
+            });
+
+            User.findOneAndUpdate({ username: "testbruger" }, { $set: { 
                 firstName: "tester",
                 lastName: "McTestersen",
                 trainingStats: newUser.trainingStats,
@@ -410,4 +419,3 @@ function createTestWorkouts() {
     }
     return assignedWorkouts;
 }
-

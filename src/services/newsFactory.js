@@ -38,8 +38,8 @@ function deleteNews(News, newsId, callback) {
 
 function createTestNews(News){
     News.create({
-        title: "Titel",
-        subdivision: "Rubrik",
+        title: "Overskrift på nyhed",
+        subdivision: "Rubrik på nyhed",
         content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla hendrerit arcu sed fermentum tristique. Mauris fermentum vestibulum neque quis suscipit. Praesent non aliquam nibh. Integer consequat orci eget nunc consequat commodo. Mauris felis ipsum, interdum eget tristique sit amet, ornare sit amet tellus. Aenean non facilisis metus. Donec quis condimentum ante. Mauris nec dignissim ex, laoreet lobortis nunc. Pellentesque iaculis condimentum placerat. Aenean placerat lectus non lectus sollicitudin vestibulum.",
         imageUrl: "",
         link: "http://www.google.dk",

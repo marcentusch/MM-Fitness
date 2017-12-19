@@ -26,23 +26,22 @@ mealFactory       = require('./services/mealFactory.js'),
 newsFactory       = require('./services/newsFactory.js'),
 env               = require('../env.json');
 
-
 // Database stuff
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/mm_fitness_app', {useMongoClient: true});
 const db = mongoose.connection;
 
 // Schemas
-// user-schema
+// User-schema
 const userSchema = mongoose.Schema(userData);
 userSchema.plugin(passportLocalMongoose);
 const User = mongoose.model('User', userSchema);
 
-// workout-schema
+// Workout-schema
 const workoutSchema = mongoose.Schema(workoutData);
 const Workout = mongoose.model('Workout', workoutSchema);
 
-// news-schema
+// News-schema
 const newsSchema = mongoose.Schema(newsData);
 const News = mongoose.model('News', newsSchema);
 
@@ -64,28 +63,55 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.use(function(req, res, next){
+// Flash middleware running for every route
+app.use((req, res, next) => {
     res.locals.success_messages = req.flash('success_messages');
     res.locals.error_messages = req.flash('error_messages');
     next();
 });
 
-// Creates test data. needs username = 1
-userFactory.testData(User, 10);
+// For testing purposes for exam
+User.register(new User(
+    userFactory.newUser({
+        isAdmin: true,
+        username: "admin",
+        firstName: "tester",
+        address: "Roskildevej 223",
+        zipcode: "2620"
+    })
+ ), "1234", (err, user) => {   
+ });
+
+ User.register(new User(
+    userFactory.newUser({
+        username: "testbruger",
+        firstName: "tester",
+        address: "Roskildevej 223",
+        zipcode: "2620"
+    })
+ ), "1234", (err, user) => {   
+     // Create test data
+     userFactory.testData(User, 10);
+ });
 
 // Run this to get execise data in DB
-/* const exercises = ["squats", "bench press", "deadlift", "biceps curls", "shoulder press", "sit ups", "punch press", "flyes", "incline cable flyes", "incline lateral raises", "triceps extensions", "lat pull", "seated row", "leg extension", "leg curls", "calf raises", "cable crunches"];
-    exercises.forEach((exercise) => {
-    workoutFactory.createNewWorkout(Workout, exercise);
-}); */
+Workout.remove({}, () => {
+    const exercises = ["squats", "bench press", "deadlift", "biceps curls", "shoulder press", "sit ups", "punch press", "flyes", "incline cable flyes", "incline lateral raises", "triceps extensions", "lat pull", "seated row", "leg extension", "leg curls", "calf raises", "cable crunches"];
+        exercises.forEach((exercise) => {
+        workoutFactory.createNewWorkout(Workout, exercise);
+    });
+});
 
-//run to get news test data in DB
-//newsFactory.createTestNews(News);
+// Run to get news test data in DB
+News.remove({}, () => {
+    newsFactory.createTestNews(News);
+    newsFactory.createTestNews(News);
+})
 
 // ===============================================================
 // WEB SOCKETS FOR CHAT
 // ===============================================================
-io.on('connection', function(socket){
+io.on('connection', (socket) => {
 
     // Handle user message from client to server
     socket.on("from user to server", (data) => {
@@ -150,7 +176,7 @@ io.on('connection', function(socket){
 // SCHEDULE 
 // ===============================================================
 
-var j = schedule.scheduleJob('0 0 * * *', function(){
+var j = schedule.scheduleJob('0 0 * * *', () => {
     User.find({}, (err, users) => {
         if(err) {
             throw err;
@@ -160,7 +186,7 @@ var j = schedule.scheduleJob('0 0 * * *', function(){
             user.foodStats.mealPlan.meals.forEach((meal) => {
                 meal.isChecked = false;
             });
-            user.save(function (err, updatedUsers) {
+            user.save((err, updatedUsers) => {
                 if (err){
                     throw(err); 
                 } 
@@ -183,7 +209,8 @@ app.get('/home', middleware.isLoggedIn, (req, res) => {
     const user = req.user;
     if(req.user.isAdmin){
         res.redirect('/admin/dashboard');
-    }else{
+    }else {
+
         const nextMeal = mealFactory.findNextMeal(user.foodStats.mealPlan.meals);
         const weather = userFactory.getWeather(User, user, env.googleMapsSecret, config, (weather) => {
 
@@ -204,7 +231,6 @@ app.get('/profile', middleware.isLoggedIn, (req, res) => {
     res.render('profile', {user: user});
 });
 
-
 // ===============================================================
 // USER - WORKOUT ROUTES
 // ===============================================================
@@ -224,9 +250,6 @@ app.post('/update/trainingpas/timesTrained/:increase', middleware.isLoggedIn, (r
         res.json({"updatedTimesTrained": updatedTimesTrained})        
     });
 });
-
-
-
 
 // ===============================================================
 // USER - MEAL ROUTES
@@ -280,13 +303,13 @@ app.get('/workout/:name', middleware.isLoggedIn, async (req, res) => {
 // Admin route
 // ===============================================================
 
-// front page
+// Dashboard
 app.get('/admin/dashboard/:sortBy?',  middleware.isLoggedIn, (req, res) => {
     if(req.user.isAdmin) {
         User.find({}, (err, users) => {
 
             // Default sort to first name when loading page
-            users.sort(function(a, b) {
+            users.sort((a, b) => {
                 if(a.firstName < b.firstName) return -1;
                 if(a.firstName > b.firstName) return 1;
                 return 0;
@@ -297,21 +320,21 @@ app.get('/admin/dashboard/:sortBy?',  middleware.isLoggedIn, (req, res) => {
 
             if(sortBy === "firstName") {
                 sorted = "Fornavn";
-                users.sort(function(a, b) {
+                users.sort((a, b) => {
                     if(a.firstName < b.firstName) return -1;
                     if(a.firstName > b.firstName) return 1;
                     return 0;
                 });
             } else if(sortBy === "lastName") {
                 sorted = "Efternavn";                
-                users.sort(function(a, b) {
+                users.sort((a, b) => {
                     if(a.lastName < b.lastName) return -1;
                     if(a.lastName > b.lastName) return 1;
                     return 0;
                 }); 
             } else if(sortBy === "lastEdit") {
                 sorted = "Sidst redigeret"                
-                users.sort(function(a, b) {
+                users.sort((a, b) => {
                     const bEdit = moment(b.lastEdit, "DD/MM - HH:mm").format("x");
                     const aEdit = moment(a.lastEdit, "DD/MM - HH:mm").format("x");
 
@@ -323,18 +346,18 @@ app.get('/admin/dashboard/:sortBy?',  middleware.isLoggedIn, (req, res) => {
                 });
             } else if(sortBy === "dateCreated") {
                 sorted = "Nyeste";                
-                users.sort(function(a, b) {
+                users.sort((a, b) => {
                     return Number(b.dateCreated) - Number(a.dateCreated);
                 });
             }
             
             // Filters enabled users
-            const disabledUsers = users.filter(function (user) {
+            const disabledUsers = users.filter((user) => {
                 return user.isDisabled === true;
             });
 
             // Filters disabled users
-            users = users.filter(function (user) {
+            users = users.filter((user) => {
                 return user.isDisabled === false;
             });
 
@@ -351,7 +374,7 @@ app.get('/admin/dashboard/:sortBy?',  middleware.isLoggedIn, (req, res) => {
     }
 });
 
-// user page
+// Individual user page
 app.get('/admin/user/:userId', middleware.isLoggedIn, (req,res) => {
     if(req.user.isAdmin) {
 
@@ -371,10 +394,9 @@ app.get('/admin/user/:userId', middleware.isLoggedIn, (req,res) => {
     }
 });
 
-// chat page
+// Chat page
 app.get('/admin/user/:userId/chat', middleware.isLoggedIn, (req,res) => {
     if(req.user.isAdmin) {
-
         User.findById(req.params.userId, (err, user) => {
             Workout.find({}, (err, workouts) => {
                 res.render('./admin/chat', {
@@ -385,13 +407,12 @@ app.get('/admin/user/:userId/chat', middleware.isLoggedIn, (req,res) => {
                 });
             });
         });
-
     } else {
         res.redirect('home');
     }
 });
 
-// news page
+// News page
 app.get('/admin/news', middleware.isLoggedIn, (req,res) => {
     if(req.user.isAdmin) {
         News.find({}, (err, news) => {
@@ -409,14 +430,14 @@ app.post('/admin/user/:userId/update/weight', middleware.isLoggedIn, (req, res) 
         const userId = req.params.userId;
         const newGoal = req.body.newGoal;
         
-        User.findById(userId, function (err, user) {
+        User.findById(userId, (err, user) => {
             if (err) {
                 throw(err);
             } 
             user.weightStats.targetWeight = newGoal;
             user.lastEdit = moment().format("DD/MM - HH:mm");
             
-            user.save(function (err, updatedUser) {
+            user.save((err, updatedUser) => {
                 if (err){
                     throw(err); 
                 } 
@@ -444,7 +465,7 @@ app.post('/admin/user/:userId/create/trainingpas', middleware.isLoggedIn, async 
             muscleGroups: []
         }
     
-        User.findById(userId, function (err, user) {
+        User.findById(userId, (err, user) => {
             if (err) {
                 throw(err);
             } 
@@ -452,7 +473,7 @@ app.post('/admin/user/:userId/create/trainingpas', middleware.isLoggedIn, async 
             user.trainingStats.trainingPases.push(newPas);
             user.lastEdit = moment().format("DD/MM - HH:mm");
             
-            user.save(function (err, updatedUser) {
+            user.save((err, updatedUser) => {
                 if (err){
                     throw(err); 
                 } 
@@ -478,14 +499,14 @@ app.post('/admin/user/:userId/create/musclegroup', middleware.isLoggedIn, async 
             assignedWorkouts: []
         }
     
-        User.findById(userId, function (err, user) {
+        User.findById(userId, (err, user) => {
             if (err) {
                 throw(err);
             } 
             user.trainingStats.trainingPases[pas -1].muscleGroups.push(newMuscleGroup);
             user.lastEdit = moment().format("DD/MM - HH:mm");
             
-            user.save(function (err, updatedUser) {
+            user.save((err, updatedUser) => {
                 if (err){
                     throw(err); 
                 } 
@@ -498,7 +519,6 @@ app.post('/admin/user/:userId/create/musclegroup', middleware.isLoggedIn, async 
     }
 });
 
-
 // Create new workout
 app.post('/admin/user/:userId/create/workout', middleware.isLoggedIn, async (req, res) => {
     if(req.user.isAdmin) {
@@ -510,7 +530,7 @@ app.post('/admin/user/:userId/create/workout', middleware.isLoggedIn, async (req
         
         let formData = req.body.formData;
         
-        User.findById(userId, function (err, user) {
+        User.findById(userId, (err, user) => {
             if (err) {
                 throw(err);
             } 
@@ -521,7 +541,7 @@ app.post('/admin/user/:userId/create/workout', middleware.isLoggedIn, async (req
             user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts.push(formData);
             user.lastEdit = moment().format("DD/MM - HH:mm");
             
-            user.save(function (err, updatedUser) {
+            user.save((err, updatedUser) => {
                 if (err){
                     throw(err); 
                 } 
@@ -554,7 +574,7 @@ app.post('/admin/user/:userId/update/workout/:workoutId', middleware.isLoggedIn,
             "newWorkoutSaet": formData.saet
         };
         
-        User.findById(userId, function (err, user) {
+        User.findById(userId, (err, user) => {
             if (err) {
                 throw(err);
             } 
@@ -585,7 +605,7 @@ app.post('/admin/user/:userId/update/workout/:workoutId', middleware.isLoggedIn,
             user.lastEdit = moment().format("DD/MM - HH:mm");
             
             // Update new workout data
-            user.save(function (err, updatedUser) {
+            user.save((err, updatedUser) => {
                 if (err){
                     throw(err); 
                 } 
@@ -604,7 +624,7 @@ app.post('/admin/user/:userId/delete/pas', middleware.isLoggedIn, async (req, re
 
         const userId = req.params.userId;
         
-        User.findById(userId, function (err, user) {
+        User.findById(userId, (err, user) => {
             if (err) {
                 throw(err);
             } 
@@ -619,7 +639,7 @@ app.post('/admin/user/:userId/delete/pas', middleware.isLoggedIn, async (req, re
             user.lastEdit = moment().format("DD/MM - HH:mm");
             
             // Update new workout data
-            user.save(function (err, updatedUser) {
+            user.save((err, updatedUser) => {
                 if (err){
                     throw(err); 
                 } 
@@ -639,7 +659,7 @@ app.post('/admin/user/:userId/delete/musclegroup', middleware.isLoggedIn, async 
         const muscleGroup = req.body.muscleGroup;
         const trainingPas = req.body.trainingPas;
     
-        User.findById(userId, function (err, user) {
+        User.findById(userId, (err, user) => {
             if (err) {
                 throw(err);
             } 
@@ -651,7 +671,7 @@ app.post('/admin/user/:userId/delete/musclegroup', middleware.isLoggedIn, async 
             user.lastEdit = moment().format("DD/MM - HH:mm");
             
             // Update new workout data
-            user.save(function (err, updatedUser) {
+            user.save((err, updatedUser) => {
                 if (err){
                     throw(err); 
                 } 
@@ -679,7 +699,7 @@ app.post('/admin/user/:userId/delete/workout', middleware.isLoggedIn, async (req
         const muscleGroup = req.body.muscleGroup;
         const workoutName = req.body.workoutName;
         
-        User.findById(userId, function (err, user) {
+        User.findById(userId, (err, user) => {
             if (err) {
                 throw(err);
             } 
@@ -693,7 +713,7 @@ app.post('/admin/user/:userId/delete/workout', middleware.isLoggedIn, async (req
             user.lastEdit = moment().format("DD/MM - HH:mm");
             
                 // Update new workout data
-            user.save(function (err, updatedUser) {
+            user.save((err, updatedUser) => {
                 if (err){
                     throw(err); 
                 } 
@@ -717,7 +737,7 @@ app.post('/admin/user/:userId/create/meal', middleware.isLoggedIn, async (req, r
         const userId = req.params.userId;
         const formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
         
-        User.findById(userId, function (err, user) {
+        User.findById(userId, (err, user) => {
             if (err) {
                 throw(err);
             } 
@@ -740,7 +760,7 @@ app.post('/admin/user/:userId/create/meal', middleware.isLoggedIn, async (req, r
             
             user.lastEdit = moment().format("DD/MM - HH:mm");
 
-            user.save(function (err, updatedUser) {
+            user.save((err, updatedUser) => {
                 if (err){
                     throw(err); 
                 } 
@@ -823,7 +843,7 @@ app.post("/admin/user/:userId/update/isDisabled/:bool", (req, res) => {
 
             user.isDisabled = req.params.bool;
 
-            user.save(function (err, updatedUser) {
+            user.save((err, updatedUser) => {
                 if (err){
                     throw(err); 
                 }
@@ -876,7 +896,7 @@ app.post('/admin/register', (req, res) => {
     User.register(new User(
         userFactory.newUser(req.body)
     ), 
-        req.body.password, function(err, user){
+        req.body.password, (err, user) => {
         if(err){
             req.flash("error_messages", "Brugeren eksisterer allerede!");
             res.redirect('/admin/dashboard');
