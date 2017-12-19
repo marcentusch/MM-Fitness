@@ -41,12 +41,12 @@
             <% if(message.fromUser === false) { %>            
                 <p class="">
                     <span class="text-secondary font-weight-bold">  
-                        <small> <%= message.date %> </small> <%= user.firstName %>
+                        <small> <%= message.date %> </small> Mikael
                     </span>:  <%= message.message %> 
                 </p>
             <% } else { %>
                 <p class="">
-                    <span class="text-primary font-weight-bold"><small> <%= message.date %> </small> Mikael
+                    <span class="text-primary font-weight-bold"><small> <%= message.date %> </small> <%= user.firstName %>
                     </span>: <%= message.message %>  
                 </p>                    
             <% } %>
