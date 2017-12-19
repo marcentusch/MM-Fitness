@@ -9,8 +9,10 @@
         function adminMessage (userId) {
             const message = $("#message").val();
             $("#message").val("");
+
             
-            $("#messageDiv").append("<p class='text-right'>" + message + "</p>");
+            
+            $("#messageDiv").append("<p> <small> Mikael </small> - " + message + " </p>");
             
             socket.emit("from admin to server", {
                 message: message,
@@ -20,7 +22,9 @@
 
         // Admin recieving message from server
         socket.on("from server to admin", (data) => {
-            $("#messageDiv").append("<p>" + data.message + "</p>");
+            $("#messageDiv").append(
+                "<p> <small> <%= user.firstName %> - </small>" + data.message + "</p>"
+            );
         });
 
     </script>
@@ -38,17 +42,12 @@
     <!-- Messages  -->
      <div id="messageDiv" class="container">
         <% user.messages.forEach((message) => { %>
-            <% if(message.fromUser === false) { %>            
-                <p class="">
-                    <span class="text-secondary font-weight-bold">  
-                        <small> <%= message.date %> </small> Mikael
-                    </span>:  <%= message.message %> 
-                </p>
+            <% if(message.fromUser === false) { %>    
+                <p> <small> Mikael - </small> <%= message.message %></p>        
+               
             <% } else { %>
-                <p class="">
-                    <span class="text-primary font-weight-bold"><small> <%= message.date %> </small> <%= user.firstName %>
-                    </span>: <%= message.message %>  
-                </p>                    
+                <p> <small> <%= user.firstName  %> - </small> <%= message.message %></p>  
+                               
             <% } %>
         <% }) %>
     </div>

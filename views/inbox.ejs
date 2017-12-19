@@ -10,7 +10,7 @@
             const message = $("#message").val();
             $("#message").val("");
 
-            $("#messageDiv").append("<p class='text-right'>" + message + "</p>")
+            $("#messageDiv").append("<p> <small> Mig - </small>" + message + "</p>")
 
             socket.emit("from user to server", {
                 message: message,
@@ -21,7 +21,7 @@
         // User recieving message from server
         socket.on("from server to user", (data) => {
             if(data.userId === '<%= user._id %>'){
-                $("#messageDiv").append("<p>" + data.message + "</p>");
+                $("#messageDiv").append("<p> <small> Mikael - </small>" + data.message + "</p>");
             }
         });
         
@@ -32,9 +32,9 @@
         <div id="messageDiv">
         <% user.messages.forEach((message) => { %>
             <% if(message.fromUser === true) { %>
-                    <p class="text-right"> <%= message.message %> </p>
+                    <p> <small> Mig - </small> <%= message.message %> </p>
                 <% } else { %>
-                    <p> <%= message.message %> </p>                    
+                    <p> <small> Mikael - </small> <%= message.message %> </p>                    
                 <% } %>
             <% }) %>
         </div>
