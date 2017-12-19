@@ -270,14 +270,9 @@ app.post('/update/weight', middleware.isLoggedIn, (req, res) => {
 
 // Workout details
 app.get('/workout/:name', middleware.isLoggedIn, async (req, res) => {
-    const name = req.params.name;
-    try {
-        Workout.findOne({name: name}, (err, workoutFromDb) => {
-            res.render('workout', {workout: workoutFromDb});
-        }).exec();
-    } catch (err) {
-        throw(err);
-    }
+    workoutFactory.getWorkout(Workout, req.params.name, (workout) => {
+        res.render('workout', {workout: workout});    
+    });
 });
 
 
@@ -320,8 +315,8 @@ app.get('/admin/dashboard/:sortBy?',  middleware.isLoggedIn, (req, res) => {
                     const bEdit = moment(b.lastEdit, "DD/MM - HH:mm").format("x");
                     const aEdit = moment(a.lastEdit, "DD/MM - HH:mm").format("x");
 
-                    if(a.lastEdit !== "" || b.lastEdit !== "") {
-                       return -1;
+                    if(b.lastEdit !== "" || a.lastEdit !== "") {
+                       return 1;
                     }
                     
                     return Number(bEdit) - Number(aEdit);
