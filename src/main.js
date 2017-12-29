@@ -26,6 +26,39 @@ mealFactory       = require('./services/mealFactory.js'),
 newsFactory       = require('./services/newsFactory.js'),
 env               = require('../env.json');
 
+
+/* SEND MAIL - WORKS FOR ME */
+var nodemailer = require("nodemailer");
+
+let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    secure: false,
+    port: 25,
+    auth: {
+        user: 'marcentusch@gmail.com',
+        pass: 'PASSWORD HERE'
+    },
+    tls: {
+        rejectUnauthorized: false
+    }
+});
+
+let HelperOptions = {
+    from: '"Marc Erhardtsen" <marcentusch@gmail.com',
+    to: 'marcentusch@gmail.com',
+    subject: 'Hello World!',
+    text: 'wow it works!'
+};
+
+transporter.sendMail(HelperOptions, (error, info) => {
+    if(error) {
+        console.log(error);
+    } else {
+        console.log("The message was sent!");
+    }
+});
+
+
 // Database stuff
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/mm_fitness_app', {useMongoClient: true});
