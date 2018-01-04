@@ -27,7 +27,6 @@ newsFactory       = require('./services/newsFactory.js'),
 mailService       = require('./services/mailService.js'),
 env               = require('../env.json');
 
-
 // Database stuff
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/mm_fitness_app', {useMongoClient: true});
@@ -451,7 +450,6 @@ app.post('/admin/user/:userId/update/weight', middleware.isLoggedIn, (req, res) 
 // Create new trainingPas
 app.post('/admin/user/:userId/create/trainingpas', middleware.isLoggedIn, async (req, res) => {
     if(req.user.isAdmin) {
-
         const userId = req.params.userId;
        
         const newPas = {
@@ -474,7 +472,6 @@ app.post('/admin/user/:userId/create/trainingpas', middleware.isLoggedIn, async 
                 res.json({"message": "created new pas"});
             });
         });
-
     } else {
         res.redirect('home');
     }
@@ -483,7 +480,6 @@ app.post('/admin/user/:userId/create/trainingpas', middleware.isLoggedIn, async 
 // Create a new musclegroup in the specific trainingPas
 app.post('/admin/user/:userId/create/musclegroup', middleware.isLoggedIn, async (req, res) => {
     if(req.user.isAdmin) {
-
         const userId = req.params.userId;
         const pas = req.body.trainingPas;
         const formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
@@ -507,7 +503,6 @@ app.post('/admin/user/:userId/create/musclegroup', middleware.isLoggedIn, async 
                 res.json({"message": "created new musclegroup"});
             });
         });
-        
     } else {
         res.redirect('home');
     }
@@ -553,7 +548,6 @@ app.post('/admin/user/:userId/update/workout/:workoutId', middleware.isLoggedIn,
     if(req.user.isAdmin) {
         
         const userId = req.params.userId;
-    
         const trainingPas = req.body.trainingPas;
         const muscleGroup = req.body.muscleGroup;
         const workoutName = req.body.workoutName;
@@ -561,6 +555,7 @@ app.post('/admin/user/:userId/update/workout/:workoutId', middleware.isLoggedIn,
     
         // Format query string to JSON-object
         formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
+        
         // Data to be returned to ajax call 
         returnData = {
             "newWorkoutName": formData.name,
@@ -615,7 +610,6 @@ app.post('/admin/user/:userId/update/workout/:workoutId', middleware.isLoggedIn,
 // Delete single pas
 app.post('/admin/user/:userId/delete/pas', middleware.isLoggedIn, async (req, res) => {
     if(req.user.isAdmin) {
-
         const userId = req.params.userId;
         
         User.findById(userId, (err, user) => {
@@ -640,7 +634,6 @@ app.post('/admin/user/:userId/delete/pas', middleware.isLoggedIn, async (req, re
                 res.json({msg: "Pas was deleted"});
             });
         });
-        
     } else {
         res.redirect('home');
     }
@@ -702,11 +695,10 @@ app.post('/admin/user/:userId/delete/workout', middleware.isLoggedIn, async (req
             const muscleGroupIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups.findIndex(i => i.name === muscleGroup);
             const workoutIndex = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts.findIndex(i => i.name === workoutName);
     
-    
             user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts.splice(workoutIndex, 1);
             user.lastEdit = moment().format("DD/MM - HH:mm");
             
-                // Update new workout data
+            // Update new workout data
             user.save((err, updatedUser) => {
                 if (err){
                     throw(err); 
@@ -770,12 +762,9 @@ app.post('/admin/user/:userId/create/meal', middleware.isLoggedIn, async (req, r
 // Update meal 
 app.post('/admin/user/:userId/update/meal', middleware.isLoggedIn, async (req, res) => {
     if(req.user.isAdmin) {
-
         mealFactory.updateMeal(User, req.params.userId, req.body.mealId, req.body.whatToUpdate, req.body.formData, () => {
             res.json({"msg": "Updated meal"});
-        });
-
-        
+        });        
     } else {
         res.redirect('home');
     }
@@ -871,7 +860,8 @@ app.post('/admin/delete/:userId', (req, res) => {
                 res.redirect('/admin/dashboard');
                 return;
             } else {
-                req.flash("success_messages", "Brugeren er blevet slettet.");
+                mailService.sendMail(deletedUser, env, "delete");
+                req.flash("success_messages", "Brugeren er blevet slettet og bekræftelsesmail er afsendt til: " + deletedUser.username);
                 res.redirect('/admin/dashboard');
             }
         });
@@ -896,9 +886,9 @@ app.post('/admin/register', (req, res) => {
             res.redirect('/admin/dashboard');
             return;
         }
-        mailService.sendMail(user, env);
-        req.flash("success_messages", "Ny bruger er blevet oprettet!");
-        res.redirect('/admin/dashboard')
+        mailService.sendMail(user, env, "welcome");
+        req.flash("success_messages", "Ny bruger er oprettet og bekræftelses-mail er sendt til: " + user.username);
+        res.redirect('/admin/dashboard');
     });
 });
 
