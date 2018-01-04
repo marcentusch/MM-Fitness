@@ -201,12 +201,6 @@ var j = schedule.scheduleJob('0 0 * * *', () => {
 // ROUTES 
 // ===============================================================
 
-/* 
-   Grundet problemer med asynkrone kald til databasen lægger der en del funktionalitet i nogle ruterne
-   som burder lægge i nogle af de forskellige factories. Vi har fundet løsningen relativt sent og har derfor
-   ikke haft tid til at rykke det ud fra alle ruterne 
-*/
-
 // Root route
 app.get('/', (req, res) => {
     res.render('login'); 
@@ -217,8 +211,7 @@ app.get('/home', middleware.isLoggedIn, (req, res) => {
     const user = req.user;
     if(req.user.isAdmin){
         res.redirect('/admin/dashboard');
-    }else {
-
+    } else {
         const nextMeal = mealFactory.findNextMeal(user.foodStats.mealPlan.meals);
         const weather = userFactory.getWeather(User, user, env.googleMapsSecret, config, (weather) => {
 
@@ -385,9 +378,8 @@ app.get('/admin/dashboard/:sortBy?',  middleware.isLoggedIn, (req, res) => {
 // Individual user page
 app.get('/admin/user/:userId', middleware.isLoggedIn, (req,res) => {
     if(req.user.isAdmin) {
-
-        User.findById(req.params.userId, (err, user) => {
-            Workout.find({}, (err, workouts) => {
+        userFactory.getUser(User, req.params.userId, (user) => {
+            workoutFactory.getWorkouts(Workout, (workouts) => {
                 res.render('./admin/user-page/user', {
                     user: user, 
                     workouts: workouts, 
@@ -396,7 +388,6 @@ app.get('/admin/user/:userId', middleware.isLoggedIn, (req,res) => {
                 });
             });
         });
-
     } else {
         res.redirect('home');
     }
@@ -405,14 +396,9 @@ app.get('/admin/user/:userId', middleware.isLoggedIn, (req,res) => {
 // Chat page
 app.get('/admin/user/:userId/chat', middleware.isLoggedIn, (req,res) => {
     if(req.user.isAdmin) {
-        User.findById(req.params.userId, (err, user) => {
-            Workout.find({}, (err, workouts) => {
-                res.render('./admin/chat', {
-                    user: user, 
-                    workouts: workouts, 
-                    muscleGroups: workoutFactory.muscleGroups,
-                    meals: mealFactory.meals
-                });
+        userFactory.getUser(User, req.params.userId, (user) => {
+            res.render('./admin/chat', {
+                user: user
             });
         });
     } else {
@@ -423,7 +409,7 @@ app.get('/admin/user/:userId/chat', middleware.isLoggedIn, (req,res) => {
 // News page
 app.get('/admin/news', middleware.isLoggedIn, (req,res) => {
     if(req.user.isAdmin) {
-        News.find({}, (err, news) => {
+        newsFactory.getAllNews(News, (news) => {
             res.render('./admin/news', {news: news});
         });
     } else {

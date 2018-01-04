@@ -4,6 +4,7 @@ request      = require('request');
 
 module.exports = {
     createNewUser,
+    getUser,
     testData,
     updateWeight,
     newUser,
@@ -23,6 +24,13 @@ function createNewUser(user, User){
             return newUser;
         }
     }
+}
+
+// Get user
+function getUser(User, userId, callback){
+    User.findById(userId, (err, user) => {
+        callback(user);
+    });
 }
 
 // Find forecast for a user

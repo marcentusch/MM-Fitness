@@ -1,9 +1,17 @@
 moment = require('moment');
 
 module.exports = {
+    getAllNews,
     createNewNews,
     deleteNews,
     createTestNews
+}
+
+// Get all news
+function getAllNews(News, callback){
+    News.find({}, (err, news) => {
+        callback(news);
+    });
 }
 
 function createNewNews(News, formData, callback) {

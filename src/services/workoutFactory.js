@@ -2,7 +2,14 @@
 module.exports = {
     getWorkout,
     createNewWorkout,
+    getWorkouts,
     muscleGroups: ["ben", "ryg", "biceps", "core", "skulder", "bryst", "triceps"]
+}
+
+function getWorkouts(Workout, callback){
+    Workout.find({}, (err, workouts) => {
+        callback(workouts);
+    });
 }
 
 
