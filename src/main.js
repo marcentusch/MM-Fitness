@@ -306,7 +306,7 @@ app.get('/workout/:name', middleware.isLoggedIn, async (req, res) => {
 // Dashboard
 app.get('/admin/dashboard/:sortBy?',  middleware.isLoggedIn, (req, res) => {
     if(req.user.isAdmin) {
-        User.find({}, (err, users) => {
+        userFactory.getUsers(User, (users) => {
 
             // Default sort to first name when loading page
             users.sort((a, b) => {
@@ -314,10 +314,10 @@ app.get('/admin/dashboard/:sortBy?',  middleware.isLoggedIn, (req, res) => {
                 if(a.firstName > b.firstName) return 1;
                 return 0;
             });
-
+    
             const sortBy = req.params.sortBy;
             let sorted = "Fornavn";
-
+    
             if(sortBy === "firstName") {
                 sorted = "Fornavn";
                 users.sort((a, b) => {
@@ -337,7 +337,7 @@ app.get('/admin/dashboard/:sortBy?',  middleware.isLoggedIn, (req, res) => {
                 users.sort((a, b) => {
                     const bEdit = moment(b.lastEdit, "DD/MM - HH:mm").format("x");
                     const aEdit = moment(a.lastEdit, "DD/MM - HH:mm").format("x");
-
+    
                     if(b.lastEdit !== "" || a.lastEdit !== "") {
                        return 1;
                     }
@@ -355,18 +355,18 @@ app.get('/admin/dashboard/:sortBy?',  middleware.isLoggedIn, (req, res) => {
             const disabledUsers = users.filter((user) => {
                 return user.isDisabled === true;
             });
-
+    
             // Filters disabled users
             users = users.filter((user) => {
                 return user.isDisabled === false;
             });
-
+    
             // Pushing disabled users to enabled user-array
             // in order to get disabled users in bottom
             disabledUsers.forEach((user) => {
                 users.push(user);
             });
-
+    
             res.render('./admin/dashboard', {users: users, sorted: sorted });
         });
     } else {
@@ -419,14 +419,9 @@ app.get('/admin/news', middleware.isLoggedIn, (req,res) => {
 // Update the users targetweight
 app.post('/admin/user/:userId/update/weight', middleware.isLoggedIn, (req, res) => {
     if(req.user.isAdmin) {
-
-        const userId = req.params.userId;
         const newGoal = req.body.newGoal;
         
-        User.findById(userId, (err, user) => {
-            if (err) {
-                throw(err);
-            } 
+        userFactory.getUser(User, req.params.userId, (user) => {
             user.weightStats.targetWeight = newGoal;
             user.lastEdit = moment().format("DD/MM - HH:mm");
             
@@ -434,10 +429,9 @@ app.post('/admin/user/:userId/update/weight', middleware.isLoggedIn, (req, res) 
                 if (err){
                     throw(err); 
                 } 
-                res.redirect('/admin/user/' + userId);
+                res.redirect('/admin/user/' + req.params.userId);
             });
         });
-
     } else {
         res.redirect('home');
     }
@@ -450,27 +444,8 @@ app.post('/admin/user/:userId/update/weight', middleware.isLoggedIn, (req, res) 
 // Create new trainingPas
 app.post('/admin/user/:userId/create/trainingpas', middleware.isLoggedIn, async (req, res) => {
     if(req.user.isAdmin) {
-        const userId = req.params.userId;
-       
-        const newPas = {
-            pasNumber: '',
-            muscleGroups: []
-        }
-    
-        User.findById(userId, (err, user) => {
-            if (err) {
-                throw(err);
-            } 
-            newPas.pasNumber = user.trainingStats.trainingPases.length + 1;
-            user.trainingStats.trainingPases.push(newPas);
-            user.lastEdit = moment().format("DD/MM - HH:mm");
-            
-            user.save((err, updatedUser) => {
-                if (err){
-                    throw(err); 
-                } 
-                res.json({"message": "created new pas"});
-            });
+        workoutFactory.addTrainingPas(User, req.params.userId, (msg) => {
+            res.send(msg);
         });
     } else {
         res.redirect('home');
@@ -480,28 +455,9 @@ app.post('/admin/user/:userId/create/trainingpas', middleware.isLoggedIn, async 
 // Create a new musclegroup in the specific trainingPas
 app.post('/admin/user/:userId/create/musclegroup', middleware.isLoggedIn, async (req, res) => {
     if(req.user.isAdmin) {
-        const userId = req.params.userId;
-        const pas = req.body.trainingPas;
         const formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
-        const muscleGroup = formData.muscleGroup;
-        const newMuscleGroup = {
-            name: muscleGroup,
-            assignedWorkouts: []
-        }
-    
-        User.findById(userId, (err, user) => {
-            if (err) {
-                throw(err);
-            } 
-            user.trainingStats.trainingPases[pas -1].muscleGroups.push(newMuscleGroup);
-            user.lastEdit = moment().format("DD/MM - HH:mm");
-            
-            user.save((err, updatedUser) => {
-                if (err){
-                    throw(err); 
-                } 
-                res.json({"message": "created new musclegroup"});
-            });
+        workoutFactory.addMuscleGroup(User, req.params.userId, req.body.trainingPas, formData.muscleGroup, (msg) => {
+            res.json(msg);
         });
     } else {
         res.redirect('home');

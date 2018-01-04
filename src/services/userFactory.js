@@ -4,6 +4,7 @@ request      = require('request');
 
 module.exports = {
     createNewUser,
+    getUsers,
     getUser,
     testData,
     updateWeight,
@@ -24,6 +25,13 @@ function createNewUser(user, User){
             return newUser;
         }
     }
+}
+
+// Get all users
+function getUsers(User, callback) {
+    User.find({}, (err, users) => {
+        callback(users);
+    });
 }
 
 // Get user

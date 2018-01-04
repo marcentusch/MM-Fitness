@@ -1,8 +1,10 @@
 
 module.exports = {
     getWorkout,
-    createNewWorkout,
     getWorkouts,
+    addTrainingPas,
+    addMuscleGroup,
+    createNewWorkout,
     muscleGroups: ["ben", "ryg", "biceps", "core", "skulder", "bryst", "triceps"]
 }
 
@@ -21,6 +23,53 @@ function getWorkout(Workout, workoutName, callback) {
     } catch (err) {
         throw(err);
     }
+}
+
+function addTrainingPas(User, userId, callback) {
+    const newPas = {
+        pasNumber: '',
+        muscleGroups: []
+    }
+
+    User.findById(userId, (err, user) => {
+        if (err) {
+            throw(err);
+        } 
+        newPas.pasNumber = user.trainingStats.trainingPases.length + 1;
+        user.trainingStats.trainingPases.push(newPas);
+        user.lastEdit = moment().format("DD/MM - HH:mm");
+        
+        user.save((err, updatedUser) => {
+            if (err){
+                throw(err); 
+            } 
+            callback("Pas created")
+        });
+    });
+};
+
+function addMuscleGroup(User, userId, pas, muscleGroup, callback) {
+
+    const newMuscleGroup = {
+        name: muscleGroup,
+        assignedWorkouts: []
+    }
+
+    User.findById(userId, (err, user) => {
+        if (err) {
+            throw(err);
+        } 
+        user.trainingStats.trainingPases[pas -1].muscleGroups.push(newMuscleGroup);
+        user.lastEdit = moment().format("DD/MM - HH:mm");
+        
+        user.save((err, updatedUser) => {
+            if (err){
+                throw(err); 
+            } 
+            callback("Musclegroup added")
+        });
+    });
+
 }
 
 
