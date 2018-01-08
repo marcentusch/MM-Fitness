@@ -297,14 +297,6 @@ app.post('/update/weight', middleware.isLoggedIn, (req, res) => {
     res.redirect('/home');
 });
 
-// Workout details
-app.get('/workout/:name', middleware.isLoggedIn, async (req, res) => {
-    workoutFactory.getWorkout(Workout, req.params.name, (workout) => {
-        res.render('workout', {workout: workout});    
-    });
-});
-
-
 // ===============================================================
 // Admin route
 // ===============================================================
