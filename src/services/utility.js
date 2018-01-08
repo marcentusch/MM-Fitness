@@ -33,7 +33,7 @@ function decryptMessage(env, string){
     let deciphered = decipher.update(string,'hex','utf8')
     deciphered += decipher.final('utf8');
     return deciphered;
-  }
+}
 
 function randomDate() {
     const someDate = randomNumber(1,27) + "-" + randomNumber(1, 12) + "-2017";
