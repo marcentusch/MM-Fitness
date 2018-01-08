@@ -446,6 +446,7 @@ app.post('/admin/workouts/update', middleware.isLoggedIn, ( req , res ) => {
                 if (err){
                     throw(err); 
                 } else {
+                    req.flash("success_messages", "Øvelsen er opdateret.");
                     res.redirect('/admin/workouts');
                 }
             });
@@ -459,6 +460,7 @@ app.post('/admin/workouts/update', middleware.isLoggedIn, ( req , res ) => {
 app.post('/admin/workouts/create', middleware.isLoggedIn, ( req , res ) => {
     if(req.user.isAdmin){ 
         workoutFactory.createNewWorkout(Workout, req.body);
+        req.flash("success_messages", "Øvelsen er oprettet.");
         res.redirect('/admin/workouts');
     } else {
         res.redirect('home');
@@ -469,6 +471,7 @@ app.post('/admin/workouts/create', middleware.isLoggedIn, ( req , res ) => {
 app.get('/admin/workouts/delete/:id', middleware.isLoggedIn, ( req , res ) => {
     if(req.user.isAdmin){ 
         workoutFactory.deleteWorkout(Workout, req.params.id);
+        req.flash("success_messages", "Øvelsen er slettet.");
         res.redirect('/admin/workouts');
     } else {
         res.redirect('home');
