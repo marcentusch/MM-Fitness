@@ -77,7 +77,7 @@ function addMuscleGroup(User, userId, pas, muscleGroup, callback) {
 function createNewWorkout(Workout, workout){
     Workout.create({
         name: workout,
-        description: "Gør noget",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer eleifend felis ex, iaculis feugiat lectus placerat ac. Morbi erat justo, volutpat eu molestie ac, mattis eget nisl. Phasellus interdum id leo at egestas. Nam hendrerit massa sed risus tincidunt ullamcorper. Ut ex turpis, vestibulum et maximus eu, viverra eu dui. Donec ullamcorper eleifend fringilla. Aliquam rhoncus, eros eu ultricies tincidunt, ligula eros tincidunt tortor, venenatis mattis dolor sem in nisi. Proin pharetra a metus vel porta. Suspendisse at urna nunc. Mauris vehicula facilisis ultricies. Vivamus libero quam, sollicitudin vitae egestas at, porta non libero. Curabitur augue nulla, cursus et tempor non, faucibus nec purus. Sed vitae ipsum feugiat, varius felis vitae, fringilla diam. Curabitur eget malesuada ligula. Aliquam ac enim justo.",
         videoUrl: "www.google.com"
     }),
     function(err, newWorkout){

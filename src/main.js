@@ -406,7 +406,7 @@ app.get('/admin/user/:userId/chat', middleware.isLoggedIn, (req,res) => {
 });
 
 // News page
-app.get('/admin/news', middleware.isLoggedIn, (req,res) => {
+app.get('/admin/news', middleware.isLoggedIn, ( req , res ) => {
     if(req.user.isAdmin) {
         newsFactory.getAllNews(News, (news) => {
             res.render('./admin/news', {news: news});
@@ -416,8 +416,19 @@ app.get('/admin/news', middleware.isLoggedIn, (req,res) => {
     }
 });
 
+// Workout page
+app.get('/admin/workouts', middleware.isLoggedIn, ( req , res ) => {
+    if(req.user.isAdmin){
+        workoutFactory.getWorkouts(Workout, (workouts) => {
+            res.render('./admin/workouts', {workouts: workouts});
+        }); 
+    } else {
+        res.redirect('home');
+    }
+});
+
 // Update the users targetweight
-app.post('/admin/user/:userId/update/weight', middleware.isLoggedIn, (req, res) => {
+app.post('/admin/user/:userId/update/weight', middleware.isLoggedIn, ( req , res ) => {
     if(req.user.isAdmin) {
         const newGoal = req.body.newGoal;
         
