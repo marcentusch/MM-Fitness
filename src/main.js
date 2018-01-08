@@ -420,8 +420,32 @@ app.get('/admin/news', middleware.isLoggedIn, ( req , res ) => {
 app.get('/admin/workouts', middleware.isLoggedIn, ( req , res ) => {
     if(req.user.isAdmin){
         workoutFactory.getWorkouts(Workout, (workouts) => {
+            workouts.sort((a, b) => {
+                if(a.name < b.name) return -1;
+                if(a.name > b.name) return 1;
+                return 0;
+            });
             res.render('./admin/workouts', {workouts: workouts});
         }); 
+    } else {
+        res.redirect('home');
+    }
+});
+
+// Update workout data 
+app.post('/admin/workouts/update', middleware.isLoggedIn, ( req , res ) => {
+    if(req.user.isAdmin){
+        workoutFactory.getWorkout(Workout, req.body.name, (workout) => {
+            workout.videoUrl = req.body.videoUrl;
+            workout.description = req.body.description;
+            workout.save((err) => {
+                if (err){
+                    throw(err); 
+                } else {
+                    res.redirect('/admin/workouts');
+                }
+            });
+        });
     } else {
         res.redirect('home');
     }

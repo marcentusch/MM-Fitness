@@ -25,8 +25,15 @@
     <ul id="workoutList" class="list-group">
         <% workouts.forEach((workout) => { %>
             <li class="list-group-item">
-                <a class="btn-link text-capitalize" href=""><%= workout.name %></a>
-                <input type="text" class="" value="<%= workout.videoUrl %>">
+                <form action="/admin/workouts/update" method="POST">
+                    <a class="btn-link text-capitalize" data-toggle="collapse" href="#collapse<%= workout._id %>" role="button" aria-expanded="false" aria-controls="collapse<%= workout._id %>"><%= workout.name %></a>
+                    <div id="collapse<%= workout._id %>" class="collapse">
+                        <input name="name" style="display: none" value="<%= workout.name %>">
+                        <input type="text" name="videoUrl" class="form-control my-2" value="<%= workout.videoUrl %>">
+                        <textarea class="form-control my-2" name="description" rows="10"> <%= workout.description %> </textarea>
+                        <button class="btn btn-outline-primary pointer float-right" type="submit"> Gem </button>
+                    </div>
+                </form>
             </li>
         <% }) %>
     </ul>

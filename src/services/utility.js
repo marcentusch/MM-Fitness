@@ -1,13 +1,22 @@
 const moment = require('moment');
 
 module.exports = {
-    sortUser,
     randomDate,
     randomNumber,
     currentDayDK
 };
 
-function sortUser () {};
+/* Sort function WIP */
+/* function sortListOfObjects (list, sortBy) {
+    let sortedList = list.sort((a, b) => {
+            if(a.firstName < b.firstName) return -1;
+            if(a.firstName > b.firstName) return 1;
+            return 0;
+        });
+    
+    return sortedList;
+
+}; */
 
 function randomDate() {
     const someDate = randomNumber(1,27) + "-" + randomNumber(1, 12) + "-2017";
