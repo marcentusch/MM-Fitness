@@ -1,6 +1,9 @@
 const moment = require('moment');
+const crypto = require('crypto');
 
 module.exports = {
+    encryptMessage,
+    decryptMessage,
     randomDate,
     randomNumber,
     currentDayDK
@@ -17,6 +20,20 @@ module.exports = {
     return sortedList;
 
 }; */
+
+function encryptMessage(env, string) {
+    let cipher = crypto.createCipher(env.cipherAlgorithm, env.cipherPass);
+    let crypted = cipher.update(string, 'utf8', 'hex');
+    crypted += cipher.final('hex');
+    return crypted;
+}
+
+function decryptMessage(env, string){
+    let decipher = crypto.createDecipher(env.cipherAlgorithm, env.cipherPass)
+    let deciphered = decipher.update(string,'hex','utf8')
+    deciphered += decipher.final('utf8');
+    return deciphered;
+  }
 
 function randomDate() {
     const someDate = randomNumber(1,27) + "-" + randomNumber(1, 12) + "-2017";
