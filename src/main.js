@@ -243,7 +243,9 @@ app.get('/profile', middleware.isLoggedIn, (req, res) => {
 app.get('/program', middleware.isLoggedIn, (req, res) => {
     const user = req.user;
     const today = utility.currentDayDK();
-    res.render('program', {user: user, today: today});
+    workoutFactory.getWorkouts(Workout, (workouts) => {
+        res.render('program', {user: user, today: today, workouts: workouts});
+    });
 });
 
 app.post('/update/trainingpas/timesTrained/:increase', middleware.isLoggedIn, (req, res) => {
