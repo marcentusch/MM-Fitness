@@ -99,7 +99,11 @@ User.register(new User(
 Workout.remove({}, () => {
     const exercises = ["squats", "bench press", "deadlift", "biceps curls", "shoulder press", "sit ups", "punch press", "flyes", "incline cable flyes", "incline lateral raises", "triceps extensions", "lat pull", "seated row", "leg extension", "leg curls", "calf raises", "cable crunches"];
         exercises.forEach((exercise) => {
-        workoutFactory.createNewWorkout(Workout, exercise);
+        workoutFactory.createNewWorkout(Workout, {
+            name:exercise,
+            description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse pretium viverra urna, at bibendum est tristique auctor. Quisque dapibus purus sed justo lacinia eleifend. Phasellus id condimentum risus. Vestibulum fringilla tincidunt ex a consequat. Praesent quis consectetur neque. Aenean blandit ante eu rhoncus maximus. Nulla ut mi ipsum. Nulla cursus condimentum elit pulvinar commodo. Phasellus gravida dolor et odio dignissim, at luctus velit iaculis.",
+            videoUrl:"https://www.facebook.com/MikaelMunkFitness/videos/1371468532975406/"
+        });
     });
 });
 
@@ -446,6 +450,26 @@ app.post('/admin/workouts/update', middleware.isLoggedIn, ( req , res ) => {
                 }
             });
         });
+    } else {
+        res.redirect('home');
+    }
+});
+
+// Add new workout 
+app.post('/admin/workouts/create', middleware.isLoggedIn, ( req , res ) => {
+    if(req.user.isAdmin){ 
+        workoutFactory.createNewWorkout(Workout, req.body);
+        res.redirect('/admin/workouts');
+    } else {
+        res.redirect('home');
+    }
+});
+
+// Delete workout
+app.get('/admin/workouts/delete/:id', middleware.isLoggedIn, ( req , res ) => {
+    if(req.user.isAdmin){ 
+        workoutFactory.deleteWorkout(Workout, req.params.id);
+        res.redirect('/admin/workouts');
     } else {
         res.redirect('home');
     }

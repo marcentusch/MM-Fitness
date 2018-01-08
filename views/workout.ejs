@@ -17,12 +17,11 @@
                 js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.6";
                 fjs.parentNode.insertBefore(js, fjs);
             }(document, 'script', 'facebook-jssdk'));</script>
-            <% const videoUrl = "https://www.facebook.com/MikaelMunkFitness/videos/1371468532975406/" %>
             <!-- Your embedded video player code -->
-            <div class="fb-video" data-href="<%= videoUrl %>" data-width="500" data-show-text="false">
+            <div class="fb-video" data-href="<%= workout.videoUrl %>" data-width="500" data-show-text="false">
                 <div class="fb-xfbml-parse-ignore">
-                    <blockquote cite="<%= videoUrl %>">
-                        <a href="<%= videoUrl %>">How to Share With Just Friends</a>
+                    <blockquote cite="<%= workout.videoUrl %>">
+                        <a href="<%= workout.videoUrl %>">How to Share With Just Friends</a>
                         <p>How to share with just friends.</p>
                         Posted by <a href="https://www.facebook.com/facebook/">Facebook</a> on Friday, December 5, 2014
                     </blockquote>

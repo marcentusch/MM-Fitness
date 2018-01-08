@@ -6,45 +6,45 @@
 
 <!-- MODAL -->
 <div class="modal fade" id="modalNews" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Opret nyhed</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-                <form action="/admin/news/create" method="POST">
-                    <div class="form-group">
-                        <label>Titel <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" name="title">
-                    </div>
-                    <div class="form-group">
-                        <label>Rubrik <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" name="subdivision">
-                    </div>
-                    <div class="form-group">
-                        <label>Tekst <span class="text-danger">*</span></label>
-                        <textarea type="text" class="form-control" name="content" cols="30" rows="10"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Link</label>
-                        <input type="text" class="form-control" name="link" placeholder="f.eks http://www.google.com">
-                    </div>
-                    <div class="form-group">
-                        <label>Link-tekst</label>
-                        <input type="text" class="form-control" name="linkText" placeholder="f.eks Google">
-                    </div>
-                    <div class="float-right my-2">
-                        <button class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary pointer">Opret nyhed</button>
-                    </div>
-                </form> 
-            </div>
-          </div>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Opret nyhed</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
         </div>
-      </div>
+        <div class="modal-body">
+            <form action="/admin/news/create" method="POST">
+                <div class="form-group">
+                    <label>Titel <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="title">
+                </div>
+                <div class="form-group">
+                    <label>Rubrik <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="subdivision">
+                </div>
+                <div class="form-group">
+                    <label>Tekst <span class="text-danger">*</span></label>
+                    <textarea type="text" class="form-control" name="content" cols="30" rows="10"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Link</label>
+                    <input type="text" class="form-control" name="link" placeholder="f.eks http://www.google.com">
+                </div>
+                <div class="form-group">
+                    <label>Link-tekst</label>
+                    <input type="text" class="form-control" name="linkText" placeholder="f.eks Google">
+                </div>
+                <div class="float-right my-2">
+                    <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary pointer">Opret nyhed</button>
+                </div>
+            </form> 
+        </div>
+        </div>
+    </div>
+</div>
 
 <!-- MODAL BUTTON -->
 <div class="row mx-3 my-3">
