@@ -23,6 +23,7 @@ function getWorkout(Workout, workoutName, callback) {
             callback(workoutFromDb);
         });
     } catch (err) {
+        console.log("Error getting workout", err);
         throw(err);
     }
 }
@@ -43,6 +44,7 @@ function addTrainingPas(User, userId, callback) {
         
         user.save((err, updatedUser) => {
             if (err){
+                console.log("Error saving training pas", err);
                 throw(err); 
             } 
             callback("Pas created")
@@ -59,6 +61,7 @@ function addMuscleGroup(User, userId, pas, muscleGroup, callback) {
 
     User.findById(userId, (err, user) => {
         if (err) {
+            console.log("Error finding user", err);
             throw(err);
         } 
         user.trainingStats.trainingPases[pas -1].muscleGroups.push(newMuscleGroup);
@@ -66,6 +69,7 @@ function addMuscleGroup(User, userId, pas, muscleGroup, callback) {
         
         user.save((err, updatedUser) => {
             if (err){
+                console.log("Error adding musclegroup", err);
                 throw(err); 
             } 
             callback("Musclegroup added")
@@ -84,6 +88,7 @@ function createNewWorkout(Workout, workout){
     }),
     function(err, newWorkout){
         if(err){
+            console.log("Error creating workout", err);
             throw(err);
         } else{
             return newWorkout;
@@ -94,6 +99,7 @@ function createNewWorkout(Workout, workout){
 function deleteWorkout(Workout, workoutId){
     Workout.findByIdAndRemove(workoutId, (err) =>{
         if(err){
+            console.log("Error deleting workout", err);
             throw err;
         }
     })
