@@ -366,7 +366,7 @@ function testData(User, amount) {
             weightStats: weightStats,
             trainingStats: trainingStats,
             foodStats: foodStats,
-            messages: messages,
+            messages: [],
             lastEdit: "",
             dateCreated: moment().format("x")
         }

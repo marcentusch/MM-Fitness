@@ -120,9 +120,10 @@ io.on('connection', (socket) => {
 
     // Handle user message from client to server
     socket.on("from user to server", (data) => {
-        let newMessage = {
+        // Encrypt the message for database
+        let encryptedMessage = {
             date: moment().format("DD/MM - hh:mm"),
-            message: data.message,
+            message: utility.encryptMessage(env, data.message),
             fromUser: true
         }
 
@@ -130,28 +131,36 @@ io.on('connection', (socket) => {
             if(err) {
                 throw err;
             } else {
-                user.messages.push(newMessage);
+                user.messages.push(encryptedMessage);
                 
                 user.save((err, updatedUser) => {
                     if(err) {
                         throw err;
                     }
+
                 });
             }
         });
-        newMessage.userId = data.userId;
-
+        encryptedMessage.userId = data.userId;
+        
+        // Foward normal message to client
+        let message = {
+            date: moment().format("DD/MM - hh:mm"),
+            message: data.message,
+            fromUser: true
+        }
         // Send user message from server to client
-        socket.broadcast.emit('from server to admin', newMessage);
+        socket.broadcast.emit('from server to admin', message);
     });
 
 /*************************************************************************** */
 
     // Handle admin message from client to server
     socket.on("from admin to server", (data) => {
-        let newMessage = {
+        // Encrypt the message for database
+        let encryptedMessage = {
             date: moment().format("DD/MM - hh:mm"),
-            message: data.message,
+            message: utility.encryptMessage(env, data.message),
             fromUser: false
         }
         
@@ -159,7 +168,7 @@ io.on('connection', (socket) => {
             if(err) {
                 throw err;
             } else {
-                user.messages.push(newMessage);
+                user.messages.push(encryptedMessage);
 
                 user.save((err, updatedUser) => {
                     if(err) {
@@ -168,11 +177,16 @@ io.on('connection', (socket) => {
                 });
             }
         });
+        encryptedMessage.userId = data.userId;
 
-        newMessage.userId = data.userId;
-
+        // Foward normal message to client
+        let message = {
+            date: moment().format("DD/MM - hh:mm"),
+            message: data.message,
+            fromUser: true
+        }
         // Send admin message from server to client
-        socket.broadcast.emit("from server to user", newMessage);
+        socket.broadcast.emit("from server to user", message);
     });
 
 });
@@ -270,15 +284,18 @@ app.get('/meal-plan', middleware.isLoggedIn, (req, res) => {
 });
 
 // Update Calories
-app.post('/meal-plan/update/:userId/mealId/:mealId', middleware.isLoggedIn, async (req, res) => {
+app.post('/meal-plan/update/:userId/mealId/:mealId', middleware.isLoggedIn, async ( req , res ) => {
     userFactory.updateCalories(User, req.user, req.params.mealId, (newCaloriesToday) => {
         res.json({"newCalories": newCaloriesToday});
     });
 });
 
 // Inbox
-app.get('/inbox', middleware.isLoggedIn, (req, res) => {
+app.get('/inbox', middleware.isLoggedIn, ( req , res ) => {
     const user = req.user;
+    for(let i = 0; i < user.messages.length; i++){
+        user.messages[i].message = utility.decryptMessage(env, user.messages[i].message);
+    }
     res.render('inbox', {user: user});
 });
 
@@ -391,9 +408,12 @@ app.get('/admin/user/:userId', middleware.isLoggedIn, (req,res) => {
 });
 
 // Chat page
-app.get('/admin/user/:userId/chat', middleware.isLoggedIn, (req,res) => {
+app.get('/admin/user/:userId/chat', middleware.isLoggedIn, ( req , res ) => {
     if(req.user.isAdmin) {
         userFactory.getUser(User, req.params.userId, (user) => {
+            for(let i = 0; i < user.messages.length; i++){
+                user.messages[i].message = utility.decryptMessage(env, user.messages[i].message);
+            }
             res.render('./admin/chat', {
                 user: user
             });
