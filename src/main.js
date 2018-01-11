@@ -128,16 +128,17 @@ io.on('connection', (socket) => {
         }
 
         User.findById(data.userId, (err, user) => {
-            if(err) {
+            if(err){
+                console.log("Error looking up user: ", err);
                 throw err;
             } else {
                 user.messages.push(encryptedMessage);
                 
                 user.save((err, updatedUser) => {
-                    if(err) {
+                    if(err){
+                        console.log("Error in saving user: ", err);
                         throw err;
                     }
-
                 });
             }
         });
@@ -165,13 +166,14 @@ io.on('connection', (socket) => {
         }
         
         User.findById(data.userId, (err, user) => {
-            if(err) {
+            if(err){
+                console.log("Error looking up user: ", err);
                 throw err;
             } else {
                 user.messages.push(encryptedMessage);
-
                 user.save((err, updatedUser) => {
-                    if(err) {
+                    if(err){
+                        console.log("Error saving user: ", err);
                         throw err;
                     }
                 });
@@ -197,7 +199,8 @@ io.on('connection', (socket) => {
 
 var j = schedule.scheduleJob('0 0 * * *', () => {
     User.find({}, (err, users) => {
-        if(err) {
+        if(err){
+            console.log("Error looking up users: ", err);
             throw err;
         }
         users.forEach((user) => {
@@ -207,7 +210,8 @@ var j = schedule.scheduleJob('0 0 * * *', () => {
             });
             user.save((err, updatedUsers) => {
                 if (err){
-                    throw(err); 
+                    console.log("Error saving user: ", err);
+                    throw err; 
                 } 
             });
         });
@@ -279,7 +283,6 @@ app.post('/update/trainingpas/timesTrained/:increase', middleware.isLoggedIn, (r
 app.get('/meal-plan', middleware.isLoggedIn, (req, res) => {
     const user = req.user;
     const today = utility.currentDayDK();
-    
     res.render('meal-plan', {user: user});
 });
 
@@ -291,7 +294,7 @@ app.post('/meal-plan/update/:userId/mealId/:mealId', middleware.isLoggedIn, asyn
 });
 
 // Inbox
-app.get('/inbox', middleware.isLoggedIn, ( req , res ) => {
+app.get('/inbox', middleware.isLoggedIn, (req , res) => {
     const user = req.user;
     for(let i = 0; i < user.messages.length; i++){
         user.messages[i].message = utility.decryptMessage(env, user.messages[i].message);
@@ -302,7 +305,11 @@ app.get('/inbox', middleware.isLoggedIn, ( req , res ) => {
 // News
 app.get('/news', middleware.isLoggedIn, (req, res) => {
     const user = req.user;
-    News.find({}, (err, news) =>{
+    News.find({}, (err, news) => {
+        if(err){
+            console.log("Error looking up news: ", err);
+            throw err;
+        }
         res.render('news', {user: user, news: news});
     });
 });
@@ -390,7 +397,7 @@ app.get('/admin/dashboard/:sortBy?',  middleware.isLoggedIn, (req, res) => {
 });
 
 // Individual user page
-app.get('/admin/user/:userId', middleware.isLoggedIn, (req,res) => {
+app.get('/admin/user/:userId', middleware.isLoggedIn, (req, res) => {
     if(req.user.isAdmin) {
         userFactory.getUser(User, req.params.userId, (user) => {
             workoutFactory.getWorkouts(Workout, (workouts) => {
@@ -408,7 +415,7 @@ app.get('/admin/user/:userId', middleware.isLoggedIn, (req,res) => {
 });
 
 // Chat page
-app.get('/admin/user/:userId/chat', middleware.isLoggedIn, ( req , res ) => {
+app.get('/admin/user/:userId/chat', middleware.isLoggedIn, (req, res) => {
     if(req.user.isAdmin) {
         userFactory.getUser(User, req.params.userId, (user) => {
             for(let i = 0; i < user.messages.length; i++){
@@ -424,7 +431,7 @@ app.get('/admin/user/:userId/chat', middleware.isLoggedIn, ( req , res ) => {
 });
 
 // News page
-app.get('/admin/news', middleware.isLoggedIn, ( req , res ) => {
+app.get('/admin/news', middleware.isLoggedIn, (req, res) => {
     if(req.user.isAdmin) {
         newsFactory.getAllNews(News, (news) => {
             res.render('./admin/news', {news: news});
@@ -435,7 +442,7 @@ app.get('/admin/news', middleware.isLoggedIn, ( req , res ) => {
 });
 
 // Workout page
-app.get('/admin/workouts', middleware.isLoggedIn, ( req , res ) => {
+app.get('/admin/workouts', middleware.isLoggedIn, (req, res) => {
     if(req.user.isAdmin){
         workoutFactory.getWorkouts(Workout, (workouts) => {
             workouts.sort((a, b) => {
@@ -451,14 +458,15 @@ app.get('/admin/workouts', middleware.isLoggedIn, ( req , res ) => {
 });
 
 // Update workout data 
-app.post('/admin/workouts/update', middleware.isLoggedIn, ( req , res ) => {
+app.post('/admin/workouts/update', middleware.isLoggedIn, (req, res) => {
     if(req.user.isAdmin){
         workoutFactory.getWorkout(Workout, req.body.name, (workout) => {
             workout.videoUrl = req.body.videoUrl;
             workout.description = req.body.description;
             workout.save((err) => {
                 if (err){
-                    throw(err); 
+                    req.flash("error_messages", "Øvelsen blev IKKE opdateret.");
+                    throw err; 
                 } else {
                     req.flash("success_messages", "Øvelsen er opdateret.");
                     res.redirect('/admin/workouts');
@@ -471,7 +479,7 @@ app.post('/admin/workouts/update', middleware.isLoggedIn, ( req , res ) => {
 });
 
 // Add new workout 
-app.post('/admin/workouts/create', middleware.isLoggedIn, ( req , res ) => {
+app.post('/admin/workouts/create', middleware.isLoggedIn, (req, res) => {
     if(req.user.isAdmin){ 
         workoutFactory.createNewWorkout(Workout, req.body);
         req.flash("success_messages", "Øvelsen er oprettet.");
@@ -482,7 +490,7 @@ app.post('/admin/workouts/create', middleware.isLoggedIn, ( req , res ) => {
 });
 
 // Delete workout
-app.get('/admin/workouts/delete/:id', middleware.isLoggedIn, ( req , res ) => {
+app.get('/admin/workouts/delete/:id', middleware.isLoggedIn, (req, res) => {
     if(req.user.isAdmin){ 
         workoutFactory.deleteWorkout(Workout, req.params.id);
         req.flash("success_messages", "Øvelsen er slettet.");
@@ -493,7 +501,7 @@ app.get('/admin/workouts/delete/:id', middleware.isLoggedIn, ( req , res ) => {
 });
 
 // Update the users targetweight
-app.post('/admin/user/:userId/update/weight', middleware.isLoggedIn, ( req , res ) => {
+app.post('/admin/user/:userId/update/weight', middleware.isLoggedIn, (req, res) => {
     if(req.user.isAdmin) {
         const newGoal = req.body.newGoal;
         
@@ -503,7 +511,8 @@ app.post('/admin/user/:userId/update/weight', middleware.isLoggedIn, ( req , res
             
             user.save((err, updatedUser) => {
                 if (err){
-                    throw(err); 
+                    console.log("Error saving user: ", err);
+                    throw err; 
                 } 
                 res.redirect('/admin/user/' + req.params.userId);
             });
@@ -543,17 +552,15 @@ app.post('/admin/user/:userId/create/musclegroup', middleware.isLoggedIn, async 
 // Create new workout
 app.post('/admin/user/:userId/create/workout', middleware.isLoggedIn, async (req, res) => {
     if(req.user.isAdmin) {
-
         const userId = req.params.userId;
-    
         const trainingPas = req.body.trainingPas;
         const muscleGroup = req.body.muscleGroupId;
-        
         let formData = req.body.formData;
         
         User.findById(userId, (err, user) => {
-            if (err) {
-                throw(err);
+            if (err){
+                console.log("Error looking up user: ", err);
+                throw err;
             } 
             
             const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === trainingPas);
@@ -561,15 +568,15 @@ app.post('/admin/user/:userId/create/workout', middleware.isLoggedIn, async (req
     
             user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts.push(formData);
             user.lastEdit = moment().format("DD/MM - HH:mm");
-            
+        
             user.save((err, updatedUser) => {
                 if (err){
-                    throw(err); 
+                    console.log("Error saving user: ", err);
+                    throw err; 
                 } 
                 res.json({"msg": "New workout was added"});
             });
         });
-        
     } else {
         res.redirect('home');
     }
@@ -578,14 +585,11 @@ app.post('/admin/user/:userId/create/workout', middleware.isLoggedIn, async (req
 // Update Workout
 app.post('/admin/user/:userId/update/workout/:workoutId', middleware.isLoggedIn, async (req, res) => {
     if(req.user.isAdmin) {
-        
         const userId = req.params.userId;
         const trainingPas = req.body.trainingPas;
         const muscleGroup = req.body.muscleGroup;
         const workoutName = req.body.workoutName;
         const workoutId = req.body.workoutId;
-    
-        // Format query string to JSON-object
         formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
         
         // Data to be returned to ajax call 
@@ -596,8 +600,9 @@ app.post('/admin/user/:userId/update/workout/:workoutId', middleware.isLoggedIn,
         };
         
         User.findById(userId, (err, user) => {
-            if (err) {
-                throw(err);
+            if (err){
+                console.log("Error looking up user: ", err);
+                throw err;
             } 
     
             const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === trainingPas);
@@ -610,13 +615,11 @@ app.post('/admin/user/:userId/update/workout/:workoutId', middleware.isLoggedIn,
             } else {
                 returnData.newWorkoutName =  user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].name;
             }
-            
             if(formData.reps) {
                 user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].reps = formData.reps;
             } else {
                 returnData.newWorkoutReps = user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].reps;
             }
-    
             if(formData.saet) {
                 user.trainingStats.trainingPases[trainingPasIndex].muscleGroups[muscleGroupIndex].assignedWorkouts[workoutIndex].saet = formData.saet;        
             } else {
@@ -628,12 +631,12 @@ app.post('/admin/user/:userId/update/workout/:workoutId', middleware.isLoggedIn,
             // Update new workout data
             user.save((err, updatedUser) => {
                 if (err){
-                    throw(err); 
+                    console.log("Error saving user: ", err);
+                    throw err; 
                 } 
                 res.json(returnData);
             });
         });
-
     } else {
         res.redirect('home');
     }
@@ -643,10 +646,11 @@ app.post('/admin/user/:userId/update/workout/:workoutId', middleware.isLoggedIn,
 app.post('/admin/user/:userId/delete/pas', middleware.isLoggedIn, async (req, res) => {
     if(req.user.isAdmin) {
         const userId = req.params.userId;
-        
+
         User.findById(userId, (err, user) => {
-            if (err) {
-                throw(err);
+            if (err){
+                console.log("Error looking up user: ", err);
+                throw err;
             } 
             
             const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === req.body.trainingPas);
@@ -661,7 +665,8 @@ app.post('/admin/user/:userId/delete/pas', middleware.isLoggedIn, async (req, re
             // Update new workout data
             user.save((err, updatedUser) => {
                 if (err){
-                    throw(err); 
+                    console.log("Error saving user: ", err);
+                    throw err; 
                 } 
                 res.json({msg: "Pas was deleted"});
             });
@@ -679,8 +684,9 @@ app.post('/admin/user/:userId/delete/musclegroup', middleware.isLoggedIn, async 
         const trainingPas = req.body.trainingPas;
     
         User.findById(userId, (err, user) => {
-            if (err) {
-                throw(err);
+            if (err){
+                console.log("Error looking up user: ", err);
+                throw err;
             } 
             
             const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === req.body.trainingPas);
@@ -692,7 +698,8 @@ app.post('/admin/user/:userId/delete/musclegroup', middleware.isLoggedIn, async 
             // Update new workout data
             user.save((err, updatedUser) => {
                 if (err){
-                    throw(err); 
+                    console.log("Error saving user: ", err);
+                    throw err; 
                 } 
                 res.json(
                     {
@@ -703,7 +710,6 @@ app.post('/admin/user/:userId/delete/musclegroup', middleware.isLoggedIn, async 
                 );
             });
         });
-        
     } else {
         res.redirect('home');
     }
@@ -713,14 +719,14 @@ app.post('/admin/user/:userId/delete/musclegroup', middleware.isLoggedIn, async 
 app.post('/admin/user/:userId/delete/workout', middleware.isLoggedIn, async (req, res) => {
     if(req.user.isAdmin) {
         const userId = req.params.userId;
-    
         const trainingPas = req.body.trainingPas;
         const muscleGroup = req.body.muscleGroup;
         const workoutName = req.body.workoutName;
         
         User.findById(userId, (err, user) => {
-            if (err) {
-                throw(err);
+            if (err){
+                console.log("Error looking up user: ", err);
+                throw err;
             } 
             
             const trainingPasIndex = user.trainingStats.trainingPases.findIndex(i => i.pasNumber === trainingPas);
@@ -733,12 +739,12 @@ app.post('/admin/user/:userId/delete/workout', middleware.isLoggedIn, async (req
             // Update new workout data
             user.save((err, updatedUser) => {
                 if (err){
-                    throw(err); 
+                    console.log("Error saving user: ", err);
+                    throw err; 
                 } 
                 res.json({msg: "Deleted a single workout"});
             });
         });
-        
     } else {
         res.redirect('home');
     }
@@ -751,16 +757,15 @@ app.post('/admin/user/:userId/delete/workout', middleware.isLoggedIn, async (req
 // Create meal
 app.post('/admin/user/:userId/create/meal', middleware.isLoggedIn, async (req, res) => {
     if(req.user.isAdmin) {
-
         const userId = req.params.userId;
         const formData = JSON.parse('{"' + decodeURI(req.body.formData.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
         
         User.findById(userId, (err, user) => {
-            if (err) {
-                throw(err);
+            if (err){
+                console.log("Error looking up user: ", err);
+                throw err;
             } 
             const newMealId = user.foodStats.mealPlan.meals.length + 1;
-            
             const newMeal = {
                 isChecked: false,
                 id: newMealId,
@@ -775,17 +780,16 @@ app.post('/admin/user/:userId/create/meal', middleware.isLoggedIn, async (req, r
             }
     
             user.foodStats.mealPlan.meals.push(newMeal);
-            
             user.lastEdit = moment().format("DD/MM - HH:mm");
 
             user.save((err, updatedUser) => {
                 if (err){
-                    throw(err); 
+                    console.log("Error looking up user: ", err);
+                    throw err; 
                 } 
                 res.json({"msg": "Created new meal"});
             });
         });
-        
     } else {
         res.redirect('home');
     }
@@ -851,16 +855,19 @@ app.post('/admin/news/delete/:newsId', (req, res) => {
 
 app.post("/admin/user/:userId/update/isDisabled/:bool", (req, res) => {
     if(req.user.isAdmin) {
-
         const userId = req.params.userId;
 
         User.findById(userId, (err, user) => {
-
+            if (err){
+                console.log("Error looking up user: ", err);
+                throw err;
+            }
             user.isDisabled = req.params.bool;
 
             user.save((err, updatedUser) => {
                 if (err){
-                    throw(err); 
+                    console.log("Error saving user: ", err);
+                    throw err; 
                 }
                 if(req.params.bool == 'false') {
                     req.flash("success_messages", "Brugeren er blevet aktiveret.");
@@ -871,7 +878,6 @@ app.post("/admin/user/:userId/update/isDisabled/:bool", (req, res) => {
                 }
             });
         });
-
     } else {
         res.redirect('home');
     }
@@ -883,7 +889,6 @@ app.post("/admin/user/:userId/update/isDisabled/:bool", (req, res) => {
 
 app.post('/admin/delete/:userId', (req, res) => {
     if(req.user.isAdmin) {
-
         const userId = req.params.userId;
         
         User.findByIdAndRemove(userId, (err, deletedUser) => {
@@ -897,7 +902,6 @@ app.post('/admin/delete/:userId', (req, res) => {
                 res.redirect('/admin/dashboard');
             }
         });
-
     } else {
         res.redirect('home');
     }
