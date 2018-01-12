@@ -2,17 +2,20 @@
 
 <script>
 function search(){
-    let input, filter, ul, li, a, i;
-    input = document.getElementById('searchField');
-    filter = input.value.toUpperCase();
-    ul = document.getElementById('workoutList');
-    li = ul.getElementsByTagName('li');
+    let listItem;
+    let input = document.getElementById('searchField');
+    let search = input.value.toUpperCase();
+    let ul = document.getElementById('workoutList');
+    let li = ul.getElementsByTagName('li');
 
     for (i = 0; i < li.length; i++) {
-        a = li[i].getElementsByTagName("a")[0];
-        if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+        /* Find each workout tag */
+        listItem = li[i].getElementsByTagName("a")[0];
+        /* If contains the input = show */
+        if (listItem.innerHTML.toUpperCase().indexOf(search) > -1) {
             li[i].style.display = "";
         } else {
+            /* If does not contain the input = hide */
             li[i].style.display = "none";
         }
     }
