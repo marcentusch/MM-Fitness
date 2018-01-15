@@ -11,7 +11,7 @@ describe("Root app route", () => {
 });
 describe("Login with test user", () => {
     it("Should be redirected to /home", function(done) {
-        request.post("http://localhost:8080/login", {form: {username: "2", password: "2"}}, function(error, response, body) {
+        request.post("http://localhost:8080/login", {form: {username: "testbruger", password: "1234"}}, function(error, response, body) {
             expect(response.statusCode).to.equal(302);
             expect(body).have.string("/home");
             done();
