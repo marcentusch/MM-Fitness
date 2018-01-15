@@ -5,8 +5,7 @@ module.exports = {
     encryptMessage,
     decryptMessage,
     randomDate,
-    randomNumber,
-    currentDayDK
+    randomNumber
 };
 
 /* Sort function WIP */
